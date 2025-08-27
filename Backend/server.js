@@ -1,29 +1,29 @@
-require("dotenv").config({ debug: false });
-const cors = require("cors");
-const express = require("express");
+require('dotenv').config({ debug: false });
+const cors = require('cors');
+const express = require('express');
 const app = express();
-const authRoutes = require("./router");
-const connectDB = require("./utils/db");
-const { errorMiddleware } = require("./middleware/middleware");
+const authRoutes = require('./router');
+const connectDB = require('./utils/db');
+const { errorMiddleware } = require('./middleware/middleware');
 
-// ✅ Correct CORS configuration
+// ------------------- CORS CONFIG -------------------
 const allowedOrigins = [
-  "http://localhost:5173",   // Local frontend (Vite)
-  "http://localhost:5174",   // Alternate local frontend
+  "http://localhost:5173",
+  "http://localhost:5174",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5174",
-  "https://veyg-2k25-frontend.onrender.com", // ✅ Your frontend Render URL
+  "https://veyg-2k25-frontend.onrender.com",   // Your deployed frontend
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (e.g., mobile apps, Postman)
+    // Allow requests with no origin (like Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      console.error(`❌ CORS blocked for origin: ${origin}`);
+      console.log(`❌ Blocked by CORS: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
@@ -33,28 +33,22 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // Handle preflight requests
 
-// ✅ Parse JSON payloads
+// ------------------- MIDDLEWARE -------------------
 app.use(express.json());
-
-// ✅ API Routes
-app.use("/api", authRoutes);
-
-// ✅ Error Middleware
+app.use('/api', authRoutes);
 app.use(errorMiddleware);
 
-// ✅ Port config
+// ------------------- PORT -------------------
 const PORT = process.env.PORT || 8000;
 
-// ✅ Connect to MongoDB and start the server
-connectDB()
-  .then(() => {
-    console.log("✅ Database connected successfully!");
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error("❌ Database connection failed:", error.message);
-    process.exit(1);
+// ------------------- CONNECT DB & START SERVER -------------------
+connectDB().then(() => {
+  console.log("✅ Database connected successfully!");
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
+}).catch((err) => {
+  console.error("❌ Failed to connect DB:", err.message);
+});
