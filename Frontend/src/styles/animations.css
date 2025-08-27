@@ -1,0 +1,27 @@
+/* Scroll Animation Styles - DISABLED */
+/* All scroll animations have been disabled to remove scrolling effects */
+
+.scroll-animate,
+.scroll-animate-fade,
+.scroll-animate-slide-left,
+.scroll-animate-slide-right,
+.scroll-animate-scale,
+.scroll-animate-rotate,
+.scroll-animate-stagger {
+  /* Remove all animations - show content immediately */
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.scroll-animate.animate-in,
+.scroll-animate-fade.animate-in,
+.scroll-animate-slide-left.animate-in,
+.scroll-animate-slide-right.animate-in,
+.scroll-animate-scale.animate-in,
+.scroll-animate-rotate.animate-in,
+.scroll-animate-stagger.animate-in {
+  /* Ensure all content is visible without animation */
+  opacity: 1 !important;
+  transform: none !important;
+}

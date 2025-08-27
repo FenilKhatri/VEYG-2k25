@@ -1,0 +1,70 @@
+/* Global CSS Reset for White Space Issues */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 75%, #1a1a2e 100%);
+  min-height: 100vh;
+}
+
+/* Remove default margins from all page sections */
+.page-container {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+/* Ensure no white space above content */
+.main-content {
+  margin-top: 0;
+  padding-top: 0;
+  background: transparent;
+}
+
+/* Fix navbar spacing */
+.navbar-fixed-top + * {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Remove default Bootstrap margins and backgrounds */
+.container-fluid,
+.container {
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
+}
+
+/* Ensure sections start from top */
+section:first-child,
+div:first-child {
+  margin-top: 0;
+}
+
+/* Remove white backgrounds from Bootstrap components */
+.card {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-content {
+  background: rgba(15, 15, 35, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure no white gaps between sections */
+.row {
+  margin: 0;
+}
+
+.col, .col-* {
+  padding: 0;
+}
