@@ -13,6 +13,7 @@ const allowedOrigins = [
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5174",
   "https://veyg-2k25-frontend.onrender.com",   // Your deployed frontend
+  "https://veyg-2k25-backend.onrender.com",   // Your deployed backend
 ];
 
 const corsOptions = {
