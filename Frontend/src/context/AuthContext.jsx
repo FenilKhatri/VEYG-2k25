@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserRegistrations = async (username, token) => {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://veyg-2k25-backend.onrender.com'
       const response = await fetch(`${API_BASE_URL}/api/game-registrations/my-registrations`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -136,7 +136,7 @@ export const AuthProvider = ({ children }) => {
         totalAmount: registrationDetails.totalAmount || 0
       }
 
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://veyg-2k25-backend.onrender.com'
       const response = await fetch(`${API_BASE_URL}/api/game-registrations/register`, {
         method: 'POST',
         headers: {
