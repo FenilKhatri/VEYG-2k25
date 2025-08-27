@@ -1,6 +1,12 @@
 import cookieAuth from '../utils/cookieAuth'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_FALLBACK_API_URL || 'http://localhost:8000'
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_FALLBACK_API_URL ||
+  'http://localhost:8000';
+
+console.log("🌐 Using API Base URL:", API_BASE_URL);
+
 
 class ApiService {
   // Helper method to get auth headers

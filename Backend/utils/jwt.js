@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-const JWT_SECRET = process.env.JWT_SECRET || 'veyg_secret_key_2025'
+const JWT_SECRET = process.env.JWT_SECRET || 'veyg_039'
 const JWT_EXPIRE = process.env.JWT_EXPIRE || '7d'
 
 // Generate JWT token
