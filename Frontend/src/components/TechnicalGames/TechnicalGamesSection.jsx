@@ -1,32 +1,21 @@
 import { Container, Row, Col } from "react-bootstrap"
 import TechnicalGameCard from "./TechnicalGamesCard"
 import { useAuth } from "../../context/AuthContext"
+import { useDayWiseRegistration } from "../../hooks/useDayWiseRegistration"
 import { Code, Database, Terminal, Cpu } from "lucide-react"
 
 const TechnicalGamesSection = ({ day1Games, day2Games }) => {
   const { registeredGames, user } = useAuth()
+  const {
+    hasDay1Registration,
+    hasDay2Registration,
+    day1GameName,
+    day2GameName,
+    isGameRegistered,
+    canRegisterForDay
+  } = useDayWiseRegistration(registeredGames, user)
 
   const techIcons = [Code, Database, Terminal, Cpu]
-
-  // Check if user has registered for any game on a specific day
-  const hasRegisteredForDay = (dayGames) => {
-    if (!registeredGames || !Array.isArray(registeredGames)) return false
-    return registeredGames.some(registration =>
-      dayGames.some(game => game.id === registration.gameId)
-    )
-  }
-
-  const hasDay1Registration = hasRegisteredForDay(day1Games)
-  const hasDay2Registration = hasRegisteredForDay(day2Games)
-
-  // Get registered game name for a specific day
-  const getRegisteredGameName = (dayGames) => {
-    if (!registeredGames || !Array.isArray(registeredGames)) return null
-    const registration = registeredGames.find(reg =>
-      dayGames.some(game => game.id === reg.gameId)
-    )
-    return registration ? registration.gameName : null
-  }
 
   return (
     <section
@@ -123,12 +112,14 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
               <div
                 className="alert alert-success d-inline-block px-4 py-2 rounded-pill mb-3"
                 style={{
-                  background: 'rgba(34, 197, 94, 0.1)',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                  color: '#22c55e'
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  border: '2px solid rgba(34, 197, 94, 0.5)',
+                  color: '#16a34a',
+                  fontWeight: '600',
+                  boxShadow: '0 4px 12px rgba(34, 197, 94, 0.2)'
                 }}
               >
-                ✅ You have registered for: <strong>{getRegisteredGameName(day1Games)}</strong>
+                ✅ You already registered 1 game in Day 1: <strong>{day1GameName}</strong>
               </div>
             )}
           </div>
@@ -138,8 +129,10 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
                 <TechnicalGameCard
                   game={game}
                   registeredGames={registeredGames}
-                  userId={user?.username}
-                  isDisabled={hasDay1Registration && !registeredGames.some(reg => reg.gameId === game.id)}
+                  userId={user?.username || user?.name || user?.id}
+                  isThisGameRegistered={isGameRegistered(game.id)}
+                  hasRegisteredForDay={hasDay1Registration}
+                  canRegisterForDay={canRegisterForDay(1)}
                   registrationStatus={hasDay1Registration ? 'day_registered' : 'available'}
                 />
               </Col>
@@ -181,12 +174,14 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
               <div
                 className="alert alert-success d-inline-block px-4 py-2 rounded-pill mb-3"
                 style={{
-                  background: 'rgba(34, 197, 94, 0.1)',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                  color: '#22c55e'
+                  background: 'rgba(34, 197, 94, 0.2)',
+                  border: '2px solid rgba(34, 197, 94, 0.5)',
+                  color: '#16a34a',
+                  fontWeight: '600',
+                  boxShadow: '0 4px 12px rgba(34, 197, 94, 0.2)'
                 }}
               >
-                ✅ You have registered for: <strong>{getRegisteredGameName(day2Games)}</strong>
+                ✅ You already registered 1 game in Day 2: <strong>{day2GameName}</strong>
               </div>
             )}
           </div>
@@ -196,8 +191,10 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
                 <TechnicalGameCard
                   game={game}
                   registeredGames={registeredGames}
-                  userId={user?.username}
-                  isDisabled={hasDay2Registration && !registeredGames.some(reg => reg.gameId === game.id)}
+                  userId={user?.username || user?.name || user?.id}
+                  isThisGameRegistered={isGameRegistered(game.id)}
+                  hasRegisteredForDay={hasDay2Registration}
+                  canRegisterForDay={canRegisterForDay(2)}
                   registrationStatus={hasDay2Registration ? 'day_registered' : 'available'}
                 />
               </Col>

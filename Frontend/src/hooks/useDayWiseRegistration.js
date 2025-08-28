@@ -1,106 +1,99 @@
-import { useState, useEffect, useCallback } from 'react'
-import { apiService } from '../services/api'
+import { useMemo } from 'react'
+import { getGameById } from '../data/gamesData'
 
-export const useDayWiseRegistration = () => {
-      const [dayWiseStatus, setDayWiseStatus] = useState({
-            day1: { registered: false, registration: null, availableSlots: 1 },
-            day2: { registered: false, registration: null, availableSlots: 1 }
-      })
-      const [loading, setLoading] = useState(false)
-      const [error, setError] = useState(null)
-
-      // Fetch day-wise registration status
-      const fetchDayWiseStatus = useCallback(async () => {
-            try {
-                  setLoading(true)
-                  setError(null)
-
-                  const response = await apiService.getDayWiseRegistrationStatus()
-
-                  if (response.success) {
-                        setDayWiseStatus(response.data.dayWiseStatus)
-                  } else {
-                        throw new Error(response.message || 'Failed to fetch day-wise status')
+export const useDayWiseRegistration = (registeredGames, user) => {
+      return useMemo(() => {
+            // Early return if no data
+            if (!registeredGames || !Array.isArray(registeredGames) || !user) {
+                  return {
+                        hasDay1Registration: false,
+                        hasDay2Registration: false,
+                        day1GameName: null,
+                        day2GameName: null,
+                        isGameRegistered: () => false,
+                        canRegisterForDay: () => true
                   }
-            } catch (err) {
-                  console.error('Error fetching day-wise status:', err)
-                  setError(err.message)
-            } finally {
-                  setLoading(false)
-            }
-      }, [])
-
-      // Check if user can register for a specific day
-      const checkDayAvailability = useCallback(async (day) => {
-            try {
-                  const response = await apiService.checkDayAvailability(day)
-                  return response.success ? response.data : null
-            } catch (err) {
-                  console.error(`Error checking day ${day} availability:`, err)
-                  return null
-            }
-      }, [])
-
-      // Get registration summary
-      const getRegistrationSummary = useCallback(() => {
-            const summary = {
-                  totalRegistrations: 0,
-                  registeredDays: [],
-                  availableDays: [],
-                  canRegisterMore: false
             }
 
-            Object.entries(dayWiseStatus).forEach(([day, status]) => {
-                  if (status.registered) {
-                        summary.totalRegistrations++
-                        summary.registeredDays.push({
-                              day: day === 'day1' ? 1 : 2,
-                              gameName: status.registration?.gameName,
-                              registrationId: status.registration?.registrationId
-                        })
-                  } else {
-                        summary.availableDays.push(day === 'day1' ? 1 : 2)
+            console.log('=== Day-wise Registration Debug ===')
+            console.log('User:', { username: user.username, name: user.name, id: user.id })
+            console.log('Registered Games:', registeredGames)
+
+            // Find user's registrations with comprehensive matching
+            const userRegistrations = registeredGames.filter(reg => {
+                  const matches = [
+                        reg.userId === user.username,
+                        reg.userId === user.name,
+                        reg.userId === user.id,
+                        reg.teamLeader?.fullName === user.username,
+                        reg.teamLeader?.fullName === user.name,
+                        reg.teamLeader?.name === user.username,
+                        reg.teamLeader?.name === user.name,
+                        String(reg.userId) === String(user.username),
+                        String(reg.userId) === String(user.name),
+                        String(reg.userId) === String(user.id)
+                  ]
+
+                  const isMatch = matches.some(Boolean)
+                  console.log(`Registration ${reg.gameName}: ${isMatch ? 'MATCH' : 'NO MATCH'}`, {
+                        regUserId: reg.userId,
+                        teamLeader: reg.teamLeader?.fullName,
+                        matches
+                  })
+
+                  return isMatch
+            })
+
+            console.log('User Registrations Found:', userRegistrations)
+
+            // Check day-wise registrations
+            let hasDay1Registration = false
+            let hasDay2Registration = false
+            let day1GameName = null
+            let day2GameName = null
+
+            userRegistrations.forEach(reg => {
+                  const gameData = getGameById(parseInt(reg.gameId))
+                  console.log(`Game ${reg.gameName} (ID: ${reg.gameId}):`, gameData)
+
+                  if (gameData) {
+                        if (gameData.day === 1) {
+                              hasDay1Registration = true
+                              day1GameName = reg.gameName
+                              console.log('Found Day 1 registration:', reg.gameName)
+                        } else if (gameData.day === 2) {
+                              hasDay2Registration = true
+                              day2GameName = reg.gameName
+                              console.log('Found Day 2 registration:', reg.gameName)
+                        }
                   }
             })
 
-            summary.canRegisterMore = summary.availableDays.length > 0
+            // Helper functions
+            const isGameRegistered = (gameId) => {
+                  return userRegistrations.some(reg =>
+                        parseInt(reg.gameId) === parseInt(gameId) ||
+                        String(reg.gameId) === String(gameId)
+                  )
+            }
 
-            return summary
-      }, [dayWiseStatus])
+            const canRegisterForDay = (day) => {
+                  return day === 1 ? !hasDay1Registration : !hasDay2Registration
+            }
 
-      // Check if user can register for a specific day (local check)
-      const canRegisterForDay = useCallback((day) => {
-            const dayKey = `day${day}`
-            return dayWiseStatus[dayKey] && !dayWiseStatus[dayKey].registered
-      }, [dayWiseStatus])
+            const result = {
+                  hasDay1Registration,
+                  hasDay2Registration,
+                  day1GameName,
+                  day2GameName,
+                  isGameRegistered,
+                  canRegisterForDay,
+                  userRegistrations // For debugging
+            }
 
-      // Get registered game for a specific day
-      const getRegisteredGameForDay = useCallback((day) => {
-            const dayKey = `day${day}`
-            return dayWiseStatus[dayKey]?.registration || null
-      }, [dayWiseStatus])
+            console.log('Final Result:', result)
+            console.log('=== End Debug ===')
 
-      // Refresh status after registration
-      const refreshStatus = useCallback(() => {
-            fetchDayWiseStatus()
-      }, [fetchDayWiseStatus])
-
-      // Initialize on mount
-      useEffect(() => {
-            fetchDayWiseStatus()
-      }, [fetchDayWiseStatus])
-
-      return {
-            dayWiseStatus,
-            loading,
-            error,
-            fetchDayWiseStatus,
-            checkDayAvailability,
-            getRegistrationSummary,
-            canRegisterForDay,
-            getRegisteredGameForDay,
-            refreshStatus
-      }
+            return result
+      }, [registeredGames, user])
 }
-
-export default useDayWiseRegistration

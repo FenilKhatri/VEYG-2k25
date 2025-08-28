@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       const authData = cookieAuth.getAuthData()
-      if (!authData) {
+      if (!authData || !authData.token) {
         setLoading(false)
         return
       }
@@ -41,13 +41,18 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(true)
       setIsAdminLoggedIn(authData.isAdmin || false)
 
-      // Fetch user registrations if student
+      // Fetch user registrations if student (with error handling)
       if (!authData.isAdmin) {
-        await fetchUserRegistrations(authData.userName, authData.token)
+        try {
+          await fetchUserRegistrations(authData.userName, authData.token)
+        } catch (regError) {
+          console.warn('Failed to fetch registrations, but keeping user logged in:', regError)
+          // Don't logout user if registration fetch fails
+        }
       }
     } catch (error) {
       console.error('Auth check failed:', error)
-      cookieAuth.clearAuthData()
+      // Don't clear auth data on error - keep user logged in
     } finally {
       setLoading(false)
     }
@@ -66,11 +71,15 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json()
         const registrations = data.registrations || data.data?.registrations || data.data || []
+        console.log('Fetched registrations:', registrations) // Debug log
         setRegisteredGames(Array.isArray(registrations) ? registrations : [])
+      } else {
+        console.warn('Registration fetch failed with status:', response.status)
+        // Don't clear registrations on API failure
       }
     } catch (error) {
       console.error('Failed to fetch user registrations:', error)
-      setRegisteredGames([])
+      // Don't clear registrations on network error
     }
   }
 

@@ -1,17 +1,15 @@
 import { Badge } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import { CheckCircle, Users, Calendar, IndianRupee, Zap, Trophy, LogIn } from "lucide-react"
-import { getGameById } from "../../data/gamesData"
+import { CheckCircle, Users, Calendar, IndianRupee, Zap, Trophy } from "lucide-react"
 
-const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, registrationStatus = 'available' }) => {
-  // Check if user has registered for any game on this day
-  const hasRegisteredForDay = registeredGames && userId && registeredGames.some(reg => {
-    const registeredGame = getGameById(parseInt(reg.gameId))
-    return registeredGame && registeredGame.day === game.day && reg.userId === userId
-  })
-  
-  // Check if user has registered for this specific game
-  const isThisGameRegistered = registeredGames && userId && registeredGames.some(reg => parseInt(reg.gameId) === game.id && reg.userId === userId)
+const TechnicalGameCard = ({
+  game,
+  userId,
+  isThisGameRegistered = false,
+  hasRegisteredForDay = false,
+  canRegisterForDay = true,
+  registrationStatus = 'available'
+}) => {
 
   return (
     <div className="tech-game-container h-100">
@@ -66,6 +64,17 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
           </div>
         </div>
 
+        {/* Day-wise Registration Status */}
+        {userId && hasRegisteredForDay && !isThisGameRegistered && (
+          <div className="day-registration-warning">
+            <div className="warning-icon">⚠️</div>
+            <div className="warning-content">
+              <div className="warning-title">Day {game.day} Registration Limit</div>
+              <div className="warning-subtitle">You can only register for 1 game per day</div>
+            </div>
+          </div>
+        )}
+
         {/* Action Section */}
         <div className="action-section">
           {!userId ? (
@@ -85,9 +94,8 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
                 View Details
               </Link>
             </div>
-          ) : isDisabled || hasRegisteredForDay ? (
+          ) : !canRegisterForDay ? (
             <div className="action-buttons">
-              <div className="warning-text">Already registered for Day {game.day}</div>
               <button className="btn-status disabled" disabled>
                 Registration Closed
               </button>
@@ -110,8 +118,12 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
         }
         
         .tech-game-card {
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-          border: 1px solid rgba(0, 212, 255, 0.2);
+          background: ${isThisGameRegistered
+          ? 'linear-gradient(135deg, #0d4f2a 0%, #1a5c3a 50%, #0f3d26 100%)'
+          : 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)'};
+          border: 1px solid ${isThisGameRegistered
+          ? 'rgba(34, 197, 94, 0.4)'
+          : 'rgba(0, 212, 255, 0.2)'};
           border-radius: 16px;
           padding: 24px;
           transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -119,12 +131,17 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
           display: flex;
           flex-direction: column;
           gap: 20px;
+          ${isThisGameRegistered ? 'box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15);' : ''}
         }
         
         .tech-game-card:hover {
           transform: translateY(-8px);
-          border-color: rgba(0, 212, 255, 0.6);
-          box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
+          border-color: ${isThisGameRegistered
+          ? 'rgba(34, 197, 94, 0.6)'
+          : 'rgba(0, 212, 255, 0.6)'};
+          box-shadow: ${isThisGameRegistered
+          ? '0 20px 40px rgba(34, 197, 94, 0.25)'
+          : '0 20px 40px rgba(0, 212, 255, 0.15)'};
         }
         
         .game-header {
@@ -234,6 +251,38 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
           font-size: 0.7rem;
         }
         
+        .day-registration-warning {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: rgba(255, 193, 7, 0.1);
+          border: 1px solid rgba(255, 193, 7, 0.3);
+          border-radius: 12px;
+          padding: 12px;
+          margin-bottom: 8px;
+        }
+        
+        .warning-icon {
+          font-size: 1.2rem;
+          flex-shrink: 0;
+        }
+        
+        .warning-content {
+          flex: 1;
+        }
+        
+        .warning-title {
+          color: #ffc107;
+          font-size: 0.85rem;
+          font-weight: 600;
+          margin-bottom: 2px;
+        }
+        
+        .warning-subtitle {
+          color: rgba(255, 193, 7, 0.8);
+          font-size: 0.75rem;
+        }
+        
         .action-section {
           margin-top: auto;
         }
@@ -242,16 +291,6 @@ const TechnicalGameCard = ({ game, registeredGames, userId, isDisabled = false, 
           display: flex;
           flex-direction: column;
           gap: 8px;
-        }
-        
-        .warning-text {
-          color: #ffc107;
-          font-size: 0.8rem;
-          text-align: center;
-          background: rgba(255, 193, 7, 0.1);
-          border: 1px solid rgba(255, 193, 7, 0.3);
-          border-radius: 8px;
-          padding: 8px;
         }
         
         .btn-action, .btn-status {

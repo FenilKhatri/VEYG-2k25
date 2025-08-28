@@ -22,7 +22,7 @@ export default function Footer() {
       <Container className="position-relative">
         <Row className="footer-content">
           {/* Company Info */}
-          <Col lg={4} md={12} className="mb-4">
+          <Col lg={8} md={12} className="mb-4">
             <div className="footer-section">
               <div className="brand-section mb-4">
                 <div className="brand-icon">
@@ -32,8 +32,12 @@ export default function Footer() {
               </div>
               <div className="college-logo-section mb-3">
                 <img
-                  src="/src/public/College-logo.png"
+                  src="https://drive.google.com/uc?export=download&id=14yJp4RCwuTyS7oF81wDYz3P7astSb9CT"
                   alt="College Logo"
+                  onError={(e) => {
+                    e.target.src = "/images/College-logo.png"; // Fallback to local image
+                    e.target.onerror = null; // Prevent infinite loop
+                  }}
                   style={{
                     height: "60px",
                     width: "auto",
@@ -52,11 +56,12 @@ export default function Footer() {
                 </div>
                 <div className="contact-item">
                   <Phone size={16} />
-                  <span>+91 98765 43210</span>
+                  <div>+91 90238 28352,</div>
+                  <div>+91 92659 26990</div>
                 </div>
                 <div className="contact-item">
-                  <MapPin size={16} />
-                  <span>Mehsana, Gujarat, India</span>
+                  <MapPin size={16} href="" />
+                  <span>Near Shanku’s Water Park, Ahmedabad – Mehsana Highway, Linch, Gujarat 384435</span>
                 </div>
               </div>
             </div>
@@ -71,41 +76,12 @@ export default function Footer() {
               </h4>
               <div className="footer-links">
                 <Link to="/" className="footer-link">Home</Link>
-                <Link to="/#games" className="footer-link">Technical Games</Link>
                 <Link to="/registered-games" className="footer-link">My Registrations</Link>
                 <Link to="/guidelines" className="footer-link">Guidelines</Link>
                 <Link to="/about" className="footer-link">About Us</Link>
                 <a href="mailto:veyg.notification@gmail.com" className="footer-link">
                   Contact Support <ExternalLink size={12} />
                 </a>
-              </div>
-            </div>
-          </Col>
-
-          {/* Tech Stack */}
-          <Col lg={4} md={12} className="mb-4">
-            <div className="footer-section">
-              <h4 className="section-title">
-                <Cpu size={18} />
-                Tech Stack
-              </h4>
-              <div className="tech-stack">
-                <div className="tech-item">
-                  <Code size={14} />
-                  <span>React.js</span>
-                </div>
-                <div className="tech-item">
-                  <Server size={14} />
-                  <span>Node.js</span>
-                </div>
-                <div className="tech-item">
-                  <Database size={14} />
-                  <span>MongoDB</span>
-                </div>
-                <div className="tech-item">
-                  <Terminal size={14} />
-                  <span>Bootstrap</span>
-                </div>
               </div>
             </div>
           </Col>
@@ -119,7 +95,7 @@ export default function Footer() {
               © 2025 VEYG Technical Festival. All rights reserved.
             </p>
             <p className="made-with">
-              Made with ❤️ by the VEYG Development Team
+              Made by the VEYG Development Team
             </p>
           </div>
 

@@ -64,21 +64,21 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #2d1b69 0%, #1a0033 25%, #0f0f23 50%, #1a1a2e 75%, #16213e 100%)',
+      background: 'linear-gradient(135deg, #7c2d12 0%, #dc2626 25%, #ea580c 50%, #f97316 75%, #fb923c 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Animated Background */}
+      {/* Geometric Background Pattern */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        opacity: 0.08,
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ctext x='10' y='30' font-family='Arial' font-size='14' fill='%23ff6b35'%3E&lt;admin&gt;%3C/text%3E%3Ctext x='10' y='50' font-family='Arial' font-size='14' fill='%23ff6b35'%3E&lt;auth&gt;%3C/text%3E%3Ctext x='10' y='70' font-family='Arial' font-size='14' fill='%23ff6b35'%3E&lt;secure&gt;%3C/text%3E%3Ctext x='10' y='90' font-family='Arial' font-size='14' fill='%23ff6b35'%3E&lt;/admin&gt;%3C/text%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '150px 150px'
+        opacity: 0.1,
+        backgroundImage: `radial-gradient(circle at 20% 80%, #ff6b35 0%, transparent 50%), 
+                         radial-gradient(circle at 80% 20%, #f7931e 0%, transparent 50%)`,
+        backgroundSize: '300px 300px'
       }}></div>
 
       <Container className="py-5 position-relative" style={{ zIndex: 2 }}>

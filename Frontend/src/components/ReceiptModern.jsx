@@ -355,7 +355,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <div className="logo-container">
           {/* Replace with actual college logo image */}
           <img
-            src="/images/college-logo.png"
+            src="https://drive.google.com/uc?export=download&id=14yJp4RCwuTyS7oF81wDYz3P7astSb9CT"
             alt="College Logo"
             className="logo-image"
             onError={(e) => {
@@ -383,7 +383,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <div className="logo-container">
           {/* Replace with actual web/event logo image */}
           <img
-            src="/images/veyg-logo.png"
+            src="https://drive.google.com/uc?export=view&id=1wkvCexRdse26PEwdy_RnlCmbL4t2q4Sq"
             alt="VEYG Logo"
             className="logo-image"
             onError={(e) => {

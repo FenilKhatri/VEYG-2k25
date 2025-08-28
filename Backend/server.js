@@ -21,19 +21,7 @@ const corsOptions = {
     // Allow requests with no origin (like Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
 
-<<<<<<< HEAD
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://127.0.0.1:5173",
-      "http://127.0.0.1:5174",
-      "https://veyg-2k25-frontend.onrender.com"
-    ];
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
-=======
     if (allowedOrigins.includes(origin)) {
->>>>>>> b8b179924d32947996d81ec3147d4a142602fe36
       callback(null, true);
     } else {
       console.log(`❌ Blocked by CORS: ${origin}`);

@@ -1,4 +1,5 @@
 import HeroSection from "../components/HeroSection/HeroSection"
+import SponsorSlider from "../components/SponsorSlider/SponsorSlider"
 import TechnicalGamesSection from "../components/TechnicalGames/TechnicalGamesSection"
 import { getDay1Games, getDay2Games } from "../data/gamesData"
 
@@ -9,6 +10,7 @@ const Home = ({ showToast, user, isLoggedIn }) => {
   return (
     <>
       <HeroSection />
+      <SponsorSlider />
       <TechnicalGamesSection
         day1Games={day1Games}
         day2Games={day2Games}

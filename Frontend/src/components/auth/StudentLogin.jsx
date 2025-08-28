@@ -64,21 +64,21 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1a0033 0%, #2d1b69 25%, #0f0f23 50%, #1a1a2e 75%, #16213e 100%)',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Animated Background */}
+      {/* Geometric Background Pattern */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        opacity: 0.1,
-        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ctext x='10' y='30' font-family='Arial' font-size='16' fill='%2300d4ff'%3E&lt;/&gt;%3C/text%3E%3Ctext x='60' y='30' font-family='Arial' font-size='16' fill='%2300d4ff'%3E{}%3C/text%3E%3Ctext x='10' y='70' font-family='Arial' font-size='16' fill='%2300d4ff'%3E[]%3C/text%3E%3Ctext x='60' y='70' font-family='Arial' font-size='16' fill='%2300d4ff'%3E()%3C/text%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-        backgroundSize: '120px 120px'
+        opacity: 0.05,
+        backgroundImage: `radial-gradient(circle at 25% 25%, #00d4ff 0%, transparent 50%), 
+                         radial-gradient(circle at 75% 75%, #007bff 0%, transparent 50%)`,
+        backgroundSize: '400px 400px'
       }}></div>
 
       <Container className="py-5 position-relative" style={{ zIndex: 2 }}>

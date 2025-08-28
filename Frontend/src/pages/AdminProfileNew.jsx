@@ -153,7 +153,7 @@ export default function AdminDashboard({ showToast }) {
       } else {
         blob = await apiService.exportAllRegistrations()
       }
-      
+
       // Create download link
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -164,7 +164,7 @@ export default function AdminDashboard({ showToast }) {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-      
+
       showToast(`${type} data exported successfully!`, 'success')
     } catch (error) {
       console.error('Export error:', error)
@@ -180,7 +180,7 @@ export default function AdminDashboard({ showToast }) {
   if (loading) {
     return (
       <>
-        <PageHeroSection 
+        <PageHeroSection
           title="Admin Dashboard"
           subtitle="Manage Game Registrations"
           icon={Trophy}
@@ -205,13 +205,13 @@ export default function AdminDashboard({ showToast }) {
 
   return (
     <>
-      <PageHeroSection 
+      <PageHeroSection
         title="Admin Dashboard"
         subtitle="Manage Game Registrations"
         icon={Trophy}
         description="Monitor and manage all game registrations and participant activities."
       />
-      
+
       <div style={{
         background: 'linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)',
         minHeight: '100vh',
@@ -219,251 +219,242 @@ export default function AdminDashboard({ showToast }) {
       }}>
         <Container>
           <div className="d-flex flex-column gap-4">
-        {/* Header */}
-        <div className="text-center">
-          <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
-            <Trophy className="text-primary" size={48} />
-          </div>
-          <h1 className="display-4 fw-bold text-dark">Admin Dashboard</h1>
-          <p className="fs-5 text-muted">Manage game registrations and monitor activities</p>
-        </div>
+            {/* Header */}
+            <div className="text-center">
+              <div className="d-flex align-items-center justify-content-center gap-3 mb-3">
+                <Trophy className="text-primary" size={48} />
+              </div>
+              <h1 className="display-4 fw-bold text-dark">Admin Dashboard</h1>
+              <p className="fs-5 text-muted">Manage game registrations and monitor activities</p>
+            </div>
 
-        {/* Stats Cards */}
-        <Row className="g-4">
-          <Col md={6} lg={3}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start">
-                  <div>
-                    <Card.Title className="fs-6 fw-medium text-muted">Total Registrations</Card.Title>
-                    <div className="fs-2 fw-bold text-dark">{stats.total}</div>
-                    <small className="text-muted">All registrations</small>
-                  </div>
-                  <Users className="text-primary" size={20} />
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-
-          <Col md={6} lg={3}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start">
-                  <div>
-                    <Card.Title className="fs-6 fw-medium text-muted">Approved</Card.Title>
-                    <div className="fs-2 fw-bold text-success">{stats.approved}</div>
-                    <small className="text-muted">Confirmed registrations</small>
-                  </div>
-                  <CheckCircle className="text-success" size={20} />
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-
-          <Col md={6} lg={3}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start">
-                  <div>
-                    <Card.Title className="fs-6 fw-medium text-muted">Pending</Card.Title>
-                    <div className="fs-2 fw-bold text-warning">{stats.pending}</div>
-                    <small className="text-muted">Awaiting approval</small>
-                  </div>
-                  <Clock className="text-warning" size={20} />
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-
-          <Col md={6} lg={3}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start">
-                  <div>
-                    <Card.Title className="fs-6 fw-medium text-muted">Rejected</Card.Title>
-                    <div className="fs-2 fw-bold text-danger">{stats.rejected}</div>
-                    <small className="text-muted">Declined registrations</small>
-                  </div>
-                  <XCircle className="text-danger" size={20} />
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Filters and Actions */}
-        <Card className="shadow-sm">
-          <Card.Header>
-            <Card.Title className="mb-1">Registration Management</Card.Title>
-            <Card.Text className="text-muted mb-0">Search, filter, and manage all game registrations</Card.Text>
-          </Card.Header>
-          <Card.Body>
-            <Row className="g-3 align-items-end">
-              <Col md={6}>
-                <Form.Group className="position-relative">
-                  <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={16} />
-                  <Form.Control
-                    type="text"
-                    placeholder="Search by game name or participant name..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ paddingLeft: '2.5rem' }}
-                  />
-                </Form.Group>
+            {/* Stats Cards */}
+            <Row className="g-4">
+              <Col md={6} lg={3}>
+                <Card className="h-100 shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <Card.Title className="fs-6 fw-medium text-muted">Total Registrations</Card.Title>
+                        <div className="fs-2 fw-bold text-dark">{stats.total}</div>
+                        <small className="text-muted">All registrations</small>
+                      </div>
+                      <Users className="text-primary" size={20} />
+                    </div>
+                  </Card.Body>
+                </Card>
               </Col>
-              <Col md={3}>
-                <div className="d-flex align-items-center gap-2">
-                  <Filter className="text-muted" size={16} />
-                  <Form.Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                    <option value="all">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                  </Form.Select>
-                </div>
+
+              <Col md={6} lg={3}>
+                <Card className="h-100 shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <Card.Title className="fs-6 fw-medium text-muted">Approved</Card.Title>
+                        <div className="fs-2 fw-bold text-success">{stats.approved}</div>
+                        <small className="text-muted">Confirmed registrations</small>
+                      </div>
+                      <CheckCircle className="text-success" size={20} />
+                    </div>
+                  </Card.Body>
+                </Card>
               </Col>
-              <Col md={3}>
-                <div className="d-flex gap-2 flex-wrap">
-                  <Button variant="outline-secondary" size="sm" onClick={() => handleExport("students")}>
-                    <Download size={16} className="me-1" />
-                    Export Students
-                  </Button>
-                  <Button variant="outline-secondary" size="sm" onClick={() => handleExport("games")}>
-                    <Download size={16} className="me-1" />
-                    Export Games
-                  </Button>
-                  <Button variant="primary" size="sm" onClick={() => handleExport("all")}>
-                    <Download size={16} className="me-1" />
-                    Export All
-                  </Button>
-                </div>
+
+              <Col md={6} lg={3}>
+                <Card className="h-100 shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <Card.Title className="fs-6 fw-medium text-muted">Pending</Card.Title>
+                        <div className="fs-2 fw-bold text-warning">{stats.pending}</div>
+                        <small className="text-muted">Awaiting approval</small>
+                      </div>
+                      <Clock className="text-warning" size={20} />
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6} lg={3}>
+                <Card className="h-100 shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <Card.Title className="fs-6 fw-medium text-muted">Rejected</Card.Title>
+                        <div className="fs-2 fw-bold text-danger">{stats.rejected}</div>
+                        <small className="text-muted">Declined registrations</small>
+                      </div>
+                      <XCircle className="text-danger" size={20} />
+                    </div>
+                  </Card.Body>
+                </Card>
               </Col>
             </Row>
-          </Card.Body>
-        </Card>
 
-        {/* Registrations Table */}
-        <Card className="shadow-sm">
-          <Card.Header>
-            <Card.Title className="mb-0">Game Registrations ({filteredRegistrations.length})</Card.Title>
-          </Card.Header>
-          <Card.Body className="p-0">
-            {filteredRegistrations.length === 0 ? (
-              <div className="text-center py-5">
-                <Trophy className="text-muted mx-auto mb-3" size={64} />
-                <h5 className="text-muted mb-2">No registrations found</h5>
-                <p className="text-muted">No registrations match your current filters.</p>
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <Table className="mb-0">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Registration ID</th>
-                      <th>Game</th>
-                      <th>Team/Participant</th>
-                      <th>Type</th>
-                      <th>Fee</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRegistrations.map((registration) => (
-                      <tr key={registration._id}>
-                        <td>
-                          <Badge bg="outline-secondary" className="font-monospace">
-                            {registration.uniqueId}
-                          </Badge>
-                        </td>
-                        <td>
-                          <div>
-                            <div className="fw-medium">{registration.gameName}</div>
-                            <small className="text-muted">{registration.gameDay}</small>
-                          </div>
-                        </td>
-                        <td>
-                          <div>
-                            {registration.registrationType === "team" ? (
-                              <>
-                                <div className="fw-medium text-primary">{registration.teamName}</div>
-                                <small className="text-muted d-block">
-                                  Leader: {registration.teamLeader?.fullName}
-                                </small>
-                                <small className="text-muted">
-                                  {1 + (registration.teamMembers?.length || 0)} members
-                                </small>
-                              </>
-                            ) : (
-                              <>
-                                <div className="fw-medium">{registration.teamLeader?.fullName}</div>
-                                <small className="text-muted">{registration.teamLeader?.email}</small>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                        <td>
-                          <Badge bg={registration.registrationType === "individual" ? "primary" : "secondary"}>
-                            {registration.registrationType === "individual" ? "Individual" : "Team"}
-                          </Badge>
-                        </td>
-                        <td>
-                          <span className="fw-semibold text-primary">₹{registration.totalFee}</span>
-                        </td>
-                        <td>
-                          <Badge
-                            bg={
-                              registration.approvalStatus === "approved"
-                                ? "success"
-                                : registration.approvalStatus === "rejected"
-                                ? "danger"
-                                : "warning"
-                            }
-                          >
-                            {registration.approvalStatus === "approved"
-                              ? "Approved"
-                              : registration.approvalStatus === "rejected"
-                              ? "Rejected"
-                              : "Pending"}
-                          </Badge>
-                        </td>
-                        <td>
-                          <div className="d-flex gap-1">
-                            {registration.approvalStatus !== "approved" && (
-                              <Button
-                                size="sm"
-                                variant="outline-success"
-                                onClick={() => handleStatusUpdate(registration._id, "approved")}
+            {/* Filters and Actions */}
+            <Card className="shadow-sm">
+              <Card.Header>
+                <Card.Title className="mb-1">Registration Management</Card.Title>
+                <Card.Text className="text-muted mb-0">Search, filter, and manage all game registrations</Card.Text>
+              </Card.Header>
+              <Card.Body>
+                <Row className="g-3 align-items-end">
+                  <Col md={6}>
+                    <Form.Group className="position-relative">
+                      <Search className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" size={16} />
+                      <Form.Control
+                        type="text"
+                        placeholder="Search by game name or participant name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ paddingLeft: '2.5rem' }}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={3}>
+                    <div className="d-flex align-items-center gap-2">
+                      <Filter className="text-muted" size={16} />
+                      <Form.Select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                      </Form.Select>
+                    </div>
+                  </Col>
+                  <Col md={3}>
+                    <div className="d-flex gap-2 flex-wrap">
+                      <Button variant="outline-primary" size="sm" onClick={fetchRegistrations}>
+                        Refresh Data
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+
+            {/* Registrations Table */}
+            <Card className="shadow-sm">
+              <Card.Header>
+                <Card.Title className="mb-0">Game Registrations ({filteredRegistrations.length})</Card.Title>
+              </Card.Header>
+              <Card.Body className="p-0">
+                {filteredRegistrations.length === 0 ? (
+                  <div className="text-center py-5">
+                    <Trophy className="text-muted mx-auto mb-3" size={64} />
+                    <h5 className="text-muted mb-2">No registrations found</h5>
+                    <p className="text-muted">No registrations match your current filters.</p>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
+                    <Table className="mb-0">
+                      <thead className="table-light">
+                        <tr>
+                          <th>Registration ID</th>
+                          <th>Game</th>
+                          <th>Team/Participant</th>
+                          <th>Type</th>
+                          <th>Fee</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredRegistrations.map((registration) => (
+                          <tr key={registration._id}>
+                            <td>
+                              <Badge bg="outline-secondary" className="font-monospace">
+                                {registration.uniqueId}
+                              </Badge>
+                            </td>
+                            <td>
+                              <div>
+                                <div className="fw-medium">{registration.gameName}</div>
+                                <small className="text-muted">{registration.gameDay}</small>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                {registration.registrationType === "team" ? (
+                                  <>
+                                    <div className="fw-medium text-primary">{registration.teamName}</div>
+                                    <small className="text-muted d-block">
+                                      Leader: {registration.teamLeader?.fullName}
+                                    </small>
+                                    <small className="text-muted">
+                                      {1 + (registration.teamMembers?.length || 0)} members
+                                    </small>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className="fw-medium">{registration.teamLeader?.fullName}</div>
+                                    <small className="text-muted">{registration.teamLeader?.email}</small>
+                                  </>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <Badge bg={registration.registrationType === "individual" ? "primary" : "secondary"}>
+                                {registration.registrationType === "individual" ? "Individual" : "Team"}
+                              </Badge>
+                            </td>
+                            <td>
+                              <span className="fw-semibold text-primary">₹{registration.totalFee}</span>
+                            </td>
+                            <td>
+                              <Badge
+                                bg={
+                                  registration.approvalStatus === "approved"
+                                    ? "success"
+                                    : registration.approvalStatus === "rejected"
+                                      ? "danger"
+                                      : "warning"
+                                }
                               >
-                                Approve
-                              </Button>
-                            )}
-                            {registration.approvalStatus !== "rejected" && (
-                              <Button
-                                size="sm"
-                                variant="outline-danger"
-                                onClick={() => handleStatusUpdate(registration._id, "rejected")}
-                              >
-                                Reject
-                              </Button>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              onClick={() => handleViewDetails(registration)}
-                            >
-                              <Eye size={16} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            )}
-          </Card.Body>
-        </Card>
+                                {registration.approvalStatus === "approved"
+                                  ? "Approved"
+                                  : registration.approvalStatus === "rejected"
+                                    ? "Rejected"
+                                    : "Pending"}
+                              </Badge>
+                            </td>
+                            <td>
+                              <div className="d-flex gap-1">
+                                {registration.approvalStatus !== "approved" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline-success"
+                                    onClick={() => handleStatusUpdate(registration._id, "approved")}
+                                  >
+                                    Approve
+                                  </Button>
+                                )}
+                                {registration.approvalStatus !== "rejected" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline-danger"
+                                    onClick={() => handleStatusUpdate(registration._id, "rejected")}
+                                  >
+                                    Reject
+                                  </Button>
+                                )}
+                                <Button
+                                  size="sm"
+                                  variant="outline-primary"
+                                  onClick={() => handleViewDetails(registration)}
+                                >
+                                  <Eye size={16} />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
           </div>
         </Container>
       </div>
@@ -504,8 +495,8 @@ export default function AdminDashboard({ showToast }) {
                           selectedRegistration.approvalStatus === "approved"
                             ? "success"
                             : selectedRegistration.approvalStatus === "rejected"
-                            ? "danger"
-                            : "warning"
+                              ? "danger"
+                              : "warning"
                         }
                       >
                         {selectedRegistration.approvalStatus}
@@ -545,21 +536,21 @@ export default function AdminDashboard({ showToast }) {
                     )}
                     <div>
                       <strong>Registration Date:</strong>{" "}
-                      {selectedRegistration.createdAt 
+                      {selectedRegistration.createdAt
                         ? new Date(selectedRegistration.createdAt).toLocaleDateString('en-IN', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
                         : selectedRegistration.registrationDate
-                        ? new Date(selectedRegistration.registrationDate).toLocaleDateString('en-IN', {
+                          ? new Date(selectedRegistration.registrationDate).toLocaleDateString('en-IN', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'
                           })
-                        : 'N/A'
+                          : 'N/A'
                       }
                     </div>
                   </div>

@@ -266,14 +266,16 @@ const RegisteredGames = ({ user, showToast }) => {
                   return (
                     <Col md={6} lg={4} key={registration._id} className="mb-4">
                       <Card className="h-100 border-0 shadow-lg" style={{ background: '#1e293b' }}>
-                        <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
-                          <img
-                            src={gameData?.image || '/api/placeholder/400/200'}
-                            alt={registration.gameName}
-                            style={{
-                              width: '100%',
-                            }}
-                          />
+                        <div style={{
+                          position: 'relative',
+                          height: '80px',
+                          background: 'linear-gradient(135deg, #00d4ff 0%, #0ea5e9 100%)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '12px 12px 0 0'
+                        }}>
+                          <Trophy size={32} color="white" />
                           <Badge
                             className="position-absolute top-0 end-0 m-2"
                             bg={registration.approvalStatus === 'approved' ? 'success' :

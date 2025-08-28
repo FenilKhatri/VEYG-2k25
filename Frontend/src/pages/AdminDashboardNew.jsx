@@ -360,31 +360,12 @@ const AdminDashboardNew = () => {
                                                 <Col lg={4}>
                                                       <div className="d-flex gap-2">
                                                             <Button
-                                                                  variant="success"
-                                                                  onClick={() => handleExport('students')}
+                                                                  variant="outline-primary"
+                                                                  onClick={fetchRegistrations}
                                                                   disabled={loading}
                                                                   style={{ borderRadius: '12px', fontWeight: '600' }}
                                                             >
-                                                                  <Users size={16} className="me-2" />
-                                                                  Export Students
-                                                            </Button>
-                                                            <Button
-                                                                  variant="primary"
-                                                                  onClick={() => handleExport('games')}
-                                                                  disabled={loading}
-                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
-                                                            >
-                                                                  <Trophy size={16} className="me-2" />
-                                                                  Export Games
-                                                            </Button>
-                                                            <Button
-                                                                  variant="info"
-                                                                  onClick={() => handleExport('admin')}
-                                                                  disabled={loading}
-                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
-                                                            >
-                                                                  <Download size={16} className="me-2" />
-                                                                  Export Admins
+                                                                  Refresh Data
                                                             </Button>
                                                       </div>
                                                 </Col>
