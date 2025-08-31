@@ -3,7 +3,7 @@ const { successResponse, errorResponse } = require('../utils/response')
 const autoExcelStore = require('../utils/autoExcelStore')
 
 // Generate unique registration ID and receipt number
-const generateRegistrationId = async (teamLeaderName, collegeName, gameName) => {
+const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
   try {
     // College code mapping - unique 3-letter codes for each college
     const collegeCodeMap = {
@@ -78,22 +78,59 @@ const generateRegistrationId = async (teamLeaderName, collegeName, gameName) => 
     })
     const teamNumber = existingTeams + 1
 
-    // For team registrations, we'll assign student numbers when we have team members
-    // For now, start with student number 1 (team leader)
-    const studentNumber = 1
+    // For individual registration, return single ID
+    if (registrationType === 'individual') {
+      const registrationId = `${collegeCode}-${gameCode}-${gameDay}-1 [${teamLeaderName}]`
 
-    // Format: COLLEGE-GAME-TEAM-STUDENT [Name]
-    const registrationId = `${collegeCode}-${gameCode}-${teamNumber}-${studentNumber} [${teamLeaderName}]`
+      // Check if this ID already exists
+      const existingId = await GameRegistration.findOne({ registrationId })
+      if (existingId) {
+        const randomSuffix = Math.floor(Math.random() * 100)
+        return `${collegeCode}-${gameCode}-${gameDay}-1-${randomSuffix} [${teamLeaderName}]`
+      }
 
-    // Check if this ID already exists (unlikely but safe)
-    const existingId = await GameRegistration.findOne({ registrationId })
-    if (existingId) {
-      // If exists, try with a random suffix
-      const randomSuffix = Math.floor(Math.random() * 100)
-      return `${collegeCode}-${gameCode}-${teamNumber}-${studentNumber}-${randomSuffix} [${teamLeaderName}]`
+      return registrationId
     }
 
-    return registrationId
+    // For team registration, generate IDs for all members
+    const teamIds = []
+
+    // Team leader ID (member 1)
+    const leaderIdBase = `${collegeCode}-${gameCode}-${gameDay}-${teamNumber}-1`
+    let leaderId = `${leaderIdBase} [${teamLeaderName}]`
+
+    // Check if leader ID exists
+    const existingLeaderId = await GameRegistration.findOne({ registrationId: leaderId })
+    if (existingLeaderId) {
+      const randomSuffix = Math.floor(Math.random() * 100)
+      leaderId = `${leaderIdBase}-${randomSuffix} [${teamLeaderName}]`
+    }
+
+    teamIds.push({
+      memberId: leaderId,
+      memberName: teamLeaderName,
+      memberType: 'leader'
+    })
+
+    // Team members IDs (member 2, 3, 4, etc.)
+    teamMembers.forEach((member, index) => {
+      const memberNumber = index + 2 // Start from 2 (leader is 1)
+      const memberName = member.fullName || member.name || `Member ${memberNumber}`
+      const memberIdBase = `${collegeCode}-${gameCode}-${gameDay}-${teamNumber}-${memberNumber}`
+      const memberId = `${memberIdBase} [${memberName}]`
+
+      teamIds.push({
+        memberId: memberId,
+        memberName: memberName,
+        memberType: 'member'
+      })
+    })
+
+    return {
+      teamRegistrationId: leaderId, // Main registration ID (team leader)
+      teamIds: teamIds // All member IDs
+    }
+
   } catch (error) {
     console.error('Error generating registration ID:', error)
     // Fallback ID generation
@@ -166,7 +203,12 @@ const registerGame = async (req, res) => {
     // Generate unique registration ID and receipt number
     const teamLeaderName = teamLeader?.fullName || 'Unknown'
     const collegeName = teamLeader?.collegeName || 'Unknown College'
-    const registrationId = await generateRegistrationId(teamLeaderName, collegeName, gameName)
+    const registrationIdResult = await generateRegistrationId(teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers)
+
+    // Handle different return types (string for individual, object for team)
+    const registrationId = typeof registrationIdResult === 'string' ? registrationIdResult : registrationIdResult.teamRegistrationId
+    const teamIds = typeof registrationIdResult === 'object' ? registrationIdResult.teamIds : null
+
     const receiptNumber = await generateReceiptNumber()
 
     const registration = new GameRegistration({

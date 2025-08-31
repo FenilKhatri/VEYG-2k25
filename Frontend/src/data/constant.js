@@ -13,6 +13,7 @@ export const collegesInGujarat = [
   "Gujarat Forensic Sciences University",
   "Gujarat Maritime University",
   "Gujarat National Law University",
+  "Gujarat Power Engineering and Research Institute (GPERI)",
   "Gujarat Technological University",
   "Gujarat University",
   "Gujarat Vidyapith",

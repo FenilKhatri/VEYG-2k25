@@ -8,7 +8,8 @@ const TechnicalGameCard = ({
   isThisGameRegistered = false,
   hasRegisteredForDay = false,
   canRegisterForDay = true,
-  registrationStatus = 'available'
+  registrationStatus = 'available',
+  isRegistrationExpired = false
 }) => {
 
   return (
@@ -94,10 +95,10 @@ const TechnicalGameCard = ({
                 View Details
               </Link>
             </div>
-          ) : !canRegisterForDay ? (
+          ) : !canRegisterForDay || isRegistrationExpired ? (
             <div className="action-buttons">
               <button className="btn-status disabled" disabled>
-                Registration Closed
+                {isRegistrationExpired ? 'Registration Closed' : `Day ${game.day} Full`}
               </button>
               <Link to={`/game/${game.id}`} className="btn-action secondary">
                 View Details

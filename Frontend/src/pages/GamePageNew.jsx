@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Card, Button, Badge, Spinner } from 'react-bootstrap'
-import { Trophy, Users, Clock, IndianRupee, Calendar, CheckCircle, Zap, Shield, Star } from 'lucide-react'
+import { Container, Row, Col, Card, Button, Badge, Spinner, Alert } from 'react-bootstrap'
+import { Trophy, Users, Clock, IndianRupee, Calendar, CheckCircle, Zap, Shield, Star, AlertTriangle } from 'lucide-react'
 import { getGameById } from '../data/gamesData'
 import RegistrationForm from '../components/RegistrationForm'
+import RegistrationTimer from '../components/RegistrationTimer'
 import { useAuth } from '../context/AuthContext'
 
 const GamePageNew = ({ isLoggedIn, user, showToast }) => {
@@ -13,6 +14,7 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
   const [game, setGame] = useState(null)
   const [showRegistrationModal, setShowRegistrationModal] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isRegistrationExpired, setIsRegistrationExpired] = useState(false)
 
   // Check if user has registered for this specific game
   const isThisGameRegistered = game && registeredGames && user && registeredGames.some(reg => {
@@ -45,7 +47,15 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
       navigate("/student-login")
       return
     }
+    if (isRegistrationExpired) {
+      showToast("Registration period has ended", "error")
+      return
+    }
     setShowRegistrationModal(true)
+  }
+
+  const handleRegistrationExpired = () => {
+    setIsRegistrationExpired(true)
   }
 
   const handleGameRegistration = async () => {
@@ -158,6 +168,12 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
 
       {/* Main Content */}
       <Container style={{ paddingTop: '60px', paddingBottom: '60px' }}>
+        {/* Registration Timer */}
+        <RegistrationTimer
+          deadline="2025-09-13T23:59:59"
+          onExpired={handleRegistrationExpired}
+        />
+
         <Row>
           {/* Game Details */}
           <Col lg={8}>
@@ -182,119 +198,6 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
                 <p style={{ fontSize: '1.1rem', lineHeight: '1.7', margin: 0 }}>
                   {game.description}
                 </p>
-              </Card.Body>
-            </Card>
-
-            {/* Rules & Guidelines */}
-            <Card className="mb-4" style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '20px',
-              backdropFilter: 'blur(15px)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-            }}>
-              <Card.Header style={{
-                background: 'linear-gradient(135deg, rgba(0, 234, 255, 0.15), rgba(255, 0, 229, 0.15))',
-                border: 'none',
-                borderRadius: '20px 20px 0 0',
-                padding: '20px 24px'
-              }}>
-                <h4 style={{
-                  color: '#00d4ff',
-                  margin: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: '1.3rem',
-                  fontWeight: '600'
-                }}>
-                  <Star size={26} style={{ marginRight: '12px', color: '#ff00e5' }} />
-                  Rules & Guidelines
-                </h4>
-                <p style={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  margin: '8px 0 0 0',
-                  fontSize: '0.95rem'
-                }}>
-                  Essential rules to ensure fair play and competition integrity
-                </p>
-              </Card.Header>
-              <Card.Body style={{ color: '#f1f5f9', padding: '24px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {game.rules.map((rule, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '16px',
-                        padding: '16px 20px',
-                        background: 'rgba(0, 234, 255, 0.08)',
-                        borderRadius: '12px',
-                        borderLeft: '4px solid #00d4ff',
-                        transition: 'all 0.3s ease',
-                        cursor: 'default'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.background = 'rgba(0, 234, 255, 0.12)'
-                        e.target.style.transform = 'translateX(4px)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = 'rgba(0, 234, 255, 0.08)'
-                        e.target.style.transform = 'translateX(0px)'
-                      }}
-                    >
-                      <div style={{
-                        minWidth: '28px',
-                        height: '28px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #00d4ff, #007bff)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: '600',
-                        fontSize: '14px',
-                        marginTop: '2px'
-                      }}>
-                        {index + 1}
-                      </div>
-                      <span style={{
-                        lineHeight: '1.6',
-                        fontSize: '1rem',
-                        color: '#f1f5f9'
-                      }}>
-                        {rule}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={{
-                  marginTop: '24px',
-                  padding: '16px 20px',
-                  background: 'rgba(255, 193, 7, 0.1)',
-                  border: '1px solid rgba(255, 193, 7, 0.3)',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}>
-                  <CheckCircle size={20} style={{ color: '#ffc107', flexShrink: 0 }} />
-                  <div>
-                    <strong style={{ color: '#ffc107', fontSize: '0.95rem' }}>
-                      Important Notice:
-                    </strong>
-                    <p style={{
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      margin: '4px 0 0 0',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.5'
-                    }}>
-                      Violation of any rule may result in immediate disqualification.
-                      Please read all guidelines carefully before participating.
-                    </p>
-                  </div>
-                </div>
               </Card.Body>
             </Card>
           </Col>
@@ -370,6 +273,23 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
                       Registration Closed
                     </Button>
                   </div>
+                ) : isRegistrationExpired ? (
+                  <div>
+                    <Alert variant="danger" className="mb-3">
+                      <AlertTriangle size={16} className="me-2" />
+                      <strong>Registration Closed</strong>
+                      <div className="mt-1">The registration deadline has passed. No new registrations are accepted.</div>
+                    </Alert>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      disabled
+                      style={{ width: '100%', borderRadius: '10px' }}
+                    >
+                      <AlertTriangle size={20} style={{ marginRight: '8px' }} />
+                      Registration Closed
+                    </Button>
+                  </div>
                 ) : (
                   <Button
                     variant="primary"
@@ -402,6 +322,7 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
         onRegisterGame={handleGameRegistration}
         showToast={showToast}
         registeredGames={registeredGames}
+        isRegistrationExpired={isRegistrationExpired}
       />
     </div>
   )

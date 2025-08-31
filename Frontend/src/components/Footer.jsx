@@ -56,7 +56,7 @@ export default function Footer() {
                 </div>
                 <div className="contact-item">
                   <Phone size={16} />
-                  <div>+91 90238 28352,</div>
+                  <div>+91 63536 22735,</div>
                   <div>+91 92659 26990</div>
                 </div>
                 <div className="contact-item">
@@ -94,27 +94,6 @@ export default function Footer() {
             <p className="copyright-text">
               © 2025 VEYG Technical Festival. All rights reserved.
             </p>
-            <p className="made-with">
-              Made by the VEYG Development Team
-            </p>
-          </div>
-
-          <div className="team-section">
-            <h6 className="team-title">Development Team</h6>
-            <div className="team-grid">
-              <div className="team-member">
-                <span className="member-name">Fenil Khatri</span>
-              </div>
-              <div className="team-member">
-                <span className="member-name">Divyesh Kubavat</span>
-              </div>
-              <div className="team-member">
-                <span className="member-name">Vraj Fadiya</span>
-              </div>
-              <div className="team-member">
-                <span className="member-name">Riddhi Sadhu</span>
-              </div>
-            </div>
           </div>
         </div>
       </Container>

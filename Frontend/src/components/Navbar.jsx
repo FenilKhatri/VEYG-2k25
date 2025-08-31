@@ -293,7 +293,37 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
           }
           .main-nav .nav-link {
             padding: 12px 16px;
-            font-size: 1rem;
+            font-size: 1r1) In the all pages give the container width like bootstrap or tailwind has a class that we give container class to the any tag so it gives margin from both side left and right so give it to the all pages.  
+
+
+
+2) In the hero section of the home page add this below 4 cards:
+
+past event details or previous year details - 
+
+ create 2 cards:- 1) add that 850+ registrations 2) total of 5 games.
+
+
+
+3) in the sponsors section instead of just logo add this:
+
+   sponsors logo, name and short 5 10 words description and while click on any sponsors redirect to their original website.
+
+
+
+4) remove the countdown and make it some different view and place it before technical games title and it looks like that it's a registration countdown. at now you just add a table with 4 cards but not looks good.
+
+
+
+5) In the tech game cards, between of both card add "OR" keyword so it shows that to participate in one game only.
+
+
+
+6) Create a day-wise registration functionality and if student register one game then update the technical game card of that day and above the view details button display that you already registered one game in {this} day! same for the Day .
+
+
+
+7) In the footer there's a contact number, email, and address so while click on the mail that redirects to the gmail app or web but while click on the contact number and address then it not redirects to the dialer, and map respectively. em;
             color: rgba(0,0,0,0.8);
             border-radius: 8px;
             text-align: center;

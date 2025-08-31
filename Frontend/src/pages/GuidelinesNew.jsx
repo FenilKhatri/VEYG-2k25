@@ -183,7 +183,12 @@ const Guidelines = () => {
                   {
                     title: "Registration Requirements",
                     content:
-                      "All participants must register online before the event deadline. Valid student ID and contact information are mandatory.",
+                    "All participants must register online before the event deadline. Valid student ID and contact information are mandatory.",
+                  },
+                  {
+                    title: "Day-Wise Registration Rule",
+                    content:
+                      "Participants can register for only one game per day. If you register for a game on Day 1, you cannot register for any other game on the same day. However, you can register for another game on Day 2 and vice versa.",
                   },
                   {
                     title: "Code of Conduct",

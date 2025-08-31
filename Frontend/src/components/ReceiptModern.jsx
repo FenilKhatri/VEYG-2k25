@@ -587,6 +587,68 @@ export default function VEYGReceipt({ show, onHide, game }) {
                     )}
                   </div>
 
+                  {/* Individual Participant Details */}
+                  {registrationType.toLowerCase() === "individual" && (
+                    <div className="info-card">
+                      <div className="section-title">
+                        <User size={20} />
+                        Participant Details
+                      </div>
+
+                      <div className="info-grid">
+                        <div className="info-item">
+                          <div className="info-icon">
+                            <FileText size={16} />
+                          </div>
+                          <div>
+                            <div className="info-label">Enrollment Number</div>
+                            <div className="info-value">{game.registrationDetails?.teamLeader?.enrollmentNumber || "N/A"}</div>
+                          </div>
+                        </div>
+
+                        <div className="info-item">
+                          <div className="info-icon">
+                            <User size={16} />
+                          </div>
+                          <div>
+                            <div className="info-label">Gender</div>
+                            <div className="info-value">{game.registrationDetails?.teamLeader?.gender || "N/A"}</div>
+                          </div>
+                        </div>
+
+                        <div className="info-item">
+                          <div className="info-icon">
+                            <Calendar size={16} />
+                          </div>
+                          <div>
+                            <div className="info-label">Semester</div>
+                            <div className="info-value">{game.registrationDetails?.teamLeader?.semester || "N/A"}</div>
+                          </div>
+                        </div>
+
+                        <div className="info-item">
+                          <div className="info-icon">
+                            <Award size={16} />
+                          </div>
+                          <div>
+                            <div className="info-label">Branch</div>
+                            <div className="info-value">{game.registrationDetails?.teamLeader?.branch || "N/A"}</div>
+                          </div>
+                        </div>
+
+                        <div className="info-item">
+                          <div className="info-icon">
+                            <Trophy size={16} />
+                          </div>
+                          <div>
+                            <div className="info-label">Degree</div>
+                            <div className="info-value">{game.registrationDetails?.teamLeader?.degree || "N/A"}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* First batch of team members */}
                   {memberPages.length > 0 && (
                     <div className="info-card">

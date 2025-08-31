@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Modal, Button, Form, Spinner, Alert, Row, Col } from "react-bootstrap"
-import { Users, Phone, Mail, Hash, User, Building2, PlusCircle, MinusCircle, CreditCard, Trophy, Zap, UserPlus, Trash2 } from "lucide-react"
+import { Users, Phone, Mail, Hash, User, Building2, PlusCircle, MinusCircle, CreditCard, Trophy, Zap, UserPlus, Trash2, AlertTriangle } from "lucide-react"
 import { collegesInGujarat, semesters, branches, genders, degrees } from "../data/constant"
 import apiService from "../services/api"
 
-const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, showToast, registeredGames }) => {
+const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, showToast, registeredGames, isRegistrationExpired = false }) => {
   const initialParticipantState = {
     fullName: "",
     email: "",
@@ -373,25 +373,129 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
         }}>
           <Building2 size={18} /> College Name
         </Form.Label>
-        <Form.Select
-          name="collegeName"
-          value={participant.collegeName}
-          onChange={handleChange}
-          disabled={loading}
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: `2px solid ${errors[`${prefix}collegeName`] ? '#ff6b6b' : 'rgba(0, 212, 255, 0.3)'}`,
-            borderRadius: '12px',
-            color: 'white',
-            padding: '12px 16px',
-            fontSize: '16px'
-          }}
-        >
-          <option value="" style={{ background: '#1a1f2e', color: 'white' }}>Select your college</option>
-          {collegesInGujarat.map((col, idx) => (
-            <option key={idx} value={col} style={{ background: '#1a1f2e', color: 'white' }}>{col}</option>
-          ))}
-        </Form.Select>
+        <div className="position-relative">
+          <Form.Control
+            type="text"
+            name="collegeName"
+            value={participant.collegeName}
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange(e);
+              // Show dropdown when typing
+              const dropdown = e.target.nextElementSibling;
+              if (dropdown && value.length > 0) {
+                dropdown.style.display = 'block';
+              } else if (dropdown) {
+                dropdown.style.display = 'none';
+              }
+            }}
+            onFocus={(e) => {
+              const dropdown = e.target.nextElementSibling;
+              if (dropdown && e.target.value.length > 0) {
+                dropdown.style.display = 'block';
+              }
+            }}
+            onBlur={(e) => {
+              // Delay hiding to allow clicking on dropdown items
+              setTimeout(() => {
+                const dropdown = e.target.nextElementSibling;
+                if (dropdown) {
+                  dropdown.style.display = 'none';
+                }
+              }, 200);
+            }}
+            disabled={loading}
+            placeholder="Type to search your college or enter manually"
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: `2px solid ${errors[`${prefix}collegeName`] ? '#ff6b6b' : 'rgba(0, 212, 255, 0.3)'}`,
+              borderRadius: '12px',
+              color: 'white',
+              padding: '12px 16px',
+              fontSize: '16px'
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              background: '#1a1f2e',
+              border: '1px solid rgba(0, 212, 255, 0.3)',
+              borderRadius: '8px',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              zIndex: 1000,
+              display: 'none'
+            }}
+          >
+            {collegesInGujarat
+              .filter(college =>
+                college.toLowerCase().includes(participant.collegeName.toLowerCase())
+              )
+              .slice(0, 10)
+              .map((college, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    color: 'white',
+                    borderBottom: '1px solid rgba(0, 212, 255, 0.1)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(0, 212, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'transparent';
+                  }}
+                  onClick={() => {
+                    const event = {
+                      target: {
+                        name: 'collegeName',
+                        value: college
+                      }
+                    };
+                    handleChange(event);
+                    // Hide dropdown
+                    const dropdown = document.querySelector(`input[name="collegeName"]`).nextElementSibling;
+                    if (dropdown) dropdown.style.display = 'none';
+                  }}
+                >
+                  {college}
+                </div>
+              ))}
+            {participant.collegeName &&
+              !collegesInGujarat.some(college =>
+                college.toLowerCase() === participant.collegeName.toLowerCase()
+              ) && (
+                <div
+                  style={{
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    color: '#00d4ff',
+                    borderBottom: '1px solid rgba(0, 212, 255, 0.1)',
+                    fontWeight: '500'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'rgba(0, 212, 255, 0.1)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'transparent';
+                  }}
+                  onClick={() => {
+                    // Keep the current value as it's a custom college
+                    const dropdown = document.querySelector(`input[name="collegeName"]`).nextElementSibling;
+                    if (dropdown) dropdown.style.display = 'none';
+                  }}
+                >
+                  <PlusCircle size={16} className="me-2" />
+                  Add "{participant.collegeName}" as new college
+                </div>
+              )}
+          </div>
+        </div>
         {errors[`${prefix}collegeName`] && (
           <div style={{ color: '#ff6b6b', fontSize: '0.875rem', marginTop: '4px' }}>
             {errors[`${prefix}collegeName`]}
@@ -534,12 +638,12 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
   return (
     <Modal show={show} onHide={handleClose} size="lg" centered>
       <div style={{
-        background: 'linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)',
-        border: '1px solid rgba(0, 212, 255, 0.2)',
+        background: 'linear-gradient(135deg, #1a0a2e 0%, #16213e 25%, #0f3460 50%, #533a7d 75%, #1a0a2e 100%)',
+        border: '1px solid rgba(138, 43, 226, 0.3)',
         borderRadius: '20px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)'
+        boxShadow: '0 25px 50px rgba(138, 43, 226, 0.3), 0 0 100px rgba(0, 212, 255, 0.1)'
       }}>
         {/* Enhanced Tech Background */}
         <div style={{
@@ -597,6 +701,20 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
             >
               <Trophy size={20} className="me-2" />
               You are already registered for this game!
+            </Alert>
+          ) : isRegistrationExpired ? (
+            <Alert
+              variant="danger"
+              className="text-center"
+              style={{
+                background: 'rgba(220, 53, 69, 0.1)',
+                border: '1px solid rgba(220, 53, 69, 0.3)',
+                color: '#dc3545',
+                borderRadius: '12px'
+              }}
+            >
+              <AlertTriangle size={20} className="me-2" />
+              Registration period has ended. No new registrations are accepted.
             </Alert>
           ) : (
             <>
@@ -907,7 +1025,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
                 <div className="d-grid gap-3 mt-4">
                   <Button
                     type="submit"
-                    disabled={loading || isRegistered}
+                    disabled={loading || isRegistered || isRegistrationExpired}
                     style={{
                       background: 'linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)',
                       border: 'none',

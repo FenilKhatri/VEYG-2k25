@@ -2,7 +2,9 @@ import { Container, Row, Col } from "react-bootstrap"
 import TechnicalGameCard from "./TechnicalGamesCard"
 import { useAuth } from "../../context/AuthContext"
 import { useDayWiseRegistration } from "../../hooks/useDayWiseRegistration"
+import RegistrationTimer from "../RegistrationTimer"
 import { Code, Database, Terminal, Cpu } from "lucide-react"
+import { useState } from "react"
 
 const TechnicalGamesSection = ({ day1Games, day2Games }) => {
   const { registeredGames, user } = useAuth()
@@ -15,7 +17,12 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
     canRegisterForDay
   } = useDayWiseRegistration(registeredGames, user)
 
+  const [isRegistrationExpired, setIsRegistrationExpired] = useState(false)
   const techIcons = [Code, Database, Terminal, Cpu]
+
+  const handleRegistrationExpired = () => {
+    setIsRegistrationExpired(true)
+  }
 
   return (
     <section
@@ -78,6 +85,12 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
           </p>
         </div>
 
+        {/* Registration Timer */}
+        <RegistrationTimer
+          deadline="2025-09-13T23:59:59"
+          onExpired={handleRegistrationExpired}
+        />
+
         {/* Day 1 Games Section */}
         <div className="mb-5">
           <div className="text-center mb-4">
@@ -132,8 +145,9 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
                   userId={user?.username || user?.name || user?.id}
                   isThisGameRegistered={isGameRegistered(game.id)}
                   hasRegisteredForDay={hasDay1Registration}
-                  canRegisterForDay={canRegisterForDay(1)}
-                  registrationStatus={hasDay1Registration ? 'day_registered' : 'available'}
+                  canRegisterForDay={canRegisterForDay(1) && !isRegistrationExpired}
+                  registrationStatus={isRegistrationExpired ? 'expired' : hasDay1Registration ? 'day_registered' : 'available'}
+                  isRegistrationExpired={isRegistrationExpired}
                 />
               </Col>
             ))}
@@ -194,8 +208,9 @@ const TechnicalGamesSection = ({ day1Games, day2Games }) => {
                   userId={user?.username || user?.name || user?.id}
                   isThisGameRegistered={isGameRegistered(game.id)}
                   hasRegisteredForDay={hasDay2Registration}
-                  canRegisterForDay={canRegisterForDay(2)}
-                  registrationStatus={hasDay2Registration ? 'day_registered' : 'available'}
+                  canRegisterForDay={canRegisterForDay(2) && !isRegistrationExpired}
+                  registrationStatus={isRegistrationExpired ? 'expired' : hasDay2Registration ? 'day_registered' : 'available'}
+                  isRegistrationExpired={isRegistrationExpired}
                 />
               </Col>
             ))}
