@@ -52,16 +52,25 @@ export default function Footer() {
               <div className="contact-info">
                 <div className="contact-item">
                   <Mail size={16} />
-                  <a href="mailto:veyg.notification@gmail.com">veyg.notification@gmail.com</a>
+                  <a href="mailto:veyg.notification@gmail.com" className="contact-link">veyg.notification@gmail.com</a>
                 </div>
                 <div className="contact-item">
                   <Phone size={16} />
-                  <div>+91 63536 22735,</div>
-                  <div>+91 92659 26990</div>
+                  <div className="phone-numbers">
+                    <a href="tel:+916353622735" className="contact-link">+91 63536 22735</a>,
+                    <a href="tel:+919265926990" className="contact-link">+91 92659 26990</a>
+                  </div>
                 </div>
                 <div className="contact-item">
-                  <MapPin size={16} href="" />
-                  <span>Near Shanku’s Water Park, Ahmedabad – Mehsana Highway, Linch, Gujarat 384435</span>
+                  <MapPin size={16} />
+                  <a 
+                    href="https://maps.google.com/?q=Near+Shanku%27s+Water+Park,+Ahmedabad+Mehsana+Highway,+Linch,+Gujarat+384435" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="contact-link address-link"
+                  >
+                    Near Shanku's Water Park, Ahmedabad – Mehsana Highway, Linch, Gujarat 384435
+                  </a>
                 </div>
               </div>
             </div>
@@ -198,6 +207,36 @@ export default function Footer() {
         
         .contact-item a:hover {
           color: #00d4ff;
+        }
+        
+        .contact-link {
+          display: inline-block;
+          position: relative;
+        }
+        
+        .contact-link:after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 1px;
+          bottom: -2px;
+          left: 0;
+          background-color: #00d4ff;
+          transition: width 0.3s ease;
+        }
+        
+        .contact-link:hover:after {
+          width: 100%;
+        }
+        
+        .phone-numbers {
+          display: flex;
+          gap: 5px;
+          flex-wrap: wrap;
+        }
+        
+        .address-link {
+          line-height: 1.4;
         }
         
         .section-title {

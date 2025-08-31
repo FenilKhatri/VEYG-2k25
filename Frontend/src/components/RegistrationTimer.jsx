@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Alert } from 'react-bootstrap'
-import { Clock, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Alert } from 'react-bootstrap'
+import { Clock, AlertTriangle, CheckCircle, Calendar } from 'lucide-react'
 
 const RegistrationTimer = ({ deadline = '2025-09-13T23:59:59', onExpired }) => {
       const [timeLeft, setTimeLeft] = useState({
@@ -58,15 +58,17 @@ const RegistrationTimer = ({ deadline = '2025-09-13T23:59:59', onExpired }) => {
 
       if (timeLeft.isExpired) {
             return (
-                  <Alert variant="danger" className="mb-4">
-                        <div className="d-flex align-items-center">
-                              <AlertTriangle size={20} className="me-2" />
-                              <strong>Registration Closed</strong>
+                  <div className="registration-timer-expired mb-5">
+                        <div className="expired-content">
+                              <div className="expired-icon">
+                                    <AlertTriangle size={32} />
+                              </div>
+                              <div className="expired-text">
+                                    <h3>Registration Closed</h3>
+                                    <p>The registration deadline has passed. No new registrations are accepted.</p>
+                              </div>
                         </div>
-                        <p className="mb-0 mt-2">
-                              The registration deadline has passed. No new registrations are accepted.
-                        </p>
-                  </Alert>
+                  </div>
             )
       }
 
@@ -74,57 +76,234 @@ const RegistrationTimer = ({ deadline = '2025-09-13T23:59:59', onExpired }) => {
       const isLastDay = timeLeft.days === 0
 
       return (
-            <Card className={`mb-4 ${isLastDay ? 'border-danger' : isUrgent ? 'border-warning' : 'border-primary'}`}>
-                  <Card.Header className={`${isLastDay ? 'bg-danger' : isUrgent ? 'bg-warning' : 'bg-primary'} text-white`}>
-                        <div className="d-flex justify-content-between align-items-center">
-                              <div className="d-flex align-items-center">
-                                    <Clock size={18} className="me-2" />
-                                    <h6 className="mb-0">Registration Deadline</h6>
-                              </div>
-                              {isLastDay && <AlertTriangle size={18} />}
+            <div className="registration-timer-container mb-5">
+                  <div className="registration-timer-header">
+                        <div className="timer-title">
+                              <Clock size={24} />
+                              <h3>Registration Countdown</h3>
                         </div>
-                  </Card.Header>
-                  <Card.Body>
-                        <div className="text-center">
-                              <div className="row g-2 mb-3">
-                                    <div className="col-3">
-                                          <div className={`p-3 rounded ${isLastDay ? 'bg-danger' : isUrgent ? 'bg-warning' : 'bg-primary'} text-white`}>
-                                                <div className="h3 mb-0 fw-bold">{formatNumber(timeLeft.days)}</div>
-                                                <small>Days</small>
-                                          </div>
-                                    </div>
-                                    <div className="col-3">
-                                          <div className={`p-3 rounded ${isLastDay ? 'bg-danger' : isUrgent ? 'bg-warning' : 'bg-primary'} text-white`}>
-                                                <div className="h3 mb-0 fw-bold">{formatNumber(timeLeft.hours)}</div>
-                                                <small>Hours</small>
-                                          </div>
-                                    </div>
-                                    <div className="col-3">
-                                          <div className={`p-3 rounded ${isLastDay ? 'bg-danger' : isUrgent ? 'bg-warning' : 'bg-primary'} text-white`}>
-                                                <div className="h3 mb-0 fw-bold">{formatNumber(timeLeft.minutes)}</div>
-                                                <small>Minutes</small>
-                                          </div>
-                                    </div>
-                                    <div className="col-3">
-                                          <div className={`p-3 rounded ${isLastDay ? 'bg-danger' : isUrgent ? 'bg-warning' : 'bg-primary'} text-white`}>
-                                                <div className="h3 mb-0 fw-bold">{formatNumber(timeLeft.seconds)}</div>
-                                                <small>Seconds</small>
-                                          </div>
-                                    </div>
-                              </div>
-
-                              <p className={`mb-0 ${isLastDay ? 'text-danger' : isUrgent ? 'text-warning' : 'text-muted'}`}>
-                                    {isLastDay ? (
-                                          <><AlertTriangle size={16} className="me-1" />Last day to register!</>
-                                    ) : isUrgent ? (
-                                          <><Clock size={16} className="me-1" />Hurry up! Registration closes soon</>
-                                    ) : (
-                                          <>Registration closes on September 13, 2025 at 11:59 PM</>
-                                    )}
-                              </p>
+                        <div className="timer-date">
+                              <Calendar size={18} />
+                              <span>Ends September 13, 2025</span>
                         </div>
-                  </Card.Body>
-            </Card>
+                  </div>
+                  
+                  <div className="registration-timer-body">
+                        <div className="timer-units">
+                              <div className="timer-unit">
+                                    <div className="unit-value">{formatNumber(timeLeft.days)}</div>
+                                    <div className="unit-label">Days</div>
+                              </div>
+                              <div className="timer-separator">:</div>
+                              <div className="timer-unit">
+                                    <div className="unit-value">{formatNumber(timeLeft.hours)}</div>
+                                    <div className="unit-label">Hours</div>
+                              </div>
+                              <div className="timer-separator">:</div>
+                              <div className="timer-unit">
+                                    <div className="unit-value">{formatNumber(timeLeft.minutes)}</div>
+                                    <div className="unit-label">Minutes</div>
+                              </div>
+                              <div className="timer-separator">:</div>
+                              <div className="timer-unit">
+                                    <div className="unit-value">{formatNumber(timeLeft.seconds)}</div>
+                                    <div className="unit-label">Seconds</div>
+                              </div>
+                        </div>
+                        
+                        {isLastDay && (
+                              <div className="timer-alert urgent">
+                                    <AlertTriangle size={18} />
+                                    <span>Last day to register! Don't miss out!</span>
+                              </div>
+                        )}
+                        
+                        {isUrgent && !isLastDay && (
+                              <div className="timer-alert warning">
+                                    <Clock size={18} />
+                                    <span>Hurry up! Registration closes soon</span>
+                              </div>
+                        )}
+                  </div>
+                  
+                  <style jsx>{`
+                        .registration-timer-container {
+                              background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+                              border: 1px solid rgba(0, 212, 255, 0.3);
+                              border-radius: 16px;
+                              overflow: hidden;
+                              backdrop-filter: blur(10px);
+                              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                        }
+                        
+                        .registration-timer-header {
+                              display: flex;
+                              justify-content: space-between;
+                              align-items: center;
+                              padding: 20px 30px;
+                              background: rgba(0, 212, 255, 0.15);
+                              border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+                        }
+                        
+                        .timer-title {
+                              display: flex;
+                              align-items: center;
+                              gap: 12px;
+                              color: #00eaff;
+                        }
+                        
+                        .timer-title h3 {
+                              margin: 0;
+                              font-size: 1.5rem;
+                              font-weight: 700;
+                        }
+                        
+                        .timer-date {
+                              display: flex;
+                              align-items: center;
+                              gap: 8px;
+                              color: rgba(255, 255, 255, 0.7);
+                              font-size: 0.9rem;
+                        }
+                        
+                        .registration-timer-body {
+                              padding: 30px;
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                        }
+                        
+                        .timer-units {
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              gap: 10px;
+                              margin-bottom: 20px;
+                        }
+                        
+                        .timer-unit {
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              min-width: 80px;
+                        }
+                        
+                        .unit-value {
+                              font-size: 2.5rem;
+                              font-weight: 700;
+                              color: white;
+                              text-shadow: 0 0 10px rgba(0, 234, 255, 0.5);
+                              background: ${isLastDay ? 'linear-gradient(45deg, #ff6b6b, #ff0076)' : isUrgent ? 'linear-gradient(45deg, #ffa600, #ff6b00)' : 'linear-gradient(45deg, #00eaff, #2979ff)'};
+                              -webkit-background-clip: text;
+                              -webkit-text-fill-color: transparent;
+                              line-height: 1;
+                        }
+                        
+                        .unit-label {
+                              font-size: 0.8rem;
+                              color: rgba(255, 255, 255, 0.6);
+                              text-transform: uppercase;
+                              letter-spacing: 1px;
+                              margin-top: 5px;
+                        }
+                        
+                        .timer-separator {
+                              font-size: 2.5rem;
+                              font-weight: 700;
+                              color: rgba(255, 255, 255, 0.3);
+                              margin-top: -10px;
+                        }
+                        
+                        .timer-alert {
+                              display: flex;
+                              align-items: center;
+                              gap: 10px;
+                              padding: 12px 20px;
+                              border-radius: 30px;
+                              font-weight: 600;
+                              margin-top: 10px;
+                        }
+                        
+                        .timer-alert.urgent {
+                              background: rgba(255, 107, 107, 0.15);
+                              border: 1px solid rgba(255, 107, 107, 0.3);
+                              color: #ff6b6b;
+                        }
+                        
+                        .timer-alert.warning {
+                              background: rgba(255, 166, 0, 0.15);
+                              border: 1px solid rgba(255, 166, 0, 0.3);
+                              color: #ffa600;
+                        }
+                        
+                        .registration-timer-expired {
+                              background: rgba(255, 107, 107, 0.1);
+                              border: 1px solid rgba(255, 107, 107, 0.3);
+                              border-radius: 16px;
+                              padding: 30px;
+                        }
+                        
+                        .expired-content {
+                              display: flex;
+                              align-items: center;
+                              gap: 20px;
+                        }
+                        
+                        .expired-icon {
+                              background: rgba(255, 107, 107, 0.2);
+                              border-radius: 50%;
+                              width: 70px;
+                              height: 70px;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              color: #ff6b6b;
+                              flex-shrink: 0;
+                        }
+                        
+                        .expired-text h3 {
+                              color: #ff6b6b;
+                              margin: 0 0 10px 0;
+                              font-size: 1.5rem;
+                              font-weight: 700;
+                        }
+                        
+                        .expired-text p {
+                              color: rgba(255, 255, 255, 0.7);
+                              margin: 0;
+                              font-size: 1rem;
+                        }
+                        
+                        @media (max-width: 768px) {
+                              .registration-timer-header {
+                                    flex-direction: column;
+                                    align-items: flex-start;
+                                    gap: 10px;
+                              }
+                              
+                              .timer-units {
+                                    flex-wrap: wrap;
+                              }
+                              
+                              .timer-unit {
+                                    min-width: 60px;
+                              }
+                              
+                              .unit-value {
+                                    font-size: 2rem;
+                              }
+                              
+                              .timer-separator {
+                                    font-size: 2rem;
+                              }
+                              
+                              .expired-content {
+                                    flex-direction: column;
+                                    text-align: center;
+                              }
+                        }
+                  `}</style>
+            </div>
       )
 }
 

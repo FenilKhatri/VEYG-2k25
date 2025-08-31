@@ -1,0 +1,286 @@
+/* Modern Receipt Styles */
+.modern-receipt .modal-content {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modern-receipt .modal-header {
+  background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #581c87 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1.25rem 1.5rem;
+}
+
+.modern-receipt .modal-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modern-receipt .modal-header .btn-close {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  padding: 0.5rem;
+  margin: -0.5rem -0.5rem -0.5rem auto;
+}
+
+.receipt-pagination {
+  border-bottom: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.receipt-content-wrapper {
+  padding: 0;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  border: none;
+  padding: 0.5rem 1.25rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+}
+
+/* Enhanced Page Styling */
+.page {
+  background: white;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+  padding-bottom: 2rem;
+}
+
+.page-body {
+  padding: 1.5rem;
+}
+
+.event-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #4338ca;
+  margin-bottom: 0.5rem;
+}
+
+.event-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #6b7280;
+}
+
+.info-card {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b;
+  gap: 0.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Logo Styling */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Info Item Styling */
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #ede9fe;
+  color: #6d28d9;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.logo-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.logo-placeholder {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #1e293b;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.logo-placeholder span {
+  margin-top: 4px;
+}
+
+/* Header Styling */
+.tech-header {
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.center-title {
+  text-align: center;
+  flex-grow: 1;
+}
+
+.institute-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.location {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 1rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Payment Status Styling */
+.payment-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
+
+.payment-status.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.payment-status.confirmed {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+/* Footer Styling */
+.tech-footer {
+  margin-top: 2rem;
+  padding: 1rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  color: #64748b;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .receipt-pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  
+  .modern-receipt .modal-title {
+    font-size: 1.25rem;
+  }
+  
+  .tech-header {
+    padding: 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .logo-container {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .institute-name {
+    font-size: 1.2rem;
+  }
+}

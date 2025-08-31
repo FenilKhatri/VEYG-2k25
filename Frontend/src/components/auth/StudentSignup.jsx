@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'
-import { User, Mail, Phone, Lock, Eye, EyeOff, UserPlus, School, Users } from 'lucide-react'
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Modal } from 'react-bootstrap'
+import { User, Mail, Phone, Lock, Eye, EyeOff, UserPlus, School, Users, CheckCircle, RefreshCw } from 'lucide-react'
 import { collegesInGujarat, genders } from '../../data/constant'
 import useScrollAnimation from '../../hooks/useScrollAnimation'
 import apiService from '../../services/api'
@@ -22,6 +22,16 @@ const StudentSignup = ({ showToast }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const formRef = useScrollAnimation()
+  
+  // Email verification states
+  const [showVerificationModal, setShowVerificationModal] = useState(false)
+  const [verificationCode, setVerificationCode] = useState('')
+  const [enteredCode, setEnteredCode] = useState('')
+  const [verificationError, setVerificationError] = useState('')
+  const [verificationLoading, setVerificationLoading] = useState(false)
+  const [verificationSent, setVerificationSent] = useState(false)
+  const [resendDisabled, setResendDisabled] = useState(false)
+  const [resendCountdown, setResendCountdown] = useState(60)
 
   const handleChange = (e) => {
     setFormData({
@@ -30,34 +40,122 @@ const StudentSignup = ({ showToast }) => {
     })
   }
 
+  // Handle countdown for resend code button
+  useEffect(() => {
+    let timer;
+    if (resendDisabled && resendCountdown > 0) {
+      timer = setTimeout(() => {
+        setResendCountdown(resendCountdown - 1);
+      }, 1000);
+    } else if (resendCountdown === 0) {
+      setResendDisabled(false);
+      setResendCountdown(60);
+    }
+    return () => clearTimeout(timer);
+  }, [resendDisabled, resendCountdown]);
+
+  // Generate a random 6-digit verification code
+  const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  // Send verification email (simulated)
+  const sendVerificationEmail = async (email) => {
+    setVerificationLoading(true);
+    try {
+      // In a real implementation, this would call an API endpoint to send an email
+      // For now, we'll simulate the process
+      const code = generateVerificationCode();
+      setVerificationCode(code);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log(`Verification code for ${email}: ${code}`);
+      showToast(`Verification code sent to ${email}`, 'info');
+      setVerificationSent(true);
+      setResendDisabled(true);
+      
+      // In production, you would call your backend API here:
+      // await apiService.sendVerificationEmail(email);
+      
+      return true;
+    } catch (error) {
+      console.error('Error sending verification email:', error);
+      setVerificationError('Failed to send verification code. Please try again.');
+      return false;
+    } finally {
+      setVerificationLoading(false);
+    }
+  };
+
+  // Handle resend verification code
+  const handleResendCode = async () => {
+    setVerificationError('');
+    await sendVerificationEmail(formData.email);
+  };
+
+  // Verify the entered code
+  const handleVerifyCode = () => {
+    setVerificationError('');
+    if (enteredCode === verificationCode) {
+      // Code is correct, proceed with registration
+      completeRegistration();
+    } else {
+      setVerificationError('Invalid verification code. Please try again.');
+    }
+  };
+
+  // Complete the registration process after verification
+  const completeRegistration = async () => {
+    setLoading(true);
+    try {
+      const data = await apiService.studentRegister(formData);
+
+      if (data.success) {
+        setShowVerificationModal(false);
+        showToast('Student registration successful! Please login to continue.', 'success');
+        navigate('/student-login');
+      } else {
+        setError(data.message || 'Registration failed');
+        setShowVerificationModal(false);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError(error.message || 'Network error. Please try again.');
+      setShowVerificationModal(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
     // Client-side validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
     }
 
     try {
-      const data = await apiService.studentRegister(formData)
-
-      if (data.success) {
-        showToast('Student registration successful! Please login to continue.', 'success')
-        navigate('/student-login')
-      } else {
-        setError(data.message || 'Registration failed')
-      }
+      // First check if email already exists
+      // In a real implementation, you would have an API endpoint for this
+      // For now, we'll just proceed to verification
+      
+      // Show verification modal and send verification code
+      setShowVerificationModal(true);
+      await sendVerificationEmail(formData.email);
     } catch (error) {
-      console.error('Registration error:', error)
-      setError(error.message || 'Network error. Please try again.')
+      console.error('Pre-registration check error:', error);
+      setError(error.message || 'Network error. Please try again.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div style={{
@@ -66,6 +164,120 @@ const StudentSignup = ({ showToast }) => {
       position: 'relative',
       overflow: 'hidden'
     }}>
+      {/* Email Verification Modal */}
+      <Modal
+        show={showVerificationModal}
+        centered={true}
+        backdrop="static"
+        keyboard={false}
+        style={{ zIndex: 2000 }}
+      >
+        <Modal.Body style={{
+          background: 'rgba(15, 23, 42, 0.95)',
+          border: '1px solid rgba(0, 212, 255, 0.3)',
+          borderRadius: '20px',
+          padding: '2rem',
+          color: 'white'
+        }}>
+          <div className="text-center mb-4">
+            <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{
+              width: '70px',
+              height: '70px',
+              background: 'linear-gradient(135deg, #00d4ff, #007bff)',
+              borderRadius: '50%',
+              boxShadow: '0 0 30px rgba(0, 212, 255, 0.5)'
+            }}>
+              <Mail size={35} color="white" />
+            </div>
+            <h3 style={{ color: '#00d4ff', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+              Email Verification
+            </h3>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              We've sent a verification code to <strong>{formData.email}</strong>
+            </p>
+          </div>
+
+          {verificationError && (
+            <Alert
+              variant="danger"
+              className="mb-4"
+              style={{
+                background: 'rgba(220, 53, 69, 0.1)',
+                border: '1px solid rgba(220, 53, 69, 0.3)',
+                color: '#ff6b6b',
+                borderRadius: '10px'
+              }}
+            >
+              {verificationError}
+            </Alert>
+          )}
+
+          <Form.Group className="mb-4">
+            <Form.Label style={{ color: '#00d4ff', fontWeight: '500' }}>
+              Verification Code
+            </Form.Label>
+            <Form.Control
+              type="text"
+              value={enteredCode}
+              onChange={(e) => setEnteredCode(e.target.value)}
+              placeholder="Enter 6-digit code"
+              maxLength={6}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '2px solid rgba(0, 212, 255, 0.3)',
+                borderRadius: '12px',
+                color: 'white',
+                padding: '12px 20px',
+                fontSize: '18px',
+                letterSpacing: '3px',
+                textAlign: 'center'
+              }}
+            />
+          </Form.Group>
+
+          <Button
+            onClick={handleVerifyCode}
+            className="w-100 mb-3"
+            disabled={verificationLoading || enteredCode.length !== 6}
+            style={{
+              background: 'linear-gradient(135deg, #00d4ff, #007bff)',
+              border: 'none',
+              borderRadius: '12px',
+              padding: '12px',
+              fontSize: '16px',
+              fontWeight: '600',
+              boxShadow: '0 4px 15px rgba(0, 212, 255, 0.3)'
+            }}
+          >
+            {verificationLoading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Verifying...
+              </>
+            ) : (
+              <>
+                <CheckCircle size={18} className="me-2" />
+                Verify Code
+              </>
+            )}
+          </Button>
+
+          <div className="d-flex justify-content-center">
+            <Button
+              variant="link"
+              onClick={handleResendCode}
+              disabled={resendDisabled || verificationLoading}
+              style={{
+                color: resendDisabled ? 'rgba(255, 255, 255, 0.4)' : '#00d4ff',
+                textDecoration: 'none'
+              }}
+            >
+              <RefreshCw size={16} className="me-1" />
+              {resendDisabled ? `Resend code in ${resendCountdown}s` : 'Resend code'}
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
       {/* Geometric Background Pattern */}
       <div style={{
         position: 'absolute',

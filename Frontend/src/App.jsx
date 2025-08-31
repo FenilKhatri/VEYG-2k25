@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./styles/animations.css"
 import "./styles/global.css"
+import { Container } from "react-bootstrap"
 
 // Import components
 import AppNavbar from "./components/Navbar"
@@ -123,7 +124,7 @@ const App = () => {
   }
 
   return (
-    <AuthProvider>
+    <AuthProvider value={{ user, isLoggedIn, isAdminLoggedIn, updateAuthState }}>
       <Router>
         <ScrollToTop />
         <div style={{
@@ -133,7 +134,7 @@ const App = () => {
           padding: 0
         }}>
           <AppNavbar isLoggedIn={isLoggedIn} isAdminLoggedIn={isAdminLoggedIn} userId={user?.name || user?.username} onLogout={handleLogout} />
-          <div style={{ paddingTop: '0px', marginTop: '0px' }}>
+          <Container fluid className="px-0">
             <Routes>
               {/* Home Route */}
               <Route
@@ -205,7 +206,7 @@ const App = () => {
               {/* 404 Page */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </div>
+          </Container>
           <Footer />
           <ToastMessage
             show={toast.show}

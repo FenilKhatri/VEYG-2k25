@@ -214,7 +214,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
       border: '1px solid rgba(0, 212, 255, 0.1)',
       borderRadius: '16px',
       padding: '20px',
-      marginBottom: '20px'
+      marginBottom: '20px',
     }}>
       <Row>
         <Col md={6}>
@@ -308,6 +308,8 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
               value={participant.enrollmentNumber}
               onChange={handleChange}
               disabled={loading}
+              minLength={12}
+              maxLength={12}
               placeholder="Enter enrollment number"
               style={{
                 background: 'rgba(255, 255, 255, 0.1)',

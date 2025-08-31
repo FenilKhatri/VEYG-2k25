@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const HeroSection = () => {
   useEffect(() => {
@@ -64,11 +64,12 @@ const HeroSection = () => {
     <section
       className="hero-section text-white position-relative overflow-hidden"
       style={{
-        minHeight: "100vh",
+        minHeight: "70vh",
         display: "flex",
         alignItems: "center",
         marginTop: "-80px",
         paddingTop: "80px",
+        paddingBottom: "40px",
       }}
     >
       {/* Animated Neural Background */}
@@ -81,6 +82,19 @@ const HeroSection = () => {
       <Container style={{ zIndex: 2 }}>
         <Row className="align-items-center text-center">
           <Col lg={10} className="mx-auto">
+            {/* College Logo */}
+            <div className="mb-4" style={{ display: "flex", justifyContent: "center" }}>
+              <img 
+                src="/images/College-logo.png" 
+                alt="Saffrony Institute of Technology" 
+                style={{ 
+                  height: "80px", 
+                  filter: "drop-shadow(0 0 10px rgba(0, 234, 255, 0.5))",
+                  marginBottom: "10px"
+                }} 
+              />
+            </div>
+            
             {/* Title */}
             <h1
               className="fw-bold mb-3"
@@ -112,14 +126,14 @@ const HeroSection = () => {
 
             {/* Event Highlights */}
             <div className="event-details mb-5">
-              <Row className="justify-content-center g-3 g-md-4">
+              <Row className="justify-content-center g-4">
                 {[
                   { icon: "📅", title: "Event Date", text: "15-16 Sept" },
                   { icon: "🎮", title: "Total Games", text: "4 Technical" },
                   { icon: "🏆", title: "Competition", text: "2 Days" },
                   { icon: "💡", title: "Innovation", text: "Tech Challenge" },
                 ].map((item, idx) => (
-                  <Col key={idx} xs={12} sm={6} md={3}>
+                  <Col key={idx} xs={6} sm={6} md={3}>
                     <div
                       className="detail-card p-4 rounded-4 h-100"
                       style={{
@@ -129,7 +143,7 @@ const HeroSection = () => {
                         boxShadow: "0 0 20px rgba(0,234,255,0.1)",
                         transition: "all 0.3s ease",
                         cursor: "pointer",
-                        height: "100%",
+                        // Removed duplicate height property
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = "scale(1.05)";
@@ -165,6 +179,130 @@ const HeroSection = () => {
                     </div>
                   </Col>
                 ))}
+              </Row>
+            </div>
+            
+            {/* Past Event Details */}
+            <div className="past-event-details mb-5">
+              <h4 className="text-center mb-4" style={{ color: "#9ddfff", letterSpacing: "1px" }}>
+                PREVIOUS YEAR HIGHLIGHTS
+              </h4>
+              <Row className="justify-content-center g-4">
+                {[
+                  { icon: "👥", title: "Registrations", value: 850, suffix: "+", color: "#ff00e5" },
+                  { icon: "🎲", title: "Total Games", value: 5, suffix: "", color: "#00ff95" },
+                ].map((item, idx) => {
+                  // Use useState and useRef for each counter
+                  const [count, setCount] = useState(0);
+                  const counterRef = useRef(null);
+                  
+                  useEffect(() => {
+                    let timer;
+                    const observer = new IntersectionObserver(
+                      ([entry]) => {
+                        // When counter comes into view
+                        if (entry.isIntersecting) {
+                          let startValue = 0;
+                          const endValue = item.value;
+                          const duration = 2000; // 2 seconds
+                          const increment = Math.ceil(endValue / (duration / 30)); // Update every 30ms
+                          
+                          timer = setInterval(() => {
+                            startValue += increment;
+                            if (startValue > endValue) {
+                              setCount(endValue);
+                              clearInterval(timer);
+                            } else {
+                              setCount(startValue);
+                            }
+                          }, 30);
+                          
+                          // Clean up observer after animation starts
+                          observer.disconnect();
+                        }
+                      },
+                      { threshold: 0.1 }
+                    );
+                    
+                    if (counterRef.current) {
+                      observer.observe(counterRef.current);
+                    }
+                    
+                    return () => {
+                      observer.disconnect();
+                      if (timer) clearInterval(timer);
+                    };
+                  }, [item.value]);
+                  
+                  // Format the count value (add commas for thousands)
+                  const formattedCount = count.toLocaleString();
+                  
+                  return (
+                    <Col key={idx} xs={12} sm={6} md={6} lg={3}>
+                      <div
+                        ref={counterRef}
+                        className="past-event-card p-4 rounded-4 text-center h-100"
+                        style={{
+                          background: "transparent",
+                          border: `1px solid rgba(${item.color === "#ff00e5" ? "255, 0, 229" : 
+                                    item.color === "#00ff95" ? "0, 255, 149" : 
+                                    item.color === "#00eaff" ? "0, 234, 255" : 
+                                    "255, 153, 0"}, 0.3)`,
+                          boxShadow: `0 0 25px rgba(${item.color === "#ff00e5" ? "255, 0, 229" : 
+                                      item.color === "#00ff95" ? "0, 255, 149" : 
+                                      item.color === "#00eaff" ? "0, 234, 255" : 
+                                      "255, 153, 0"}, 0.15)`,
+                          transition: "all 0.3s ease",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = "translateY(-10px)";
+                          e.currentTarget.style.boxShadow = 
+                            `0 15px 30px rgba(${item.color === "#ff00e5" ? "255, 0, 229" : 
+                                          item.color === "#00ff95" ? "0, 255, 149" : 
+                                          item.color === "#00eaff" ? "0, 234, 255" : 
+                                          "255, 153, 0"}, 0.25)`;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "translateY(0)";
+                          e.currentTarget.style.boxShadow = 
+                            `0 0 25px rgba(${item.color === "#ff00e5" ? "255, 0, 229" : 
+                                        item.color === "#00ff95" ? "0, 255, 149" : 
+                                        item.color === "#00eaff" ? "0, 234, 255" : 
+                                        "255, 153, 0"}, 0.15)`;
+                        }}
+                      >
+                        <div className="fs-1 mb-3">{item.icon}</div>
+                        <h3
+                          className="fw-bold mb-2 counter-value"
+                          style={{
+                            fontSize: "2.5rem",
+                            color: item.color,
+                            textShadow: `0 0 15px rgba(${item.color === "#ff00e5" ? "255, 0, 229" : 
+                                        item.color === "#00ff95" ? "0, 255, 149" : 
+                                        item.color === "#00eaff" ? "0, 234, 255" : 
+                                        "255, 153, 0"}, 0.5)`,
+                          }}
+                        >
+                          {item.suffix === "₹" ? item.suffix : ""}{formattedCount}{item.suffix !== "₹" ? item.suffix : ""}
+                        </h3>
+                        <p
+                          className="mb-0 text-uppercase"
+                          style={{
+                            fontSize: "1rem",
+                            letterSpacing: "1px",
+                            fontWeight: "600",
+                            color: "#e3f9ff",
+                          }}
+                        >
+                          {item.title}
+                        </p>
+                      </div>
+                    </Col>
+                  );
+                })}
               </Row>
             </div>
 

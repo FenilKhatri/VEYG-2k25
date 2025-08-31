@@ -1,24 +1,24 @@
 "use client"
 import React from "react"
+import "./ReceiptModern.css"
 import { Modal, Button } from "react-bootstrap"
-import {
-  Download,
-  Trophy,
-  User,
-  Mail,
-  Phone,
-  Building2,
-  Users,
-  Calendar,
-  IndianRupee,
-  CheckCircle,
-  FileText,
-  Award,
-  MapPin,
-  Globe,
-} from "lucide-react"
+import { Download, Trophy, User, Mail, Phone, Building2, Users, Calendar, IndianRupee, CheckCircle, FileText, Award, MapPin, Globe } from "lucide-react"
 
 export default function VEYGReceipt({ show, onHide, game }) {
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const totalPages = game?.teamMembers?.length ? game.teamMembers.length + 1 : 1
+  
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+  
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
   const handleDownloadPDF = () => {
     try {
       if (typeof window === 'undefined') {
@@ -313,10 +313,10 @@ export default function VEYGReceipt({ show, onHide, game }) {
 
   if (!game) {
     return (
-      <Modal show={show} onHide={onHide} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Payment Receipt</Modal.Title>
-        </Modal.Header>
+    <Modal show={show} onHide={onHide} size="lg" centered className="receipt-modal modern-receipt" backdrop="static">
+      <Modal.Header closeButton>
+        <Modal.Title>Payment Receipt</Modal.Title>
+      </Modal.Header>
         <Modal.Body>
           <div className="text-center py-4">
             <FileText size={48} className="text-muted mb-3" />
@@ -330,6 +330,8 @@ export default function VEYGReceipt({ show, onHide, game }) {
 
   const receiptNumber = game.registrationDetails?.registrationId || `VEYG-${Date.now().toString().slice(-8)}`
   const isApproved = game.approvalStatus === "approved" || game.registrationDetails?.paymentStatus === "confirmed"
+  const approvedBy = game.approvedBy || "N/A"
+  const approvedAt = game.approvedAt ? new Date(game.approvedAt).toLocaleString() : "N/A"
 
   // Safe data extraction with fallbacks
   const gameName = game.name || game.gameName || "N/A"
@@ -355,7 +357,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <div className="logo-container">
           {/* Replace with actual college logo image */}
           <img
-            src="https://drive.google.com/uc?export=download&id=14yJp4RCwuTyS7oF81wDYz3P7astSb9CT"
+            src="/images/College-logo.png"
             alt="College Logo"
             className="logo-image"
             onError={(e) => {
@@ -383,7 +385,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <div className="logo-container">
           {/* Replace with actual web/event logo image */}
           <img
-            src="https://drive.google.com/uc?export=view&id=1wkvCexRdse26PEwdy_RnlCmbL4t2q4Sq"
+            src="/images/Web-logo.png"
             alt="VEYG Logo"
             className="logo-image"
             onError={(e) => {
@@ -428,6 +430,32 @@ export default function VEYGReceipt({ show, onHide, game }) {
       </Modal.Header>
 
       <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto", padding: 0 }}>
+        <div className="receipt-pagination d-flex justify-content-between align-items-center px-3 py-2 bg-light">
+          <div>
+            <span className="fw-bold">Page {currentPage} of {totalPages}</span>
+          </div>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="outline-primary" 
+              size="sm" 
+              onClick={prevPage} 
+              disabled={currentPage === 1}
+              className="d-flex align-items-center"
+            >
+              <span className="me-1">←</span> Previous
+            </Button>
+            <Button 
+              variant="outline-primary" 
+              size="sm" 
+              onClick={nextPage} 
+              disabled={currentPage === totalPages}
+              className="d-flex align-items-center"
+            >
+              Next <span className="ms-1">→</span>
+            </Button>
+          </div>
+        </div>
+        
         <div id="veyg-receipt-content">
           {/* Page 1: Event Title, Date, and Registration Information */}
           <div className="page">
@@ -488,9 +516,25 @@ export default function VEYGReceipt({ show, onHide, game }) {
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="d-flex justify-content-center w-100 mt-3">
+                    <div className={`payment-status ${isApproved ? 'confirmed' : 'pending'}`}>
+                      {isApproved ? (
+                        <>
+                          <CheckCircle size={16} className="me-2" />
+                          Payment Status
+                        </>
+                      ) : (
+                        <>
+                          <span className="me-2">⏳</span>
+                          Payment Status
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+                <div style={{ marginTop: "1.5rem", textAlign: "center", display: "flex", flexDirection: "column", gap: "0.75rem", alignItems: "center" }}>
                   <span
                     style={{
                       display: "inline-flex",
@@ -507,6 +551,12 @@ export default function VEYGReceipt({ show, onHide, game }) {
                     <CheckCircle size={16} />
                     {isApproved ? "Payment Confirmed" : "Payment Pending"}
                   </span>
+                  
+                  {isApproved && (
+                    <div style={{ fontSize: "0.875rem", color: "#4b5563" }}>
+                      <strong>Approved by:</strong> {approvedBy} • <strong>Date:</strong> {approvedAt}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -784,13 +834,14 @@ export default function VEYGReceipt({ show, onHide, game }) {
         </div>
       </Modal.Body>
 
-      <Modal.Footer style={{ background: "#f8f9fa", border: "none" }}>
+      <Modal.Footer className="d-flex justify-content-between" style={{ background: "#f8f9fa", border: "none" }}>
         <Button variant="outline-secondary" onClick={onHide}>
           Close
         </Button>
         <Button
           variant="primary"
           onClick={handleDownloadPDF}
+          className="download-btn"
           style={{
             background: "linear-gradient(135deg, #1e40af 0%, #7c3aed 100%)",
             border: "none",

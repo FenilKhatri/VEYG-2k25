@@ -1,6 +1,7 @@
 import HeroSection from "../components/HeroSection/HeroSection"
 import SponsorSlider from "../components/SponsorSlider/SponsorSlider"
 import TechnicalGamesSection from "../components/TechnicalGames/TechnicalGamesSection"
+import AdminStatsCard from "../components/AdminStatsCard/AdminStatsCard"
 import { getDay1Games, getDay2Games } from "../data/gamesData"
 
 const Home = ({ showToast, user, isLoggedIn }) => {
@@ -10,6 +11,7 @@ const Home = ({ showToast, user, isLoggedIn }) => {
   return (
     <>
       <HeroSection />
+      <AdminStatsCard user={user} />
       <SponsorSlider />
       <TechnicalGamesSection
         day1Games={day1Games}

@@ -27,7 +27,23 @@ const AdminDashboardNew = () => {
       })
 
       useEffect(() => {
-            fetchRegistrations()
+            let isMounted = true;
+            
+            const loadData = async () => {
+                  try {
+                        await fetchRegistrations();
+                  } catch (error) {
+                        if (isMounted) {
+                              console.error('Error loading registrations:', error);
+                        }
+                  }
+            };
+            
+            loadData();
+            
+            return () => {
+                  isMounted = false;
+            };
       }, [])
 
       const fetchRegistrations = async () => {

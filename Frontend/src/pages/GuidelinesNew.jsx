@@ -63,14 +63,29 @@ const Guidelines = () => {
       },
       { threshold: [0.25, 0.5, 0.75] }
     );
-    cardRefs.current.forEach((el) => el && obs.observe(el));
-    return () => obs.disconnect();
+    
+    // Store current refs in a variable to avoid closure issues during cleanup
+    const currentRefs = cardRefs.current;
+    currentRefs.forEach((el) => el && obs.observe(el));
+    
+    return () => {
+      // Properly disconnect observer and clear all observations
+      currentRefs.forEach((el) => el && obs.unobserve(el));
+      obs.disconnect();
+    };
   }, []);
 
   // Smooth progress-based dot movement on mobile (continuous glide)
   useEffect(() => {
+    // Only on mobile
     const onScroll = () => {
       if (!cardRefs.current.length || !trackRef.current || !dotRef.current) return;
+
+      // Skip if on desktop
+      if (window.innerWidth > 768) {
+        setDotX(0);
+        return;
+      }
 
       const first = cardRefs.current[0];
       const last = cardRefs.current[cardRefs.current.length - 1];

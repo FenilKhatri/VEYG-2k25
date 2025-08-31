@@ -5,7 +5,7 @@ import PageHeroSection from "../components/HeroSection/PageHeroSection"
 const AboutUs = () => {
   return (
     <>
-      <PageHeroSection 
+      <PageHeroSection
         title="About VEYG 2K25"
         subtitle="Your Ultimate Technical Competition Platform"
         icon={Zap}
@@ -38,7 +38,7 @@ const AboutUs = () => {
                   <h2>Core Values</h2>
                   <p>The principles that drive our technical community</p>
                 </div>
-                
+
                 <div className="values-grid">
                   <div className="value-card">
                     <div className="value-icon">
@@ -49,7 +49,7 @@ const AboutUs = () => {
                       <p>We encourage participants to push boundaries and develop groundbreaking solutions in various technical domains, from AI to blockchain.</p>
                     </div>
                   </div>
-                  
+
                   <div className="value-card">
                     <div className="value-icon">
                       <Users size={32} />
@@ -59,7 +59,7 @@ const AboutUs = () => {
                       <p>Our platform is a hub for networking, collaboration, and building lasting connections within the global tech and gaming ecosystem.</p>
                     </div>
                   </div>
-                  
+
                   <div className="value-card">
                     <div className="value-icon">
                       <Award size={32} />
@@ -69,7 +69,7 @@ const AboutUs = () => {
                       <p>We strive to provide a fair and challenging environment where technical talent is recognized, celebrated, and rewarded.</p>
                     </div>
                   </div>
-                  
+
                   <div className="value-card">
                     <div className="value-icon">
                       <Code size={32} />
@@ -93,6 +93,94 @@ const AboutUs = () => {
                     To be the leading platform for technical competitions worldwide, inspiring the next generation of
                     innovators and fostering a vibrant global community that shapes the future of technology.
                   </p>
+                </div>
+              </div>
+
+              {/* Team Section */}
+              <div className="team-section">
+                <div className="section-header">
+                  <h2>Our Team</h2>
+                  <p>Meet the people behind VEYG 2K25</p>
+                </div>
+
+                {/* Coordinators */}
+                <div className="team-category">
+                  <h3 className="team-category-title">Event Coordinators</h3>
+                  <div className="team-grid">
+                    <div className="team-card">
+                      <div className="team-member-avatar">
+                        <img src="https://www.saffrony.ac.in/media/4258/kunal-sir.jpg" alt="Prof. Kunalsinh Kathia" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                      </div>
+                      <div className="team-member-info">
+                        <h4>Prof. Kunalsinh Kathia</h4>
+                        <p className="team-member-role">Faculty Coordinator</p>
+                        <p className="team-member-dept">Mechnaical Department</p>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-avatar">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFa8i8irJYNO0OCUsUiydH3Tcq0q0yMVH3wg&s" alt="Prof. Yogesh Kakadiya" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                      </div>
+                      <div className="team-member-info">
+                        <h4>Prof. Mitul Patel</h4>
+                        <p className="team-member-role">Technical Coordinator</p>
+                        <p className="team-member-dept">Electrical Department</p>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-avatar">
+                        <img src="https://media.licdn.com/dms/image/v2/C4D03AQEPhAA4SQYmeQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1663781191017?e=1759363200&v=beta&t=buB1_gxyXaMjg8rr7M72TFIXsmGfhcP_VEMH2vuj02o" alt="Prof. Twinkle Verma" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                      </div>
+                      <div className="team-member-info">
+                        <h4>Prof. Twinkle Verma</h4>
+                        <p className="team-member-role">Event Coordinator</p>
+                        <p className="team-member-dept">Computer Engineering Department</p>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-avatar">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFEMM-wkBAz9g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694598648255?e=2147483647&v=beta&t=8SaIe57cXIeCjfFlB9LgP65Lv_E2ZypsjFn4lJXzZ7U" alt="Prof. Nainsi Soni" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                      </div>
+                      <div className="team-member-info">
+                        <h4>Prof. Nainsi Soni</h4>
+                        <p className="team-member-role">Event Coordinator</p>
+                        <p className="team-member-dept">Computer Engineering Department</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Development Team */}
+                <div className="team-category">
+                  <h3 className="team-category-title">Development Team</h3>
+                  <div className="team-grid">
+                    <div className="team-card">
+                      <div className="team-member-info">
+                        <h4>Fenil Khatri</h4>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-info">
+                        <h4>Divyesh Khubavat</h4>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-info">
+                        <h4>Vraj Fadiya</h4>
+                      </div>
+                    </div>
+
+                    <div className="team-card">
+                      <div className="team-member-info">
+                        <h4>Riddhi Sadhu</h4>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Col>
@@ -348,8 +436,95 @@ const AboutUs = () => {
           }
         }
         
-        @media (max-width: 480px) {
+        .team-section {
+          margin: 60px 0;
+        }
+        
+        .team-category {
+          margin-bottom: 50px;
+        }
+        
+        .team-category-title {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: white;
+          margin-bottom: 30px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+          display: inline-block;
+        }
+        
+        .team-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 25px;
+        }
+        
+        @media (max-width: 1200px) {
+          .team-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        
+        .team-card {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          padding: 25px;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
+        
+        .team-card:hover {
+          border-color: rgba(0, 212, 255, 0.3);
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 212, 255, 0.1);
+        }
+        
+        .team-member-avatar {
+          background: linear-gradient(45deg, #007bff, #00d4ff);
+          width: 70px;
+          height: 70px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          flex-shrink: 0;
+        }
+        
+        .team-member-info {
+          flex-grow: 1;
+        }
+        
+        .team-member-info h4 {
+          color: white;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 5px;
+        }
+        
+        .team-member-role {
+          color: #00d4ff;
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin-bottom: 5px;
+        }
+        
+        .team-member-dept {
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 0.85rem;
+          margin: 0;
+        }
+        
+        @media (max-width: 768px) {
           .stats-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .team-grid {
             grid-template-columns: 1fr;
           }
         }

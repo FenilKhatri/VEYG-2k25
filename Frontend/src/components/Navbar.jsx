@@ -112,26 +112,20 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
             />
           </Navbar.Brand>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Toggle - Redesigned */}
           <div className="d-lg-none ms-auto d-flex align-items-center">
             <button
-              className="icon-btn mobile-toggle"
+              className={`hamburger-menu ${expanded ? 'active' : ''}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setExpanded((s) => !s);
               }}
               aria-label={expanded ? "Close menu" : "Open menu"}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'rgba(255,255,255,0.9)',
-                padding: '8px',
-                borderRadius: '8px',
-                transition: 'all 0.2s ease'
-              }}
             >
-              {expanded ? <X size={22} /> : <Menu size={22} />}
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
             </button>
           </div>
 
@@ -201,6 +195,51 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
           --muted: #9aa8bf;
           --glass: rgba(255,255,255,0.06);
         }
+        
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          width: 30px;
+          height: 24px;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          position: relative;
+          z-index: 2001;
+          transition: all 0.3s ease;
+        }
+        
+        .hamburger-line {
+          display: block;
+          width: 100%;
+          height: 2px;
+          background-color: rgba(255,255,255,0.9);
+          border-radius: 4px;
+          transition: all 0.3s ease;
+          transform-origin: center;
+        }
+        
+        .hamburger-menu.active .hamburger-line:nth-child(1) {
+          transform: translateY(11px) rotate(45deg);
+          background-color: var(--accent);
+        }
+        
+        .hamburger-menu.active .hamburger-line:nth-child(2) {
+          opacity: 0;
+          transform: scaleX(0);
+        }
+        
+        .hamburger-menu.active .hamburger-line:nth-child(3) {
+          transform: translateY(-11px) rotate(-45deg);
+          background-color: var(--accent);
+        }
+        
+        .hamburger-menu:hover .hamburger-line {
+          background-color: var(--accent);
+        }
         .app-navbar {
           position: fixed;
           top: 0; left: 0; right: 0;
@@ -265,79 +304,65 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
         @media (max-width: 991.98px) {
           .navbar-collapse {
             position: fixed;
-            top: 84px;
-            left: 18px;
-            right: 18px;
-            max-height: calc(100vh - 120px);
-            background: rgba(255,255,255,0.95);
-            border-radius: 12px;
-            padding: 20px;
+            top: 72px;
+            left: 0;
+            right: 0;
+            height: calc(100vh - 72px);
+            max-height: none;
+            background: rgba(17, 25, 40, 0.95);
+            padding: 32px 24px;
             overflow-y: auto;
             box-shadow: 0 20px 50px rgba(2,8,23,0.7);
-            transform: scale(0.95);
+            transform: translateY(-10px);
             opacity: 0;
             pointer-events: none;
-            transition: transform .3s ease, opacity .3s ease;
-            backdrop-filter: blur(10px);
+            transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1), opacity .4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(20px);
             z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
           }
           .navbar-collapse.show-drawer {
-            transform: scale(1);
+            transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
           }
           .main-nav {
             flex-direction: column;
-            gap: 8px;
-            margin-bottom: 1rem;
+            gap: 16px;
+            margin-bottom: 2rem;
+            width: 100%;
           }
           .main-nav .nav-link {
-            padding: 12px 16px;
-            font-size: 1r1) In the all pages give the container width like bootstrap or tailwind has a class that we give container class to the any tag so it gives margin from both side left and right so give it to the all pages.  
-
-
-
-2) In the hero section of the home page add this below 4 cards:
-
-past event details or previous year details - 
-
- create 2 cards:- 1) add that 850+ registrations 2) total of 5 games.
-
-
-
-3) in the sponsors section instead of just logo add this:
-
-   sponsors logo, name and short 5 10 words description and while click on any sponsors redirect to their original website.
-
-
-
-4) remove the countdown and make it some different view and place it before technical games title and it looks like that it's a registration countdown. at now you just add a table with 4 cards but not looks good.
-
-
-
-5) In the tech game cards, between of both card add "OR" keyword so it shows that to participate in one game only.
-
-
-
-6) Create a day-wise registration functionality and if student register one game then update the technical game card of that day and above the view details button display that you already registered one game in {this} day! same for the Day .
-
-
-
-7) In the footer there's a contact number, email, and address so while click on the mail that redirects to the gmail app or web but while click on the contact number and address then it not redirects to the dialer, and map respectively. em;
-            color: rgba(0,0,0,0.8);
-            border-radius: 8px;
-            text-align: center;
+            padding: 16px;
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.85);
+            border-radius: 12px;
+            text-align: left;
             width: 100%;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
           }
           .main-nav .nav-link:hover {
             color: var(--accent);
             background: rgba(0,234,255,0.1);
+            border-left: 3px solid var(--accent);
+          }
+          .main-nav .nav-link.active {
+            color: var(--accent);
+            background: rgba(0,234,255,0.15);
+            border-left: 3px solid var(--accent);
+          }
+          .main-nav .nav-link::before {
+            display: none;
           }
           .navbar-collapse .d-flex {
             justify-content: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(0,0,0,0.1);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
           }
         }
       `}</style>
