@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'
-import { User, Lock, Eye, EyeOff, Zap } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Zap, User } from 'lucide-react'
 import cookieAuth from '../../utils/cookieAuth'
 import apiService from '../../services/api'
 import useScrollAnimation from '../../hooks/useScrollAnimation'
@@ -9,7 +9,7 @@ import useScrollAnimation from '../../hooks/useScrollAnimation'
 const StudentLogin = ({ showToast, updateAuthState }) => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    name: '',
+    email: '',
     password: ''
   })
   const [loading, setLoading] = useState(false)
@@ -29,8 +29,29 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
     setLoading(true)
     setError('')
 
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all required fields')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.email.includes('@')) {
+      setError('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
     try {
-      const data = await apiService.studentLogin(formData)
+      // Normalize email to match backend validation (express-validator normalizeEmail)
+      const normalizedEmail = formData.email.trim().toLowerCase().replace(/\+.*@/, '@')
+      const loginData = {
+        email: normalizedEmail,
+        password: formData.password.trim()
+      }
+      
+      console.log('Sending login data:', { email: loginData.email, password: '[HIDDEN]' })
+      const data = await apiService.studentLogin(loginData)
 
       if (data.success) {
         // Store auth data in cookies
@@ -130,20 +151,20 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
                   )}
 
                   <Form onSubmit={handleSubmit}>
-                    {/* Name Field */}
+                    {/* Email Field */}
                     <Form.Group className="mb-4">
                       <Form.Label style={{ color: '#00d4ff', fontWeight: '500' }}>
-                        <User size={18} className="me-2" />
-                        Student Name
+                        <Mail size={18} className="me-2" />
+                        Email Address
                       </Form.Label>
                       <div className="position-relative">
                         <Form.Control
-                          type="text"
-                          name="name"
-                          value={formData.name}
+                          type="email"
+                          name="email"
+                          value={formData.email}
                           onChange={handleChange}
                           required
-                          placeholder="Enter your registered name"
+                          placeholder="Enter your email address"
                           style={{
                             background: 'rgba(255, 255, 255, 0.1)',
                             border: '2px solid rgba(0, 212, 255, 0.3)',

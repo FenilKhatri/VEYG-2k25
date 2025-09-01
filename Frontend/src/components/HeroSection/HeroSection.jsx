@@ -79,7 +79,7 @@ const HeroSection = () => {
         style={{ zIndex: 0 }}
       ></canvas>
 
-      <Container style={{ zIndex: 2 }}>
+      <Container className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" style={{ zIndex: 2 }}>
         <Row className="align-items-center text-center">
           <Col lg={10} className="mx-auto">
             {/* College Logo */}
@@ -95,21 +95,34 @@ const HeroSection = () => {
               />
             </div>
             
-            {/* Title */}
-            <h1
-              className="fw-bold mb-3"
-              style={{
-                fontSize: "3.5rem",
-                background: "linear-gradient(90deg, #00eaff, #ff00e5, #00ff95)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 0 20px rgba(0, 234, 255, 0.6)",
-                fontWeight: "800",
+            {/* Main Heading */}
+            <h1 
+              className="display-3 fw-bold mb-4" 
+              style={{ 
+                color: "white", 
+                textShadow: "0 0 30px rgba(0, 212, 255, 0.8)",
+                fontSize: "clamp(3rem, 6vw, 5rem)",
+                letterSpacing: "-0.02em"
               }}
             >
-              VEYG 2K25
+              <span style={{ 
+                background: "linear-gradient(135deg, #00d4ff 0%, #007bff 50%, #6366f1 100%)", 
+                WebkitBackgroundClip: "text", 
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                display: "inline-block",
+                animation: "glow 2s ease-in-out infinite alternate"
+              }}>
+                VEYG 2K25
+              </span>
+              <br />
+              <span style={{ 
+                fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                color: "rgba(255, 255, 255, 0.9)",
+                fontWeight: "400"
+              }}>
+                Technical Excellence Redefined
+              </span>
             </h1>
 
             {/* Sub-title */}
@@ -307,52 +320,140 @@ const HeroSection = () => {
             </div>
 
             {/* Description */}
-            <p
-              className="lead mx-auto mb-4"
-              style={{
+            <p 
+              className="lead mb-5" 
+              style={{ 
+                color: "rgba(255, 255, 255, 0.85)", 
+                fontSize: "clamp(1.2rem, 2.5vw, 1.5rem)",
+                lineHeight: "1.7",
                 maxWidth: "700px",
-                fontSize: "1.05rem",
-                color: "#d6f5ff",
-                opacity: 0.9,
+                margin: "0 auto 3rem",
+                fontWeight: "300"
               }}
             >
-              Get ready for an electrifying <strong>tech gaming</strong> experience!
-              Code, compete, and challenge your limits with the brightest minds in technology.
+              Experience the future of technical competitions at{" "}
+              <span style={{ color: "#00d4ff", fontWeight: "500" }}>
+                Saffrony Institute of Technology
+              </span>
+              . Challenge your limits, innovate solutions, and compete for glory in our cutting-edge programming arena.
             </p>
 
-            {/* Call-to-Action Button */}
-            <Button
-              as={Link}
-              to="/guidelines"
-              variant="outline-light"
-              size="lg"
-              className="fw-bold futuristic-btn"
-              style={{
-                padding: "14px 45px",
-                fontSize: "1.05rem",
-                borderRadius: "50px",
-                border: "2px solid #00eaff",
-                backgroundColor: "rgba(255, 255, 255, 0.04)", // Softer base
-                backdropFilter: "blur(6px)",
-                color: "#00eaff",
-                boxShadow: "0 0 10px rgba(0,234,255,0.3)", // Reduced glow intensity
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#00C0D1";
-                e.currentTarget.style.color = "#000";
-                e.currentTarget.style.boxShadow =
-                  "0 0 18px rgba(0,234,255,0.4), 0 0 30px rgba(0,255,149,0.2)"; // Softer hover glow
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.04)";
-                e.currentTarget.style.color = "#00eaff";
-                e.currentTarget.style.boxShadow =
-                  "0 0 10px rgba(0,234,255,0.3)";
-              }}
-            >
-              View Guidelines ⚡
-            </Button>
+            {/* Call-to-Action Buttons */}
+            <div className="d-flex flex-column flex-md-row gap-4 justify-content-center align-items-center">
+              <Button
+                as={Link}
+                to="/guidelines"
+                size="lg"
+                className="fw-bold futuristic-btn primary-cta"
+                style={{
+                  padding: "18px 40px",
+                  fontSize: "1.2rem",
+                  borderRadius: "50px",
+                  border: "none",
+                  background: "linear-gradient(135deg, #00d4ff 0%, #007bff 50%, #6366f1 100%)",
+                  color: "white",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  fontWeight: "700",
+                  boxShadow: "0 10px 30px rgba(0, 212, 255, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)",
+                  position: "relative",
+                  overflow: "hidden",
+                  minWidth: "220px"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px) scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(0, 212, 255, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2)";
+                  e.currentTarget.style.background = "linear-gradient(135deg, #00eaff 0%, #0088ff 50%, #7c3aed 100%)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 212, 255, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.background = "linear-gradient(135deg, #00d4ff 0%, #007bff 50%, #6366f1 100%)";
+                }}
+              >
+                <span style={{ position: "relative", zIndex: 2 }}>
+                  🚀 Explore Guidelines
+                </span>
+              </Button>
+              
+              <Button
+                as={Link}
+                to="/student-signup"
+                size="lg"
+                className="fw-bold secondary-cta"
+                style={{
+                  padding: "18px 40px",
+                  fontSize: "1.2rem",
+                  borderRadius: "50px",
+                  border: "2px solid rgba(0, 212, 255, 0.6)",
+                  color: "#00d4ff",
+                  background: "rgba(0, 212, 255, 0.08)",
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  fontWeight: "700",
+                  backdropFilter: "blur(20px)",
+                  boxShadow: "0 8px 25px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                  minWidth: "220px",
+                  position: "relative",
+                  overflow: "hidden"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px) scale(1.05)";
+                  e.currentTarget.style.background = "rgba(0, 212, 255, 0.2)";
+                  e.currentTarget.style.borderColor = "#00eaff";
+                  e.currentTarget.style.color = "#00eaff";
+                  e.currentTarget.style.boxShadow = "0 12px 35px rgba(0, 212, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.background = "rgba(0, 212, 255, 0.08)";
+                  e.currentTarget.style.borderColor = "rgba(0, 212, 255, 0.6)";
+                  e.currentTarget.style.color = "#00d4ff";
+                  e.currentTarget.style.boxShadow = "0 8px 25px rgba(0, 212, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)";
+                }}
+              >
+                ⚡ Register Now
+              </Button>
+            </div>
+
+            <style>{`
+              @keyframes glow {
+                0% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.8); }
+                100% { text-shadow: 0 0 50px rgba(0, 212, 255, 1), 0 0 70px rgba(0, 212, 255, 0.8); }
+              }
+              
+              .primary-cta::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                transition: left 0.5s;
+              }
+              
+              .primary-cta:hover::before {
+                left: 100%;
+              }
+              
+              .secondary-cta::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+                transition: left 0.5s;
+              }
+              
+              .secondary-cta:hover::before {
+                left: 100%;
+              }
+            `}</style>
 
           </Col>
         </Row>

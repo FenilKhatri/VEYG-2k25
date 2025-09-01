@@ -288,7 +288,7 @@ const AdminDashboardNew = () => {
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%)',
+                                                background: 'linear-gradient(135deg, #ff6b6b 0%, #ff9966 100%)',
                                                 color: 'white'
                                           }}>
                                                 <Card.Body className="text-center p-4">

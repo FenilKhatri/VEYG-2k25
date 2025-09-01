@@ -1,0 +1,24 @@
+.custom-input::placeholder {
+  color: white !important;
+  opacity: 0.6;
+}
+
+.custom-input::-webkit-input-placeholder {
+  color: white !important;
+  opacity: 0.6;
+}
+
+.custom-input::-moz-placeholder {
+  color: white !important;
+  opacity: 0.6;
+}
+
+.btn-close {
+  color: black !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.btn-close:focus {
+  box-shadow: none !important;
+}

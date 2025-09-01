@@ -52,12 +52,13 @@ export default function Footer() {
               <div className="contact-info">
                 <div className="contact-item">
                   <Mail size={16} />
-                  <a href="mailto:veyg.notification@gmail.com" className="contact-link">veyg.notification@gmail.com</a>
+                  <a href="mailto:veyg.notification@gmail.com" className="contact-link">veyg.notification@gmail.com,</a>
+                  <a href="mailto:220390116009@saffrony.ac.in" className="contact-link">220390116009@saffrony.ac.in</a>
                 </div>
                 <div className="contact-item">
                   <Phone size={16} />
                   <div className="phone-numbers">
-                    <a href="tel:+916353622735" className="contact-link">+91 63536 22735</a>,
+                    <a href="tel:+916353622735" className="contact-link">+91 63536 22735,</a>
                     <a href="tel:+919265926990" className="contact-link">+91 92659 26990</a>
                   </div>
                 </div>
@@ -76,23 +77,50 @@ export default function Footer() {
             </div>
           </Col>
 
-          {/* Quick Links */}
+          {/* Quick Links & Sponsors */}
           <Col lg={4} md={12} className="mb-4">
-            <div className="footer-section">
-              <h4 className="section-title">
-                <Terminal size={18} />
-                Quick Access
-              </h4>
-              <div className="footer-links">
-                <Link to="/" className="footer-link">Home</Link>
-                <Link to="/registered-games" className="footer-link">My Registrations</Link>
-                <Link to="/guidelines" className="footer-link">Guidelines</Link>
-                <Link to="/about" className="footer-link">About Us</Link>
-                <a href="mailto:veyg.notification@gmail.com" className="footer-link">
-                  Contact Support <ExternalLink size={12} />
-                </a>
-              </div>
-            </div>
+            <Row>
+              <Col md={6} lg={12} className="mb-4">
+                <div className="footer-section">
+                  <h4 className="section-title">
+                    <Terminal size={18} />
+                    Quick Access
+                  </h4>
+                  <div className="footer-links">
+                    <Link to="/" className="footer-link">Home</Link>
+                    <Link to="/registered-games" className="footer-link">My Registrations</Link>
+                    <Link to="/guidelines" className="footer-link">Guidelines</Link>
+                    <Link to="/about" className="footer-link">About Us</Link>
+                    <a href="mailto:veyg.notification@gmail.com" className="footer-link">
+                      Contact Support <ExternalLink size={12} />
+                    </a>
+                  </div>
+                </div>
+              </Col>
+              
+              <Col md={6} lg={12}>
+                <div className="footer-section">
+                  <h4 className="section-title">
+                    <Code size={18} />
+                    Our Sponsors
+                  </h4>
+                  <div className="footer-links">
+                    <a href="https://www.saffrony.ac.in" target="_blank" rel="noopener noreferrer" className="footer-link">
+                      Saffrony Institute of Technology <ExternalLink size={12} />
+                    </a>
+                    <a href="https://www.techcorp.com" target="_blank" rel="noopener noreferrer" className="footer-link">
+                      TechCorp Solutions <ExternalLink size={12} />
+                    </a>
+                    <a href="https://www.innovatetech.com" target="_blank" rel="noopener noreferrer" className="footer-link">
+                      InnovateTech Labs <ExternalLink size={12} />
+                    </a>
+                    <a href="https://www.digitalfuture.com" target="_blank" rel="noopener noreferrer" className="footer-link">
+                      Digital Future Inc <ExternalLink size={12} />
+                    </a>
+                  </div>
+                </div>
+              </Col>
+            </Row>
           </Col>
 
         </Row>

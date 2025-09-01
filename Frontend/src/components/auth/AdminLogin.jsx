@@ -9,7 +9,7 @@ import useScrollAnimation from '../../hooks/useScrollAnimation'
 const AdminLogin = ({ showToast, updateAuthState }) => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    name: '',
+    email: '',
     password: ''
   })
   const [loading, setLoading] = useState(false)
@@ -29,8 +29,27 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
     setLoading(true)
     setError('')
 
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all required fields')
+      setLoading(false)
+      return
+    }
+
+    if (!formData.email.includes('@')) {
+      setError('Please enter a valid email address')
+      setLoading(false)
+      return
+    }
+
     try {
-      const data = await apiService.adminLogin(formData)
+      // Ensure email is trimmed and lowercase
+      const loginData = {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password
+      }
+      
+      const data = await apiService.adminLogin(loginData)
 
       if (data.success) {
         // Store auth data in cookies
@@ -64,11 +83,11 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #7c2d12 0%, #dc2626 25%, #ea580c 50%, #f97316 75%, #fb923c 100%)',
+      background: 'linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Geometric Background Pattern */}
+      {/* Neural Network Background */}
       <div style={{
         position: 'absolute',
         top: 0,
@@ -76,13 +95,13 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
         right: 0,
         bottom: 0,
         opacity: 0.1,
-        backgroundImage: `radial-gradient(circle at 20% 80%, #ff6b35 0%, transparent 50%), 
-                         radial-gradient(circle at 80% 20%, #f7931e 0%, transparent 50%)`,
-        backgroundSize: '300px 300px'
+        backgroundImage: `radial-gradient(circle at 20% 80%, #00d4ff 0%, transparent 50%), 
+                         radial-gradient(circle at 80% 20%, #007bff 0%, transparent 50%)`,
+        backgroundSize: '400px 400px'
       }}></div>
 
-      <Container className="py-5 position-relative" style={{ zIndex: 2 }}>
-        <Row className="justify-content-center align-items-center min-vh-100">
+      <Container className="py-5 position-relative d-flex align-items-center justify-content-center" style={{ zIndex: 2, minHeight: '100vh' }}>
+        <Row className="justify-content-center align-items-center w-100">
           <Col md={8} lg={6} xl={5}>
             <div ref={formRef} className="scroll-animate">
               {/* Header Section */}
@@ -90,14 +109,14 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                 <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{
                   width: '80px',
                   height: '80px',
-                  background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
+                  background: 'linear-gradient(135deg, #00d4ff, #007bff)',
                   borderRadius: '50%',
-                  boxShadow: '0 0 30px rgba(255, 107, 53, 0.5)'
+                  boxShadow: '0 0 30px rgba(0, 212, 255, 0.5)'
                 }}>
                   <Shield size={40} color="white" />
                 </div>
                 <h2 style={{
-                  color: '#ff6b35',
+                  color: '#00d4ff',
                   fontWeight: 'bold',
                   marginBottom: '0.5rem'
                 }}>Admin Access</h2>
@@ -109,10 +128,10 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
               {/* Login Card */}
               <Card style={{
                 background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 107, 53, 0.2)',
+                border: '1px solid rgba(0, 212, 255, 0.2)',
                 borderRadius: '20px',
                 backdropFilter: 'blur(20px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+                boxShadow: '0 8px 32px rgba(0, 212, 255, 0.1)'
               }}>
                 <Card.Body className="p-5">
                   {error && (
@@ -130,22 +149,22 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                   )}
 
                   <Form onSubmit={handleSubmit}>
-                    {/* Name Field */}
+                    {/* Email Field */}
                     <Form.Group className="mb-4">
-                      <Form.Label style={{ color: '#ff6b35', fontWeight: '500' }}>
+                      <Form.Label style={{ color: '#00d4ff', fontWeight: '500' }}>
                         <User size={18} className="me-2" />
-                        Admin Name
+                        Admin Email
                       </Form.Label>
                       <Form.Control
-                        type="text"
-                        name="name"
-                        value={formData.name}
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
                         required
-                        placeholder="Enter your admin name"
+                        placeholder="Enter your admin email"
                         style={{
                           background: 'rgba(255, 255, 255, 0.1)',
-                          border: '2px solid rgba(255, 107, 53, 0.3)',
+                          border: '2px solid rgba(0, 212, 255, 0.3)',
                           borderRadius: '12px',
                           color: 'white',
                           padding: '12px 20px',
@@ -157,7 +176,7 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
 
                     {/* Password Field */}
                     <Form.Group className="mb-4">
-                      <Form.Label style={{ color: '#ff6b35', fontWeight: '500' }}>
+                      <Form.Label style={{ color: '#00d4ff', fontWeight: '500' }}>
                         <Lock size={18} className="me-2" />
                         Password
                       </Form.Label>
@@ -172,7 +191,7 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                           autoComplete="current-password"
                           style={{
                             background: 'rgba(255, 255, 255, 0.1)',
-                            border: '2px solid rgba(255, 107, 53, 0.3)',
+                            border: '2px solid rgba(0, 212, 255, 0.3)',
                             borderRadius: '12px',
                             color: 'white',
                             padding: '12px 50px 12px 20px',
@@ -205,13 +224,13 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                       className="w-100 mb-4"
                       disabled={loading}
                       style={{
-                        background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
+                        background: 'linear-gradient(135deg, #00d4ff, #007bff)',
                         border: 'none',
                         borderRadius: '12px',
                         padding: '14px',
                         fontSize: '16px',
                         fontWeight: '600',
-                        boxShadow: '0 4px 15px rgba(255, 107, 53, 0.3)',
+                        boxShadow: '0 4px 15px rgba(0, 212, 255, 0.3)',
                         transition: 'all 0.3s ease'
                       }}
                     >
@@ -238,7 +257,7 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                         className="p-0"
                         onClick={() => navigate('/admin-signup')}
                         style={{
-                          color: '#ff6b35',
+                          color: '#00d4ff',
                           textDecoration: 'none',
                           fontWeight: '500'
                         }}

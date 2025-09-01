@@ -20,7 +20,7 @@ router.post('/contact', async (req, res) => {
                   service: 'gmail',
                   auth: {
                         user: process.env.EMAIL_USER || 'veyg.notification@gmail.com',
-                        pass: process.env.EMAIL_PASS || 'your-app-password' // Use app password for Gmail
+                        pass: process.env.EMAIL_PASS
                   }
             })
 

@@ -97,24 +97,47 @@ const SponsorSlider = () => {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        opacity: 0.03,
+                        opacity: 0.05,
                         backgroundImage: `radial-gradient(circle at 25% 25%, #00d4ff 0%, transparent 50%), 
                                          radial-gradient(circle at 75% 75%, #007bff 0%, transparent 50%)`,
-                        backgroundSize: '400px 400px',
-                  }} lg={10}></div>
+                        backgroundSize: '600px 600px',
+                        animation: 'float 20s ease-in-out infinite'
+                  }}></div>
 
-                  <Container lg={10} style={{ position: 'relative', zIndex: 1 }}>
+                  <Container style={{ position: 'relative', zIndex: 1 }}>
                         <div className="text-center mb-5">
+                              <div style={{
+                                    display: 'inline-block',
+                                    background: 'rgba(0, 212, 255, 0.1)',
+                                    border: '1px solid rgba(0, 212, 255, 0.3)',
+                                    borderRadius: '50px',
+                                    padding: '8px 20px',
+                                    marginBottom: '20px'
+                              }}>
+                                    <span style={{ color: '#00d4ff', fontSize: '0.9rem', fontWeight: '600' }}>
+                                      🤝 PARTNERSHIPS
+                                    </span>
+                              </div>
                               <h2 style={{
-                                    color: '#00d4ff',
-                                    fontWeight: 'bold',
+                                    background: 'linear-gradient(135deg, #00d4ff 0%, #007bff 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text',
+                                    fontWeight: '800',
                                     marginBottom: '1rem',
-                                    fontSize: '2.5rem'
+                                    fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                                    letterSpacing: '-0.02em'
                               }}>
                                     Our Sponsors
                               </h2>
-                              <p style={{ color: '#94a3b8', fontSize: '1.2rem' }}>
-                                    Proudly supported by industry leaders
+                              <p style={{ 
+                                    color: 'rgba(255, 255, 255, 0.8)', 
+                                    fontSize: '1.3rem',
+                                    maxWidth: '600px',
+                                    margin: '0 auto',
+                                    lineHeight: '1.6'
+                              }}>
+                                    Proudly supported by industry leaders driving innovation and excellence
                               </p>
                         </div>
 
@@ -174,6 +197,7 @@ const SponsorSlider = () => {
                   </Container>
 
                   <style>{`
+        
         /* Embla Carousel Styles */
         .sponsors-carousel-container {
           position: relative;

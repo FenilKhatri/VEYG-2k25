@@ -98,7 +98,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
         expanded={expanded}
         className={`app-navbar ${scrolled ? "scrolled" : ""}`}
       >
-        <Container fluid="lg" className="d-flex align-items-center justify-content-between">
+        <Container fluid className="d-flex align-items-center justify-content-between m-3">
           {/* Logo Only */}
           <Navbar.Brand as={Link} to="/" className="brand d-flex align-items-center">
             <img

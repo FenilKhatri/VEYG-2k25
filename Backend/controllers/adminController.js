@@ -55,10 +55,10 @@ const adminRegister = async (req, res) => {
 // Admin Login
 const adminLogin = async (req, res) => {
   try {
-    const { name, password } = req.body
+    const { email, password } = req.body
 
-    // Find admin by name
-    const admin = await Admin.findOne({ name }).select('+password')
+    // Find admin by email
+    const admin = await Admin.findOne({ email }).select('+password')
     if (!admin) {
       return errorResponse(res, 401, 'Invalid credentials')
     }

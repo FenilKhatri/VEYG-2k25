@@ -14,9 +14,9 @@ const AboutUs = () => {
 
       {/* Main Content */}
       <div className="about-content-section">
-        <Container>
-          <Row className="justify-content-center">
-            <Col lg={10}>
+        <Container fluid className="px-0">
+          <Row className="justify-content-center mx-0">
+            <Col xs={12} className="px-4">
               {/* Mission Statement */}
               <div className="mission-card">
                 <div className="card-header">
@@ -106,48 +106,48 @@ const AboutUs = () => {
                 {/* Coordinators */}
                 <div className="team-category">
                   <h3 className="team-category-title">Event Coordinators</h3>
-                  <div className="team-grid">
-                    <div className="team-card">
-                      <div className="team-member-avatar">
-                        <img src="https://www.saffrony.ac.in/media/4258/kunal-sir.jpg" alt="Prof. Kunalsinh Kathia" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                  <div className="coordinator-grid">
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <img src="https://www.saffrony.ac.in/media/4258/kunal-sir.jpg" alt="Prof. Kunalsinh Kathia" />
                       </div>
-                      <div className="team-member-info">
-                        <h4>Prof. Kunalsinh Kathia</h4>
-                        <p className="team-member-role">Faculty Coordinator</p>
-                        <p className="team-member-dept">Mechnaical Department</p>
-                      </div>
-                    </div>
-
-                    <div className="team-card">
-                      <div className="team-member-avatar">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFa8i8irJYNO0OCUsUiydH3Tcq0q0yMVH3wg&s" alt="Prof. Yogesh Kakadiya" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                      </div>
-                      <div className="team-member-info">
-                        <h4>Prof. Mitul Patel</h4>
-                        <p className="team-member-role">Technical Coordinator</p>
-                        <p className="team-member-dept">Electrical Department</p>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Prof. Kunalsinh Kathia</h4>
+                        <p className="coordinator-role">Faculty Coordinator</p>
+                        <p className="coordinator-dept">Mechanical Department</p>
                       </div>
                     </div>
 
-                    <div className="team-card">
-                      <div className="team-member-avatar">
-                        <img src="https://media.licdn.com/dms/image/v2/C4D03AQEPhAA4SQYmeQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1663781191017?e=1759363200&v=beta&t=buB1_gxyXaMjg8rr7M72TFIXsmGfhcP_VEMH2vuj02o" alt="Prof. Twinkle Verma" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFa8i8irJYNO0OCUsUiydH3Tcq0q0yMVH3wg&s" alt="Prof. Yogesh Kakadiya" />
                       </div>
-                      <div className="team-member-info">
-                        <h4>Prof. Twinkle Verma</h4>
-                        <p className="team-member-role">Event Coordinator</p>
-                        <p className="team-member-dept">Computer Engineering Department</p>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Prof. Yogesh Kakadiya</h4>
+                        <p className="coordinator-role">Technical Coordinator</p>
+                        <p className="coordinator-dept">Electrical Department</p>
                       </div>
                     </div>
 
-                    <div className="team-card">
-                      <div className="team-member-avatar">
-                        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFEMM-wkBAz9g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694598648255?e=2147483647&v=beta&t=8SaIe57cXIeCjfFlB9LgP65Lv_E2ZypsjFn4lJXzZ7U" alt="Prof. Nainsi Soni" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <img src="https://media.licdn.com/dms/image/v2/C4D03AQEPhAA4SQYmeQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1663781191017?e=1759363200&v=beta&t=buB1_gxyXaMjg8rr7M72TFIXsmGfhcP_VEMH2vuj02o" alt="Prof. Twinkle Verma" />
                       </div>
-                      <div className="team-member-info">
-                        <h4>Prof. Nainsi Soni</h4>
-                        <p className="team-member-role">Event Coordinator</p>
-                        <p className="team-member-dept">Computer Engineering Department</p>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Prof. Twinkle Verma</h4>
+                        <p className="coordinator-role">Event Coordinator</p>
+                        <p className="coordinator-dept">Computer Engineering Department</p>
+                      </div>
+                    </div>
+
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFEMM-wkBAz9g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694598648255?e=2147483647&v=beta&t=8SaIe57cXIeCjfFlB9LgP65Lv_E2ZypsjFn4lJXzZ7U" alt="Prof. Nainsi Soni" />
+                      </div>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Prof. Nainsi Soni</h4>
+                        <p className="coordinator-role">Event Coordinator</p>
+                        <p className="coordinator-dept">Computer Engineering Department</p>
                       </div>
                     </div>
                   </div>
@@ -156,28 +156,97 @@ const AboutUs = () => {
                 {/* Development Team */}
                 <div className="team-category">
                   <h3 className="team-category-title">Development Team</h3>
-                  <div className="team-grid">
-                    <div className="team-card">
-                      <div className="team-member-info">
-                        <h4>Fenil Khatri</h4>
+                  
+                  <div className="coordinator-grid">
+                    {/* Team Member 1 */}
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(135deg, #00d4ff, #007bff)',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '2rem',
+                          fontWeight: 'bold',
+                          color: 'white'
+                        }}>
+                          FK
+                        </div>
+                      </div>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Fenil Khatri</h4>
                       </div>
                     </div>
 
-                    <div className="team-card">
-                      <div className="team-member-info">
-                        <h4>Divyesh Khubavat</h4>
+                    {/* Team Member 2 */}
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '2rem',
+                          fontWeight: 'bold',
+                          color: 'white'
+                        }}>
+                          DK
+                        </div>
+                      </div>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Divyesh Kubavat</h4>
                       </div>
                     </div>
 
-                    <div className="team-card">
-                      <div className="team-member-info">
-                        <h4>Vraj Fadiya</h4>
+                    {/* Team Member 3 */}
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '2rem',
+                          fontWeight: 'bold',
+                          color: 'white'
+                        }}>
+                          VF
+                        </div>
+                      </div>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Vraj Fadiya</h4>
                       </div>
                     </div>
 
-                    <div className="team-card">
-                      <div className="team-member-info">
-                        <h4>Riddhi Sadhu</h4>
+                    {/* Team Member 4 */}
+                    <div className="coordinator-card">
+                      <div className="coordinator-avatar">
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          background: 'linear-gradient(135deg, #ec4899, #be185d)',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '2rem',
+                          fontWeight: 'bold',
+                          color: 'white'
+                        }}>
+                          RS
+                        </div>
+                      </div>
+                      <div className="coordinator-info">
+                        <h4 className="coordinator-name">Riddhi Sadhu</h4>
                       </div>
                     </div>
                   </div>
@@ -454,77 +523,67 @@ const AboutUs = () => {
           display: inline-block;
         }
         
-        .team-grid {
+        .coordinator-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 25px;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 30px;
         }
-        
-        @media (max-width: 1200px) {
-          .team-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        
-        .team-card {
+
+        .coordinator-card {
           background: rgba(255, 255, 255, 0.05);
           border: 1px solid rgba(255, 255, 255, 0.1);
           border-radius: 16px;
-          padding: 25px;
+          padding: 30px;
+          text-align: center;
           transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          gap: 20px;
         }
-        
-        .team-card:hover {
-          border-color: rgba(0, 212, 255, 0.3);
-          transform: translateY(-5px);
-          box-shadow: 0 15px 35px rgba(0, 212, 255, 0.1);
+
+        .coordinator-card:hover {
+          border-color: rgba(0, 212, 255, 0.4);
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
         }
-        
-        .team-member-avatar {
-          background: linear-gradient(45deg, #007bff, #00d4ff);
-          width: 70px;
-          height: 70px;
+
+        .coordinator-avatar {
+          width: 120px;
+          height: 120px;
           border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          flex-shrink: 0;
+          margin: 0 auto 20px;
+          overflow: hidden;
+          border: 3px solid rgba(0, 212, 255, 0.3);
+          padding: 5px;
+          background: linear-gradient(45deg, #007bff, #00d4ff);
         }
-        
-        .team-member-info {
-          flex-grow: 1;
+
+        .coordinator-avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
         }
-        
-        .team-member-info h4 {
+
+        .coordinator-name {
           color: white;
-          font-size: 1.2rem;
+          font-size: 1.3rem;
           font-weight: 700;
-          margin-bottom: 5px;
+          margin-bottom: 8px;
         }
-        
-        .team-member-role {
+
+        .coordinator-role {
           color: #00d4ff;
-          font-size: 0.9rem;
+          font-size: 1rem;
           font-weight: 600;
-          margin-bottom: 5px;
+          margin-bottom: 8px;
         }
-        
-        .team-member-dept {
+
+        .coordinator-dept {
           color: rgba(255, 255, 255, 0.7);
-          font-size: 0.85rem;
+          font-size: 0.9rem;
           margin: 0;
         }
-        
+
         @media (max-width: 768px) {
           .stats-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .team-grid {
             grid-template-columns: 1fr;
           }
         }

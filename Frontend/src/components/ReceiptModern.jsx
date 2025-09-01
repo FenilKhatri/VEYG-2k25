@@ -96,13 +96,13 @@ export default function VEYGReceipt({ show, onHide, game }) {
             .logo-container {
               width: 80px;
               height: 80px;
-              background: rgba(255,255,255,0.15);
-              border-radius: 16px;
+              background: #ffffff;
+              border-radius: 8px;
               display: flex;
               align-items: center;
               justify-content: center;
-              backdrop-filter: blur(10px);
-              border: 1px solid rgba(255,255,255,0.2);
+              padding: 8px;
+              border: 1px solid rgba(255,255,255,0.4);
               overflow: hidden;
             }
             .logo-image {
@@ -354,22 +354,22 @@ export default function VEYGReceipt({ show, onHide, game }) {
     <div className="tech-header">
       <div className="header-content">
         {/* Left Logo - College Logo */}
-        <div className="logo-container">
-          {/* Replace with actual college logo image */}
-          <img
-            src="/images/College-logo.png"
-            alt="College Logo"
-            className="logo-image"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-          <div className="logo-placeholder" style={{ display: 'none' }}>
-            <Building2 size={24} />
-            <span>College Logo</span>
+        <div className="logo-container" style={{ background: '#ffffff' }}>
+            {/* Replace with actual college logo image */}
+            <img
+              src="/images/College-logo-receipt.jpg"
+              alt="College Logo"
+              className="logo-image"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+            <div className="logo-placeholder" style={{ display: 'none' }}>
+              <Building2 size={24} />
+              <span>College Logo</span>
+            </div>
           </div>
-        </div>
 
         {/* Center Title */}
         <div className="center-title">
@@ -382,22 +382,22 @@ export default function VEYGReceipt({ show, onHide, game }) {
         </div>
 
         {/* Right Logo - Web/Event Logo */}
-        <div className="logo-container">
-          {/* Replace with actual web/event logo image */}
-          <img
-            src="/images/Web-logo.png"
-            alt="VEYG Logo"
-            className="logo-image"
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'flex';
-            }}
-          />
-          <div className="logo-placeholder" style={{ display: 'none' }}>
-            <Globe size={24} />
-            <span>VEYG Logo</span>
+        <div className="logo-container" style={{ background: '#ffffff' }}>
+            {/* Replace with actual web/event logo image */}
+            <img
+              src="/images/Web-logo.png"
+              alt="VEYG Logo"
+              className="logo-image"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+            <div className="logo-placeholder" style={{ display: 'none' }}>
+              <Globe size={24} />
+              <span>VEYG Logo</span>
+            </div>
           </div>
-        </div>
       </div>
     </div>
   )

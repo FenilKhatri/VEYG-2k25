@@ -58,9 +58,9 @@ const ContactUs = () => {
 
       {/* Main Content */}
       <div className="contact-content-section">
-        <Container>
-          <Row className="justify-content-center">
-            <Col lg={10}>
+        <Container fluid className="px-0">
+          <Row className="justify-content-center mx-0">
+            <Col xs={12} className="px-4">
               <div className="contact-grid">
                 {/* Contact Form */}
                 <div className="contact-form-card">

@@ -136,62 +136,51 @@ const Guidelines = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-slate-900">
       <PageHeroSection
         title="Event Guidelines"
-        subtitle="Essential Rules & Regulations"
-        icon={Shield}
-        description="Essential guidelines for participants to ensure fair play and smooth event execution. Read carefully before registering."
+        description="Important information and rules for all participants"
+        bgImage="https://images.unsplash.com/photo-1519834089826-3e6d8f5e2c3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
       />
-
-      <div
-        style={{
-          background:
-            "linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)",
-          minHeight: "100vh",
-          margin: 0,
-          padding: 0,
-        }}
-      >
-        <Container style={{ paddingTop: "40px", paddingBottom: "60px" }}>
-          {/* Basic Guidelines */}
-          <Card
-            className="mb-5"
+      <Container className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <Card
+          className="mb-5"
+          style={{
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "15px",
+            backdropFilter: "blur(10px)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <Card.Header
             style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "15px",
-              backdropFilter: "blur(10px)",
-              transition: "all 0.3s ease",
+              background: "linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)",
+              padding: "40px 0",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "15px 15px 0 0",
+              textAlign: "center",
             }}
           >
-            <Card.Header
+            <Card.Title
               style={{
-                background: "rgba(0, 234, 255, 0.1)",
-                border: "none",
-                borderRadius: "15px 15px 0 0",
-                textAlign: "center",
+                color: "#00d4ff",
+                fontSize: "1.5rem",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                flexWrap: "wrap",
               }}
             >
-              <Card.Title
-                style={{
-                  color: "#00d4ff",
-                  fontSize: "1.5rem",
-                  margin: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Shield size={24} />
-                Basic Guidelines
-              </Card.Title>
-              <Card.Text style={{ color: "#94a3b8", margin: "10px 0 0 0" }}>
-                Essential rules and regulations for all participants
-              </Card.Text>
-            </Card.Header>
+              <Shield size={24} />
+              Basic Guidelines
+            </Card.Title>
+            <Card.Text style={{ color: "#94a3b8", margin: "10px 0 0 0" }}>
+              Essential rules and regulations for all participants
+            </Card.Text>
+          </Card.Header>
             <Card.Body style={{ padding: "28px" }}>
               <div style={{ display: "grid", gap: "18px" }}>
                 {[
@@ -516,53 +505,6 @@ const Guidelines = () => {
           </Card>
         </Container>
       </div>
-
-      {/* Styles */}
-      <style>{`
-        /* ===== Desktop timeline ===== */
-        .timeline-line,
-        .timeline-dot {
-          display: block;
-        }
-        .timeline-content { }
-
-        /* ===== Mobile layout tweaks ===== */
-        @media (max-width: 768px) {
-          /* Hide desktop timeline chrome */
-          .timeline-line,
-          .timeline-dot {
-            display: none !important;
-          }
-
-          .timeline-card { padding: 0 !important; }
-          .timeline-content {
-            width: 100% !important;
-            margin-left: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-          }
-
-          .timeline-item {
-            flex-direction: column !important;
-            align-items: stretch !important;
-          }
-
-          .timeline-card .card-body {
-            padding: 24px 18px !important;
-          }
-
-          .timeline-content .card { margin: 0; }
-          .timeline-content .card-header { padding: 14px 18px !important; }
-          .timeline-content .card-body { padding: 12px 18px !important; }
-          .timeline-content .card-title { font-size: 1rem !important; }
-
-        /* Extra small */
-        @media (max-width: 576px) {
-          .mobile-indicator-wrap { bottom: 10px; }
-          .indicator-dot { width: 20px; }
-        }
-      `}</style>
-    </>
   );
 };
 
