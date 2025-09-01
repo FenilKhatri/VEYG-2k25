@@ -71,14 +71,11 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json()
         const registrations = data.registrations || data.data?.registrations || data.data || []
-        console.log('Fetched registrations:', registrations) // Debug log
         setRegisteredGames(Array.isArray(registrations) ? registrations : [])
       } else {
-        console.warn('Registration fetch failed with status:', response.status)
         // Don't clear registrations on API failure
       }
     } catch (error) {
-      console.error('Failed to fetch user registrations:', error)
       // Don't clear registrations on network error
     }
   }

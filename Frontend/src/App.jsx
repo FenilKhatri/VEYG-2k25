@@ -60,10 +60,8 @@ const App = () => {
 
   const testBackendConnection = useCallback(async () => {
     try {
-      const response = await apiService.healthCheck()
-      console.log('Backend connection successful:', response)
+      await apiService.healthCheck()
     } catch (error) {
-      console.error('Backend connection failed:', error)
       showToast('Backend server connection failed. Some features may not work properly.', 'warning')
     }
   }, [showToast])

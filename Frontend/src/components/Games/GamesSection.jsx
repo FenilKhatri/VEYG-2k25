@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Nav, Tab } from 'react-bootstrap'
-import GamesGrid from './GamesGrid'
+import { Container, Row, Col } from 'react-bootstrap'
+import { motion } from 'framer-motion'
+import GameCard from './GameCard'
 import apiService from '../../services/api'
 
 const GamesSection = ({ 
@@ -22,9 +23,9 @@ const GamesSection = ({
 
   const fetchRegisteredGames = async () => {
     try {
-      const response = await apiService.getRegisteredGames(user.id)
+      const response = await apiService.getMyRegistrations()
       if (response.success) {
-        setRegisteredGames(response.data || [])
+        setRegisteredGames(response.data?.registrations || [])
       }
     } catch (error) {
       console.error('Error fetching registered games:', error)
@@ -41,12 +42,15 @@ const GamesSection = ({
     try {
       const response = await apiService.registerForGame({
         gameId: game.id,
-        userId: user.id
+        gameName: game.name,
+        gameDay: game.day,
+        registrationType: 'individual',
+        totalAmount: game.baseFee
       })
 
       if (response.success) {
         showToast?.(`Successfully registered for ${game.name}!`, 'success')
-        await fetchRegisteredGames() // Refresh registered games
+        await fetchRegisteredGames()
       } else {
         showToast?.(response.message || 'Registration failed', 'error')
       }
@@ -58,108 +62,142 @@ const GamesSection = ({
     }
   }
 
+  // Helper functions for registration state
+  const isRegisteredForGame = (gameId) => {
+    return registeredGames.some(reg => reg.gameId === gameId)
+  }
+
+  const hasRegisteredForDay = (day) => {
+    return registeredGames.some(reg => reg.gameDay === day || reg.gameDay === `day${day}`)
+  }
+
+  const getRegisteredGameForDay = (day) => {
+    return registeredGames.find(reg => reg.gameDay === day || reg.gameDay === `day${day}`)
+  }
+
+  const renderGameSection = (games, dayLabel) => (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7 }}
+      viewport={{ once: true }}
+      className="mb-5"
+    >
+      {/* Title */}
+      <h3
+        className="text-center fw-bold mb-3"
+        style={{
+          fontSize: '2.2rem',
+          color: '#fff',
+          textShadow: '0 0 20px rgba(0, 234, 255, 0.7)'
+        }}
+      >
+        {dayLabel}: <span style={{ color: '#00d4ff' }}>Choose Your Challenge</span>
+      </h3>
+
+      {/* Subtext */}
+      <p
+        className="text-center text-light mb-4"
+        style={{
+          fontSize: '1.1rem',
+          maxWidth: '600px',
+          margin: '0 auto',
+          opacity: 0.85
+        }}
+      >
+        {games[0]?.name} <span style={{ color: '#00d4ff', fontWeight: 'bold' }}>OR</span> {games[1]?.name}
+      </p>
+
+      {/* Game Cards */}
+      <Row className="justify-content-center g-4">
+        {games.map((game) => {
+          const isThisGameRegistered = isRegisteredForGame(game.id)
+          const hasRegForDay = hasRegisteredForDay(game.day)
+          const registeredGameForDay = getRegisteredGameForDay(game.day)
+
+          return (
+            <Col
+              key={game.id}
+              xs={12}
+              sm={6}
+              md={6}
+              lg={5}
+              className="d-flex"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+                viewport={{ once: true }}
+                className="w-100"
+              >
+                <GameCard
+                  game={game}
+                  userId={user?.id}
+                  isThisGameRegistered={isThisGameRegistered}
+                  hasRegisteredForDay={hasRegForDay}
+                  canRegisterForDay={!hasRegForDay}
+                  registrationStatus={game.registrationStatus || "available"}
+                  isRegistrationExpired={game.isRegistrationExpired || false}
+                  registeredGameName={registeredGameForDay?.gameName}
+                  registeredGameId={registeredGameForDay?.gameId}
+                  onRegister={handleRegister}
+                />
+              </motion.div>
+            </Col>
+          )
+        })}
+      </Row>
+    </motion.div>
+  )
+
   return (
-    <section style={{
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-      minHeight: '100vh',
-      paddingTop: '80px',
-      paddingBottom: '80px'
-    }}>
+    <section
+      style={{
+        background: 'linear-gradient(135deg, #050c1f 0%, #0f172a 50%, #1e293b 100%)',
+        minHeight: '100vh',
+        paddingTop: '80px',
+        paddingBottom: '80px'
+      }}
+    >
       <Container>
-        <div className="text-center mb-5">
-          <h2 className="text-white fw-bold mb-3" style={{ fontSize: '3rem' }}>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-5"
+        >
+          <h2
+            className="fw-bold mb-3"
+            style={{
+              fontSize: '3rem',
+              color: '#fff',
+              textShadow: '0 0 25px rgba(0, 234, 255, 0.8)'
+            }}
+          >
             Technical <span style={{ color: '#00d4ff' }}>Competitions</span>
           </h2>
-          <p className="text-light fs-5 mb-0" style={{ maxWidth: '600px', margin: '0 auto' }}>
-            Challenge yourself in cutting-edge technical competitions designed to test your skills
+          <p
+            className="text-light fs-5 mb-4"
+            style={{
+              maxWidth: '600px',
+              margin: '0 auto',
+              opacity: 0.85
+            }}
+          >
+            Choose one game per day. Register for your preferred competition.
           </p>
-        </div>
+        </motion.div>
 
-        <Tab.Container defaultActiveKey="day1">
-          <Row className="justify-content-center mb-4">
-            <Col xs="auto">
-              <Nav 
-                variant="pills" 
-                className="nav-pills-custom"
-                style={{
-                  background: 'rgba(15, 23, 42, 0.8)',
-                  borderRadius: '50px',
-                  padding: '8px',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(0, 212, 255, 0.2)'
-                }}
-              >
-                <Nav.Item>
-                  <Nav.Link 
-                    eventKey="day1"
-                    style={{
-                      borderRadius: '40px',
-                      padding: '12px 24px',
-                      fontWeight: '600',
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    Day 1 Games ({day1Games.length})
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link 
-                    eventKey="day2"
-                    style={{
-                      borderRadius: '40px',
-                      padding: '12px 24px',
-                      fontWeight: '600',
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    Day 2 Games ({day2Games.length})
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-            </Col>
-          </Row>
+        {/* Day 1 Games */}
+        {renderGameSection(day1Games, "Day 1")}
 
-          <Tab.Content>
-            <Tab.Pane eventKey="day1">
-              <GamesGrid
-                games={day1Games}
-                userId={user?.id}
-                registeredGames={registeredGames}
-                onRegister={handleRegister}
-              />
-            </Tab.Pane>
-            <Tab.Pane eventKey="day2">
-              <GamesGrid
-                games={day2Games}
-                userId={user?.id}
-                registeredGames={registeredGames}
-                onRegister={handleRegister}
-              />
-            </Tab.Pane>
-          </Tab.Content>
-        </Tab.Container>
+        {/* Day 2 Games */}
+        {renderGameSection(day2Games, "Day 2")}
       </Container>
-
-      <style>{`
-        .nav-pills-custom .nav-link {
-          color: #94a3b8;
-          background: transparent;
-          border: none;
-        }
-        
-        .nav-pills-custom .nav-link:hover {
-          color: #00d4ff;
-          background: rgba(0, 212, 255, 0.1);
-        }
-        
-        .nav-pills-custom .nav-link.active {
-          color: white;
-          background: linear-gradient(135deg, #00d4ff, #007bff);
-          box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-        }
-      `}</style>
     </section>
   )
 }
 
-export default GamesSection
+export default GamesSection;

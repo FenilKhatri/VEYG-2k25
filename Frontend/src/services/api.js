@@ -31,22 +31,17 @@ class ApiService {
     }
 
     try {
-      console.log(`Making API request to: ${url}`)
       const response = await fetch(url, config)
       clearTimeout(timeoutId)
-
-      console.log(`API response status: ${response.status}`)
 
       // Check if response is HTML (error page) instead of JSON
       const contentType = response.headers.get('content-type')
       if (!contentType || !contentType.includes('application/json')) {
         const text = await response.text()
-        console.error('Non-JSON response:', text)
         throw new Error(`Server returned invalid response (${response.status}). The backend may be down or the URL may be incorrect.`)
       }
 
       const data = await response.json()
-      console.log('API response data:', data)
 
       if (!response.ok) {
         // Handle different error response formats
@@ -79,7 +74,6 @@ class ApiService {
       return data
     } catch (error) {
       clearTimeout(timeoutId)
-      console.error(`API request failed: ${endpoint}`, error)
 
       if (error.name === 'AbortError') {
         throw new Error('Request timed out. Please check your connection and try again.')
@@ -188,6 +182,10 @@ class ApiService {
   }
 
   async getDayWiseStats() {
+    return this.request('/game-registrations/day-wise-stats')
+  }
+
+  async getPublicStats() {
     return this.request('/game-registrations/day-wise-stats')
   }
 

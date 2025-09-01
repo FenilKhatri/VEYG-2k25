@@ -663,6 +663,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
         <Modal.Header
           closeButton
           closeVariant="white"
+          onHide={handleClose}
           style={{
             background: 'linear-gradient(135deg, #007bff, #00d4ff)',
             border: 'none',

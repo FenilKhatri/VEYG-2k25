@@ -7,15 +7,12 @@ export const games = [
     day: 1,
     classification: "Technical",
     description: "A coding-based cricket game where players score runs by solving coding problems. Correct answers earn runs, while mistakes can cost wickets, making coding fun and competitive.",
-    image: null,
+    image: '/Logo/algo cricket.jpg',
     logo: "🧠",
-    baseFee: 150,
+    baseFee: 60,
     registrationType: "team",
     minTeamSize: 3,
     maxTeamSize: 3,
-    rules: [
-      "",
-    ],
     estimatedTime: "1-2 hours",
   },
   {
@@ -24,27 +21,13 @@ export const games = [
     gameCode: "BGo",
     day: 1,
     classification: "Technical",
-    description: "A two-round challenge: first, a rapid-fire buzzer quiz with tech, math, and general knowledge questions; second, an Alphabet Bingo round where letters map to numbers. Speed, memory, and strategy decide the winners.",
-    image: null,
+    description: "A two-round challenge: first, a rapid-fire buzzer quiz with tech, math, and general knowledge questions; second, an Alphabet Bingo round where letters map to numbers. Speed, memory, and strategy decide the winners. Student from any semester may participate in this event",
+    image: '/Logo/brain go.jpg',
     logo: "💻",
-    baseFee: 200,
-    registrationType: "both", // Allows both individual and team registration
-    minTeamSize: 1,
+    baseFee: 60,
+    registrationType: "team",
+    minTeamSize: 3,
     maxTeamSize: 3,
-    rules: [
-      "Team or Individual: Team or solo",
-      "If team (Mention number of participants): 3",
-      "Which semester can participate in: 1st Sem mostly but open for all.",
-      "Total Rounds: 2",
-      "Total time: (per Round + Coordination + Closing): 2 Hour +15 mins",
-      "Round 1: A fast-paced round where teams compete to answer general awareness,  maths and tech-related rapid-fire questions using the buzzer. The first team to buzz gets the chance to answer — correct answers earn points, while wrong ones lead to a small penalty. These rounds test speed, accuracy, and presence of mind.",
-      "Round 2: Teams receive a Bingo sheet (numbers 1–25). The host calls out the Alphabet and teams must quickly convert and mark them if present. To make it more challenging, some binary calls come with a small puzzle or riddle.",
-      `Rule & Guidelines: (Point wise)
-        1.Each correct answer = +10 points
-        2.Wrong answer = –5 points
-        3.Pass allowed once per team
-      `,
-    ],
     estimatedTime: "2-3 Hours",
   },
   // Day 2 Games
@@ -54,38 +37,13 @@ export const games = [
     gameCode: "L2L",
     day: 2,
     classification: "Technical",
-    description: "A team-based event testing observation and logic through creative tasks, quick recognition, and coding-based problem-solving.",
-    image: null,
+    description: " Logo2Logic is a fun yet challenging event designed to test both your observation and logical thinking skills. Participants will work in teams of two and tackle exciting tasks that blend creativity with problem-solving. From quick recognition to applying coding knowledge, this game ensures a mix of thrill, intellect, and teamwork.",
+    image: '/Logo/logic 2 logic.jpg',
     logo: "🤖",
-    baseFee: 300,
+    baseFee: 60,
     registrationType: "team",
-    minTeamSize: 3,
-    maxTeamSize: 3,
-    rules: [
-      "Team: Team or Individual",
-      "If team (Mention number of participants): 4",
-      "Total time : (per Round + Coordination + Closing): 2 Hours",
-      `Description of rounds:
-        Round – 1 (Logo Identification) -
-          First the logos are shown on the main screen for 10 seconds then any 2 member form team selects the logo and gives the speech on stage.
-          Setup: A presentation or PC slideshow displays 20 zoomed-in, blurred, or partial images of logos.
-          Logos include:
-          • Technology brands (Microsoft, Intel, Python, Arduino, etc.)
-          • Agricultural companies/tools (John Deere, Mahindra Tractors, seed
-          brands) for the Vegy theme.
-          • Each image is displayed for 10 seconds, then automatically moves to
-          the next.
-          • Teams must identify the correct brand or technology from the image.
-          • Once a slide passes, it cannot be shown again
-          • Logo identifying - +5 points , speech - out of 10
-
-        Round – 2 (Rebuilder) -
-          Codes that have missing logic line and the participants have to write the code.
-          • 15 pc with the missing codes in file.
-          • Correct fix = +10 points.
-          • Wrong/incorrect submission = 0 points (no negative so teams attempt).
-      `,
-    ],
+    minTeamSize: 4,
+    maxTeamSize: 4,
     estimatedTime: "2 hours",
   },
   {
@@ -94,43 +52,13 @@ export const games = [
     gameCode: "BCK",
     day: 2,
     classification: "Technical",
-    description: "A coding challenge where players solve problems on a locked screen, then hunt QR codes to unlock the hidden key—mixing logic, coding, and code-breaking.",
-    image: null,
+    description: "An interesting challenge for coding on blind screen with round one and two with treasure hunt.A coding challenge where players solve problems on a locked screen, then hunt QR codes to unlock the hidden key—mixing logic, coding, and code-breaking.",
+    image: '/Logo/blind coding to key.jpg',
     logo: "🧠",
-    baseFee: 250,
-    registrationType: "both", // Allows both individual and team registration
-    minTeamSize: 1,
+    baseFee: 60,
+    registrationType: "team",
+    minTeamSize: 2,
     maxTeamSize: 2,
-    rules: [
-      "Which semester can participate in: 3rd, 5th and 7th",
-      "Total Rounds: 2 Rounds",
-      "Team or Individual: Team or solo",
-      `Time
-        Round 1: 25 minutes
-        Round 2: 50 minutes
-      `,
-      "Total: 1 hour 30 minutes",
-      "Round 1: Participants face coding problems in a strict exam-like setup. The screen stays black & locked to avoid cheating and distractions. Players must rely on pure logic and coding skill to succeed",
-      "Round 2: Players scan QR codes hidden around the area to collect characters. They must arrange them correctly to form a secret key. This round test speed, observation, and puzzle-solving ability.",
-      "Venue: Labs and Seminar Hall",
-      `Description of rounds:
-        Round – 1 -
-          •Duration: 20 minutes per player.
-          •Locked Screen: Players cannot access their editor while the black screen is active.
-          •Automatic Unlocks: Every 5 minutes, the screen unlocks for 30
-          •seconds so players can check and continue their code.
-          •End of Game: After 20 minutes, the system ends automatically, and the screen unlocks permanently.
-          •Permanent Unlock / End Game :Admin can fully unlock the screen or stop the game at any time.
-          •Timer Reset: Admin can reset the timer in case of technical issues.
-
-        Round – 2 -
-          •Duration: 45 minutes per player
-          •Players must search for and scan QR codes hidden around the venue.
-          •Each QR code reveals a character/letter. Collect all characters.
-          •Arrange the collected characters into the correct password/key.
-          •The first player/team to submit the correct key wins the round.
-      `,
-    ],
     estimatedTime: "1-2 hour",
   },
 ]

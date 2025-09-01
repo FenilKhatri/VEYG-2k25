@@ -1,58 +1,190 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Container, Card, Badge, Button } from "react-bootstrap";
-import { Calendar, Clock, MapPin, Shield } from "lucide-react";
+// Guidelines.jsx
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { Container, Card, Badge, Button, Form, Modal as RBModal } from "react-bootstrap";
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation, useDragControls } from "framer-motion";
+import { Calendar, Clock, MapPin, Shield, Search, Download, X, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import PageHeroSection from "../components/HeroSection/PageHeroSection";
 import { games } from "../data/gamesData";
 
+/**
+ * Guidelines.jsx
+ * - Large, feature-rich single-file component.
+ * - Paste into your React project as-is (adjust imports if required).
+ *
+ * Features:
+ *  - Animated intro + staggered guidelines
+ *  - Draggable timeline (horizontal on desktop, vertical on mobile)
+ *  - Progress rail + moving dot (motionValue)
+ *  - IntersectionObserver to set activeIndex
+ *  - Search & filter
+ *  - Day tabs and keyboard navigation
+ *  - Export (copy to clipboard / download JSON)
+ *  - Accessibility: ARIA attributes, focus handling, skip links
+ *  - Print-friendly styles
+ */
+
+/* -------------------------
+   Simple CSS-in-JS block
+   (You can move to CSS file if desired)
+   ------------------------- */
+const pageStyles = `
+.guidelines-root { background: #0b1220; color: #dbe6ee; min-height: 100vh; }
+.guidelines-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; }
+.guideline-item:hover { background: rgba(0,212,255,0.04); border-color: rgba(0,212,255,0.2); }
+.timeline-card { overflow: visible; }
+.timeline-line { position:absolute; left:50%; transform:translateX(-50%); width:4px; border-radius:3px; background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,234,255,0.25)); }
+.timeline-dot { width:24px; height:24px; border-radius:50%; background:#00d4ff; border:4px solid #0a0e1a; box-sizing:content-box; }
+.scroll-container { -webkit-overflow-scrolling: touch; }
+.sr-only { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+.timeline-horizontal { display:flex; gap:18px; align-items:center; padding:18px; }
+.timeline-horizontal .timeline-card-inner { min-width:320px; max-width:420px; }
+.progress-track { height:10px; background: rgba(255,255,255,0.04); border-radius:999px; position:relative; }
+.progress-dot { width:18px; height:18px; border-radius:50%; background:#00d4ff; position:absolute; top:50%; transform:translateY(-50%); box-shadow:0 0 12px rgba(0,234,255,0.25); }
+.timeline-item { position:relative; }
+.kbd { background:#08121a; border:1px solid rgba(255,255,255,0.03); padding:4px 8px; border-radius:6px; font-size:13px; }
+`;
+
+/* -------------------------
+   Motion variants
+   ------------------------- */
+const containerVariant = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { staggerChildren: 0.08, when: "beforeChildren" } },
+};
+
+const itemVariant = {
+  hidden: { opacity: 0, y: 18 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+};
+
+const dotPulse = {
+  idle: { scale: 1, boxShadow: "0 0 0px rgba(0,234,255,0.0)" },
+  active: { scale: 1.2, boxShadow: "0 0 24px rgba(0,234,255,0.4)" },
+};
+
+/* -------------------------
+   Helper small components
+   ------------------------- */
+const IconButton = ({ label, onClick, children, className = "" }) => (
+  <button
+    aria-label={label}
+    onClick={onClick}
+    className={`btn btn-sm btn-outline-light ${className}`}
+    style={{
+      display: "inline-flex",
+      gap: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      borderColor: "rgba(0,234,255,0.15)",
+    }}
+  >
+    {children}
+  </button>
+);
+
+/* -------------------------
+   Main component
+   ------------------------- */
 const Guidelines = () => {
-  const eventSchedule = [
-    {
-      day: "Day 1",
-      date: "15 September 2025",
-      games: [
-        { name: "Algo Cricket", venue: "Lab 1", gameId: 1 },
-        { name: "BrainGo", venue: "Seminar Hall", gameId: 2 },
-      ],
-    },
-    {
-      day: "Day 2",
-      date: "16 September 2025",
-      games: [
-        { name: "Logo2Logic", venue: "Lab 2", gameId: 3 },
-        { name: "Blind Code to Key", venue: "Lab 3 & Seminar Hall", gameId: 4 },
-      ],
-    },
-  ];
+  // --- Data / configuration ------------------------------------------------
+  // eventSchedule derived from `games` if available, else fallback sample data
+  const eventSchedule = useMemo(() => {
+    // try to map user's games by day if games data contains day/date fields,
+    // otherwise fallback to a small 2-day structure for demo
+    try {
+      if (Array.isArray(games) && games.length > 0) {
+        // crude grouping by day property if present, else split by index
+        if (games[0].day) {
+          const grouped = games.reduce((acc, g) => {
+            acc[g.day] = acc[g.day] || { day: g.day, date: g.date || "", games: [] };
+            acc[g.day].games.push({ name: g.name || g.title || `Game ${g.id}`, venue: g.venue || "TBA", gameId: g.id || g.gameId || -1 });
+            return acc;
+          }, {});
+          return Object.values(grouped);
+        } else {
+          // chunk into two-day example
+          const day1 = { day: "Day 1", date: "15 September 2025", games: [] };
+          const day2 = { day: "Day 2", date: "16 September 2025", games: [] };
+          games.forEach((g, i) => {
+            const target = i % 2 === 0 ? day1 : day2;
+            target.games.push({ name: g.name || g.title || `Game ${g.id}`, venue: g.venue || "TBA", gameId: g.id || g.gameId || i + 1 });
+          });
+          return [day1, day2];
+        }
+      }
+    } catch (e) {}
+    // fallback
+    return [
+      {
+        day: "Day 1",
+        date: "15 September 2025",
+        games: [
+          { name: "Algo Cricket", venue: "Lab 1", gameId: 1 },
+          { name: "BrainGo", venue: "Seminar Hall", gameId: 2 },
+        ],
+      },
+      {
+        day: "Day 2",
+        date: "16 September 2025",
+        games: [
+          { name: "Logo2Logic", venue: "Lab 2", gameId: 3 },
+          { name: "Blind Code to Key", venue: "Lab 3 & Seminar Hall", gameId: 4 },
+        ],
+      },
+    ];
+  }, []);
 
-  const getEstimatedTime = (gameId) => {
-    const game = games.find((g) => g.id === gameId);
-    return game ? game.estimatedTime : "2 hours";
-  };
-
-  // --- Build a flat array of games for indexing/scroll indicator ---
-  const flatGames = eventSchedule.flatMap((day, di) =>
-    day.games.map((g, gi) => ({
-      ...g,
-      day: day.day,
-      date: day.date,
-      _index: di * 2 + gi, // (2 games/day as per your data)
-    }))
+  // flatGames for indexing
+  const flatGames = useMemo(
+    () =>
+      eventSchedule.flatMap((day, di) =>
+        day.games.map((g, gi) => ({
+          ...g,
+          day: day.day,
+          date: day.date,
+          _index: di * (day.games.length) + gi,
+        }))
+      ),
+    [eventSchedule]
   );
 
-  // --- Refs/state for scroll tracking ---
-  const listRef = useRef(null);
-  const trackRef = useRef(null);
+  // --- Refs & state -------------------------------------------------------
+  const listRef = useRef(null); // container for timeline
+  const itemRefs = useRef([]); // individual card refs
+  const trackRef = useRef(null); // progress track ref (mobile)
   const dotRef = useRef(null);
-  const cardRefs = useRef([]); // refs per game card (flat order)
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [dotX, setDotX] = useState(0); // pixel translate for dot (mobile)
+  const dragControls = useDragControls();
 
-  // IntersectionObserver → which card is most visible (for active label)
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [filter, setFilter] = useState("");
+  const [selectedDay, setSelectedDay] = useState(0);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Motion values for progress dot
+  const progressX = useMotionValue(0);
+  const progressWidth = useMotionValue(0);
+  const dotScale = useMotionValue(1);
+
+  const controls = useAnimation();
+
+  // Slight simulated loading (skeleton) for nicer first paint
   useEffect(() => {
-    if (!cardRefs.current.length) return;
+    const t = setTimeout(() => setLoading(false), 550);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* -------------------------
+     IntersectionObserver
+     - sets activeIndex based on what card is most visible
+     ------------------------- */
+  useEffect(() => {
+    if (!itemRefs.current || !itemRefs.current.length) return;
+
     const obs = new IntersectionObserver(
       (entries) => {
-        // Choose the entry with largest intersection ratio
+        // pick entry with largest intersection
         const best = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
@@ -63,448 +195,586 @@ const Guidelines = () => {
       },
       { threshold: [0.25, 0.5, 0.75] }
     );
-    
-    // Store current refs in a variable to avoid closure issues during cleanup
-    const currentRefs = cardRefs.current;
-    currentRefs.forEach((el) => el && obs.observe(el));
-    
+
+    const els = itemRefs.current;
+    els.forEach((el) => el && obs.observe(el));
     return () => {
-      // Properly disconnect observer and clear all observations
-      currentRefs.forEach((el) => el && obs.unobserve(el));
+      els.forEach((el) => el && obs.unobserve(el));
       obs.disconnect();
     };
-  }, []);
+  }, [flatGames, loading]);
 
-  // Smooth progress-based dot movement on mobile (continuous glide)
+  /* -------------------------
+     Update progress dot position for mobile (vertical scroll)
+     - calculates progress based on viewport relative to first/last card
+     ------------------------- */
   useEffect(() => {
-    // Only on mobile
-    const onScroll = () => {
-      if (!cardRefs.current.length || !trackRef.current || !dotRef.current) return;
+    const updateDot = () => {
+      if (!itemRefs.current.length || !trackRef.current || !dotRef.current) return;
 
-      // Skip if on desktop
+      // Mobile: vertical scroll mode (avoid horizontal for desktop)
       if (window.innerWidth > 768) {
-        setDotX(0);
+        // hide/move dot off track on larger screens (we'll use desktop highlight)
+        progressX.set(0);
+        progressWidth.set(0);
         return;
       }
 
-      const first = cardRefs.current[0];
-      const last = cardRefs.current[cardRefs.current.length - 1];
+      const first = itemRefs.current[0];
+      const last = itemRefs.current[itemRefs.current.length - 1];
       if (!first || !last) return;
 
-      const firstRect = first.getBoundingClientRect();
-      const lastRect = last.getBoundingClientRect();
+      const firstMid = first.getBoundingClientRect().top + window.scrollY + first.getBoundingClientRect().height / 2;
+      const lastMid = last.getBoundingClientRect().top + window.scrollY + last.getBoundingClientRect().height / 2;
+      const viewportMid = window.scrollY + window.innerHeight * 0.5;
 
-      // Absolute Y (document-space)
-      const firstMidY = firstRect.top + window.scrollY + firstRect.height / 2;
-      const lastMidY = lastRect.top + window.scrollY + lastRect.height / 2;
+      const raw = (viewportMid - firstMid) / Math.max(1, lastMid - firstMid);
+      const clamped = Math.min(1, Math.max(0, raw));
 
-      const viewportMidY = window.scrollY + window.innerHeight * 0.5;
-      const progressRaw = (viewportMidY - firstMidY) / Math.max(1, lastMidY - firstMidY);
-      const progress = Math.min(1, Math.max(0, progressRaw)); // clamp 0..1
+      const trackW = trackRef.current.clientWidth || 0;
+      const dotW = dotRef.current.clientWidth || 0;
+      const travel = Math.max(0, trackW - dotW);
 
-      const trackWidth = trackRef.current.clientWidth || 0;
-      const dotWidth = dotRef.current.clientWidth || 0;
-      const travel = Math.max(0, trackWidth - dotWidth);
-
-      setDotX(travel * progress);
+      const x = travel * clamped;
+      progressX.set(x);
+      progressWidth.set(travel * clamped); // unused but available
+      dotScale.set(1 + clamped * 0.2);
     };
 
-    // rAF-throttled scroll handler
     let ticking = false;
-    const handle = () => {
+    const handler = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        onScroll();
+        updateDot();
         ticking = false;
       });
     };
 
-    window.addEventListener("scroll", handle, { passive: true });
-    window.addEventListener("resize", handle);
-    // Initial position
-    handle();
-    return () => {
-      window.removeEventListener("scroll", handle);
-      window.removeEventListener("resize", handle);
-    };
-  }, []);
+    window.addEventListener("scroll", handler, { passive: true });
+    window.addEventListener("resize", handler);
 
-  // Helper: attach ref per flat index
-  const setCardRef = (el, idx) => {
-    cardRefs.current[idx] = el;
+    // initial
+    handler();
+    return () => {
+      window.removeEventListener("scroll", handler);
+      window.removeEventListener("resize", handler);
+    };
+  }, [flatGames.length, progressX, progressWidth, dotScale]);
+
+  /* -------------------------
+     Drag handling for desktop horizontal timeline
+     - uses Framer Motion's drag
+     - sets activeIndex when dragging stops by computing nearest card center
+     ------------------------- */
+  const onDragEnd = (event, info) => {
+    setIsDragging(false);
+    // snap to nearest item center
+    const container = listRef.current;
+    if (!container) return;
+    const children = Array.from(container.querySelectorAll(".timeline-card-inner"));
+    if (!children.length) return;
+
+    // container bounding
+    const cRect = container.getBoundingClientRect();
+    const containerCenterX = cRect.left + cRect.width / 2;
+
+    // find min distance from center
+    let bestIndex = activeIndex;
+    let bestDist = Infinity;
+    children.forEach((child, idx) => {
+      const r = child.getBoundingClientRect();
+      const childCenter = r.left + r.width / 2;
+      const dist = Math.abs(childCenter - containerCenterX);
+      if (dist < bestDist) {
+        bestDist = dist;
+        bestIndex = Number(child.dataset.index);
+      }
+    });
+
+    // smooth scroll to make that child centered
+    const chosen = children.find((c) => Number(c.dataset.index) === bestIndex);
+    if (chosen) {
+      const offset = chosen.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - chosen.clientWidth) / 2;
+      container.scrollBy({ left: offset, behavior: "smooth" });
+    }
   };
 
+  /* -------------------------
+     Utilities: getEstimatedTime
+     - preserved behaviour from original code (fallback 2 hours)
+     ------------------------- */
+  const getEstimatedTime = (gameId) => {
+    const g = games.find((x) => x.id === gameId || x.gameId === gameId);
+    return g ? g.estimatedTime || g.duration || "2 hours" : "2 hours";
+  };
+
+  /* -------------------------
+     Filtering & derived list
+     ------------------------- */
+  const filteredFlatGames = flatGames.filter((g) => {
+    if (!filter) return true;
+    const q = filter.toLowerCase();
+    return (g.name || "").toLowerCase().includes(q) || (g.venue || "").toLowerCase().includes(q) || (g.day || "").toLowerCase().includes(q);
+  });
+
+  /* -------------------------
+     Keyboard nav for days
+     ------------------------- */
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "ArrowLeft") setSelectedDay((s) => Math.max(0, s - 1));
+      if (e.key === "ArrowRight") setSelectedDay((s) => Math.min(eventSchedule.length - 1, s + 1));
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [eventSchedule.length]);
+
+  /* -------------------------
+     Export: copy JSON + download
+     ------------------------- */
+  const exportJSON = () => {
+    const payload = { generatedAt: new Date().toISOString(), schedule: eventSchedule };
+    const json = JSON.stringify(payload, null, 2);
+    // copy to clipboard
+    navigator.clipboard?.writeText(json).then(
+      () => {
+        // show modal success
+        setShowExportModal(true);
+      },
+      (err) => {
+        setShowExportModal(true);
+      }
+    );
+    // also trigger download
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `VEYG_schedule_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  /* -------------------------
+     Small animated guideline card component
+     ------------------------- */
+  const GuidelineCard = ({ idx, title, content }) => (
+    <motion.div
+      key={idx}
+      className="guideline-item"
+      variants={itemVariant}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.2 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 120, damping: 14 }}
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        borderRadius: 12,
+        padding: 18,
+        border: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+        <div style={{ background: "#00d4ff", color: "#000", width: 26, height: 26, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
+          {idx + 1}
+        </div>
+        <h5 style={{ margin: 0, color: "#00d4ff" }}>{title}</h5>
+      </div>
+      <p style={{ margin: 0, color: "#c7d7e6", lineHeight: 1.6 }}>{content}</p>
+    </motion.div>
+  );
+
+  /* -------------------------
+     TimelineItem (desktop horizontal or mobile stacked)
+     - includes small motion for dot & card
+     ------------------------- */
+  const TimelineItem = ({ item, isLeft, globalIndex }) => {
+    return (
+      <motion.div
+        className="timeline-item"
+        data-index={globalIndex}
+        ref={(el) => (itemRefs.current[globalIndex] = el)}
+        variants={itemVariant}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        style={{ display: "flex", alignItems: "center", gap: 12 }}
+      >
+        {/* center dot for desktop */}
+        <motion.div
+          className="timeline-dot"
+          aria-hidden
+          animate={activeIndex === globalIndex ? "active" : "idle"}
+          variants={dotPulse}
+          transition={{ duration: 0.25 }}
+          style={{
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10,
+            pointerEvents: "none",
+          }}
+        />
+        <div style={{ width: "45%", ...(isLeft ? { paddingRight: 28 } : { marginLeft: "auto", paddingLeft: 28 }) }}>
+          <motion.div whileHover={{ scale: 1.02 }} style={{ cursor: "default" }}>
+            <Card style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12 }}>
+              <Card.Header style={{ background: "transparent", borderBottom: "none", paddingBottom: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <Badge bg="primary" style={{ background: "#00d4ff", color: "#000" }}>{item.day}</Badge>
+                  <span style={{ color: "#9fb0c6", fontSize: 14 }}>{item.date}</span>
+                </div>
+                <Card.Title style={{ margin: 0, color: "#00d4ff", fontSize: 16 }}>{item.name}</Card.Title>
+              </Card.Header>
+              <Card.Body style={{ paddingTop: 6 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#9fb0c6" }}>
+                    <Clock size={16} />
+                    <span>Estimated: {getEstimatedTime(item.gameId)}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, color: "#9fb0c6" }}>
+                    <MapPin size={16} />
+                    <span>{item.venue}</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <Button
+                      variant="outline-light"
+                      size="sm"
+                      onClick={() => { window.location.href = `/game/${item.gameId}`; }}
+                      style={{ borderColor: "#00eaff", color: "#00eaff", width: "100%" }}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  /* -------------------------
+     Render
+     ------------------------- */
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="guidelines-root" role="main">
+      {/* Inject local styles */}
+      <style>{pageStyles}</style>
+
+      {/* Skip link */}
+      <a className="sr-only" href="#guidelines-content">Skip to content</a>
+
       <PageHeroSection
         title="Event Guidelines"
         description="Important information and rules for all participants"
         bgImage="https://images.unsplash.com/photo-1519834089826-3e6d8f5e2c3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
       />
-      <Container className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <Card
-          className="mb-5"
-          style={{
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            borderRadius: "15px",
-            backdropFilter: "blur(10px)",
-            transition: "all 0.3s ease",
-          }}
-        >
-          <Card.Header
-            style={{
-              background: "linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%)",
-              padding: "40px 0",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "15px 15px 0 0",
-              textAlign: "center",
-            }}
-          >
-            <Card.Title
-              style={{
-                color: "#00d4ff",
-                fontSize: "1.5rem",
-                margin: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-                flexWrap: "wrap",
-              }}
-            >
-              <Shield size={24} />
-              Basic Guidelines
-            </Card.Title>
-            <Card.Text style={{ color: "#94a3b8", margin: "10px 0 0 0" }}>
-              Essential rules and regulations for all participants
-            </Card.Text>
-          </Card.Header>
-            <Card.Body style={{ padding: "28px" }}>
-              <div style={{ display: "grid", gap: "18px" }}>
-                {[
-                  {
-                    title: "Registration Requirements",
-                    content:
-                    "All participants must register online before the event deadline. Valid student ID and contact information are mandatory.",
-                  },
-                  {
-                    title: "Day-Wise Registration Rule",
-                    content:
-                      "Participants can register for only one game per day. If you register for a game on Day 1, you cannot register for any other game on the same day. However, you can register for another game on Day 2 and vice versa.",
-                  },
-                  {
-                    title: "Code of Conduct",
-                    content:
-                      "Maintain professional behavior throughout the event. Respect fellow participants, organizers, and venue property.",
-                  },
-                  {
-                    title: "Time Management",
-                    content:
-                      "Arrive 30 minutes before your scheduled event time. Late arrivals may result in disqualification.",
-                  },
-                  {
-                    title: "Fair Play Policy",
-                    content:
-                      "Any form of cheating, plagiarism, or unfair practices will lead to immediate disqualification from the event.",
-                  },
-                  {
-                    title: "Emergency Protocols",
-                    content:
-                      "In case of technical issues or emergencies, immediately contact the event coordinators for assistance.",
-                  },
-                  {
-                    title: "Feedback & Queries",
-                    content:
-                      "For any questions or feedback, contact the organizing team through official channels provided during registration.",
-                  },
-                ].map((guideline, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      borderRadius: "12px",
-                      padding: "18px",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.08)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(0, 234, 255, 0.25)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background =
-                        "rgba(255, 255, 255, 0.03)";
-                      e.currentTarget.style.borderColor =
-                        "rgba(255, 255, 255, 0.1)";
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "12px",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          background: "#00d4ff",
-                          color: "#000",
-                          width: "24px",
-                          height: "24px",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "12px",
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {index + 1}
-                      </div>
-                      <h5
-                        style={{ color: "#00d4ff", margin: 0, fontSize: "1.05rem" }}
-                      >
-                        {guideline.title}
-                      </h5>
-                    </div>
-                    <p style={{ color: "#94a3b8", margin: 0, lineHeight: "1.65" }}>
-                      {guideline.content}
-                    </p>
-                  </div>
-                ))}
+
+      <Container id="guidelines-content" className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <h2 style={{ color: "#00d4ff", margin: 0, fontSize: 22, display: "flex", gap: 8, alignItems: "center" }}>
+              <Shield size={20} /> Basic Guidelines
+            </h2>
+            <span style={{ color: "#9fb0c6", fontSize: 14 }}>Rules & schedule for VEYG 2K25</span>
+          </div>
+
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Search size={14} />
+              <input
+                aria-label="Search games"
+                placeholder="Search games, venue or day"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                style={{
+                  background: "#061019",
+                  color: "#cfe9f6",
+                  border: "1px solid rgba(255,255,255,0.03)",
+                  padding: "8px 10px",
+                  borderRadius: 8,
+                }}
+              />
+            </div>
+
+            <IconButton label="Export schedule" onClick={exportJSON}>
+              <Download size={14} /> Export
+            </IconButton>
+
+            <IconButton label="Open export modal" onClick={() => setShowExportModal(true)}>
+              <FileText size={14} /> JSON
+            </IconButton>
+          </div>
+        </div>
+
+        {/* Guidelines Card */}
+        <motion.div initial="hidden" animate="show" variants={containerVariant}>
+          <Card className="guidelines-card mb-5" style={{ borderRadius: 14, overflow: "hidden" }}>
+            <Card.Body style={{ padding: 24 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
+                {loading ? (
+                  // skeletons
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} style={{ height: 70, background: "linear-gradient(90deg,#0b1520,#0e2130)", borderRadius: 10 }} />
+                  ))
+                ) : (
+                  <motion.div style={{ display: "grid", gap: 12 }} variants={containerVariant}>
+                    {[
+                      {
+                        title: "Registration Requirements",
+                        content: "All participants must register online before the event deadline. Valid student ID and contact information are mandatory.",
+                      },
+                      {
+                        title: "Day-Wise Registration Rule",
+                        content: "Participants can register for only one game per day. If you register for a game on Day 1, you cannot register for any other game on the same day. However, you can register for another game on Day 2 and vice versa.",
+                      },
+                      {
+                        title: "Code of Conduct",
+                        content: "Maintain professional behaviour throughout the event. Respect fellow participants, organizers, and venue property.",
+                      },
+                      {
+                        title: "Time Management",
+                        content: "Arrive 30 minutes before your scheduled event time. Late arrivals may result in disqualification.",
+                      },
+                      {
+                        title: "Fair Play Policy",
+                        content: "Any form of cheating, plagiarism, or unfair practices will lead to immediate disqualification from the event.",
+                      },
+                      {
+                        title: "Emergency Protocols",
+                        content: "In case of technical issues or emergencies, immediately contact the event coordinators for assistance.",
+                      },
+                    ].map((g, i) => (
+                      <GuidelineCard key={i} idx={i} title={g.title} content={g.content} />
+                    ))}
+                  </motion.div>
+                )}
               </div>
             </Card.Body>
           </Card>
+        </motion.div>
 
-          {/* Event Schedule Timeline */}
-          <Card
-            className="mb-5 timeline-card"
-            style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "15px",
-              backdropFilter: "blur(10px)",
-              transition: "all 0.3s ease",
-            }}
-          >
-            <Card.Header
-              style={{
-                background: "rgba(0, 234, 255, 0.1)",
-                border: "none",
-                borderRadius: "15px 15px 0 0",
-                textAlign: "center",
-              }}
-            >
-              <Card.Title
-                style={{
-                  color: "#00d4ff",
-                  fontSize: "1.5rem",
-                  margin: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Calendar size={24} />
-                Event Schedule Timeline
-              </Card.Title>
-              <Card.Text style={{ color: "#94a3b8", margin: "10px 0 0 0" }}>
-                Complete schedule for VEYG 2K25 gaming events
-              </Card.Text>
-            </Card.Header>
-
-            <Card.Body style={{ padding: "40px" }}>
-              <div style={{ position: "relative" }}>
-                {/* Desktop vertical center line */}
-                <div
-                  className="timeline-line"
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "4px",
-                    height: "100%",
-                    background: "rgba(0, 234, 255, 0.3)",
-                    borderRadius: "2px",
-                  }}
-                ></div>
-
-                {/* Timeline items */}
-                <div
-                  ref={listRef}
-                  style={{ display: "flex", flexDirection: "column", gap: "40px" }}
-                >
-                  {eventSchedule.flatMap((day, di) =>
-                    day.games.map((game, gi) => {
-                      const globalIndex = di * 2 + gi;
-                      const isLeft = globalIndex % 2 === 0;
-                      const flat = flatGames[globalIndex];
-
-                      return (
-                        <div
-                          key={`${di}-${gi}`}
-                          className="timeline-item"
-                          style={{
-                            position: "relative",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                          data-index={globalIndex}
-                          ref={(el) => setCardRef(el, globalIndex)}
-                        >
-                          {/* Desktop node dot */}
-                          <div
-                            className="timeline-dot"
-                            style={{
-                              position: "absolute",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              width: "24px",
-                              height: "24px",
-                              background: "#00d4ff",
-                              borderRadius: "50%",
-                              border: "4px solid #0a0e1a",
-                              zIndex: 10,
-                            }}
-                          ></div>
-
-                          {/* Card content */}
-                          <div
-                            className="timeline-content"
-                            style={{
-                              width: "45%",
-                              ...(isLeft
-                                ? { paddingRight: "30px" }
-                                : { marginLeft: "auto", paddingLeft: "30px" }),
-                            }}
-                          >
-                            <Card
-                              style={{
-                                background: "rgba(255, 255, 255, 0.08)",
-                                border: "1px solid rgba(255, 255, 255, 0.1)",
-                                borderRadius: "12px",
-                                backdropFilter: "blur(10px)",
-                              }}
-                            >
-                              <Card.Header
-                                style={{
-                                  paddingBottom: "10px",
-                                  border: "none",
-                                  background: "transparent",
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    marginBottom: "10px",
-                                  }}
-                                >
-                                  <Badge
-                                    bg="primary"
-                                    style={{ background: "#00d4ff", color: "#000" }}
-                                  >
-                                    {day.day}
-                                  </Badge>
-                                  <span style={{ fontSize: "14px", color: "#94a3b8" }}>
-                                    {day.date}
-                                  </span>
-                                </div>
-                                <Card.Title
-                                  style={{
-                                    color: "#00d4ff",
-                                    fontSize: "1.1rem",
-                                    margin: 0,
-                                  }}
-                                >
-                                  {game.name}
-                                </Card.Title>
-                              </Card.Header>
-                              <Card.Body style={{ paddingTop: 0 }}>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: "8px",
-                                  }}
-                                >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "8px",
-                                      fontSize: "14px",
-                                      color: "#94a3b8",
-                                    }}
-                                  >
-                                    <Clock size={16} />
-                                    Estimated Time: {getEstimatedTime(game.gameId)}
-                                  </div>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: "8px",
-                                      fontSize: "14px",
-                                      color: "#94a3b8",
-                                    }}
-                                  >
-                                    <MapPin size={16} />
-                                    {game.venue}
-                                  </div>
-                                  <Button
-                                    variant="outline-light"
-                                    size="sm"
-                                    onClick={() =>
-                                      (window.location.href = `/game/${game.gameId}`)
-                                    }
-                                    style={{
-                                      marginTop: "10px",
-                                      width: "100%",
-                                      background: "transparent",
-                                      borderColor: "#00eaff",
-                                      color: "#00eaff",
-                                      boxShadow: "0 0 10px rgba(0,234,255,0.3)",
-                                      transition: "all 0.3s ease",
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      e.currentTarget.style.backgroundColor = "#00eaff";
-                                      e.currentTarget.style.color = "#000";
-                                      e.currentTarget.style.boxShadow =
-                                        "0 0 18px rgba(0,234,255,0.6)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.currentTarget.style.backgroundColor =
-                                        "transparent";
-                                      e.currentTarget.style.color = "#00eaff";
-                                      e.currentTarget.style.boxShadow =
-                                        "0 0 10px rgba(0,234,255,0.3)";
-                                    }}
-                                  >
-                                    View Details
-                                  </Button>
-                                </div>
-                              </Card.Body>
-                            </Card>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
+        {/* Timeline Card */}
+        <Card className="timeline-card mb-8" style={{ borderRadius: 14 }}>
+          <Card.Header style={{ background: "rgba(0,234,255,0.06)", borderBottom: "none" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Calendar size={18} />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <strong style={{ color: "#00d4ff" }}>Event Schedule Timeline</strong>
+                  <small style={{ color: "#9fb0c6" }}>Complete schedule for VEYG 2K25 gaming events</small>
                 </div>
               </div>
-            </Card.Body>
-          </Card>
-        </Container>
-      </div>
+
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <div className="kbd" title="Navigate days with left/right arrow keys">
+                  <ArrowLeft size={12} /> <ArrowRight size={12} /> &nbsp;
+                  <small style={{ opacity: 0.8 }}>Day nav</small>
+                </div>
+                {/* Day Tabs */}
+                <div style={{ display: "flex", gap: 6 }}>
+                  {eventSchedule.map((d, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedDay(i)}
+                      aria-pressed={selectedDay === i}
+                      style={{
+                        padding: "6px 10px",
+                        borderRadius: 8,
+                        background: selectedDay === i ? "#00d4ff" : "transparent",
+                        color: selectedDay === i ? "#000" : "#cfe9f6",
+                        border: "1px solid rgba(255,255,255,0.03)",
+                      }}
+                    >
+                      {d.day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card.Header>
+
+          <Card.Body style={{ padding: 28, position: "relative" }}>
+            {/* vertical center line for desktop */}
+            <div className="timeline-line" style={{ top: 0, bottom: 0 }} aria-hidden />
+
+            {/* Desktop: horizontal draggable timeline (visible on wide screens)
+                Mobile: vertical stacked list (native scroll) */}
+            <div>
+              {/* Desktop horizontal scroller */}
+              <div
+                style={{
+                  display: "none",
+                }}
+                className="timeline-horizontal-wrapper"
+                aria-hidden
+              />
+
+              {/* Responsive container */}
+              <div style={{ display: "flex", gap: 12, flexDirection: "column" }}>
+                {/* On desktop: horizontal draggable list. We'll render it in both modes but with CSS show/hide via media queries.
+                    For clarity in this single file, we'll implement an inline media query to toggle layout. */}
+                <style>
+                  {`
+                    @media (min-width: 769px) {
+                      .timeline-horizontal { display:flex; overflow-x:auto; scroll-behavior:smooth; padding:18px 8px; }
+                      .timeline-vertical { display:none; }
+                    }
+                    @media (max-width: 768px) {
+                      .timeline-horizontal { display:none; }
+                      .timeline-vertical { display:block; }
+                    }
+                  `}
+                </style>
+
+                {/* Horizontal timeline (desktop) */}
+                <motion.div
+                  className="timeline-horizontal scroll-container"
+                  ref={listRef}
+                  drag="x"
+                  dragConstraints={{ left: -9999, right: 9999 }}
+                  dragElastic={0.12}
+                  dragControls={dragControls}
+                  onDragStart={() => setIsDragging(true)}
+                  onDragEnd={onDragEnd}
+                  style={{ paddingBottom: 12 }}
+                >
+                  {/* create wide horizontal cards */}
+                  {filteredFlatGames.map((g, idx) => {
+                    const isLeft = idx % 2 === 0;
+                    return (
+                      <motion.div
+                        key={idx}
+                        className="timeline-card-inner"
+                        data-index={g._index ?? idx}
+                        style={{ minWidth: 360, maxWidth: 420, flex: "0 0 auto" }}
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.04, duration: 0.45 }}
+                      >
+                        <div style={{ position: "relative", padding: "8px 6px" }}>
+                          {/* floating dot near top of each card for visual connection */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              left: "8px",
+                              top: 10,
+                              width: 12,
+                              height: 12,
+                              borderRadius: 999,
+                              background: activeIndex === idx ? "#00eaff" : "rgba(0,234,255,0.35)",
+                              boxShadow: activeIndex === idx ? "0 0 12px rgba(0,234,255,0.25)" : "none",
+                            }}
+                          />
+                          <Card style={{ background: "rgba(255,255,255,0.04)", borderRadius: 12 }}>
+                            <Card.Body>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: 8 }}>
+                                <div>
+                                  <Badge style={{ background: "#00d4ff", color: "#000" }}>{g.day}</Badge>
+                                  <div style={{ marginTop: 8, color: "#00d4ff", fontSize: 18, fontWeight: 700 }}>{g.name}</div>
+                                  <div style={{ color: "#9fb0c6", marginTop: 6 }}>{g.venue}</div>
+                                </div>
+                                <div style={{ textAlign: "right" }}>
+                                  <div style={{ color: "#9fb0c6", fontSize: 13 }}>{g.date}</div>
+                                  <div style={{ marginTop: 10 }}>
+                                    <Button size="sm" variant="outline-light" onClick={() => (window.location.href = `/game/${g.gameId}`)} style={{ borderColor: "#00eaff", color: "#00eaff" }}>
+                                      View
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+
+                {/* Vertical timeline (mobile & stacked) */}
+                <div className="timeline-vertical">
+                  <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                    {filteredFlatGames.map((g, idx) => (
+                      <div key={idx} data-index={g._index ?? idx} ref={(el) => (itemRefs.current[g._index ?? idx] = el)}>
+                        <TimelineItem item={g} isLeft={idx % 2 === 0} globalIndex={g._index ?? idx} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Mobile progress rail */}
+                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 20 }}>
+                  <div style={{ flex: 1 }}>
+                    <div ref={trackRef} className="progress-track" style={{ padding: 8 }}>
+                      <motion.div
+                        ref={dotRef}
+                        className="progress-dot"
+                        style={{ x: progressX, scale: dotScale }}
+                        animate={{}}
+                        transition={{ type: "spring", stiffness: 200, damping: 24 }}
+                      />
+                    </div>
+                    <div style={{ marginTop: 8, color: "#9fb0c6", fontSize: 13 }}>
+                      Scroll to move progress • Active: <strong style={{ color: "#00d4ff" }}>{filteredFlatGames[activeIndex]?.name || "—"}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+
+        {/* Footer utilities */}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+          <div style={{ color: "#9fb0c6" }}>
+            Showing <strong style={{ color: "#00d4ff" }}>{filteredFlatGames.length}</strong> events. Active index: <strong>{activeIndex}</strong>
+          </div>
+
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => window.print()}
+              className="btn btn-sm btn-outline-light"
+              aria-label="Print schedule"
+              style={{ borderColor: "rgba(255,255,255,0.04)", color: "#cfe9f6" }}
+            >
+              Print
+            </button>
+            <button
+              onClick={() => { setFilter(""); setSelectedDay(0); itemRefs.current = []; }}
+              className="btn btn-sm btn-outline-light"
+              aria-label="Reset filters"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </Container>
+
+      {/* Export modal */}
+      <RBModal show={showExportModal} onHide={() => setShowExportModal(false)} centered>
+        <RBModal.Header closeButton>
+          <RBModal.Title>Export Schedule JSON</RBModal.Title>
+        </RBModal.Header>
+        <RBModal.Body>
+          <p style={{ color: "#33414a", fontSize: 14 }}>
+            The schedule JSON has been copied to your clipboard and a download started automatically.
+          </p>
+          <pre style={{ maxHeight: 220, overflow: "auto", background: "#06121a", color: "#cfe9f6", padding: 12, borderRadius: 8 }}>
+            {JSON.stringify({ generatedAt: new Date().toISOString(), schedule: eventSchedule }, null, 2)}
+          </pre>
+        </RBModal.Body>
+        <RBModal.Footer>
+          <Button variant="secondary" onClick={() => setShowExportModal(false)}>
+            Close
+          </Button>
+        </RBModal.Footer>
+      </RBModal>
+    </div>
   );
 };
 

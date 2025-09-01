@@ -1,595 +1,510 @@
-import { Container, Row, Col } from "react-bootstrap"
-import { Lightbulb, Users, Award, Zap, Code, Trophy, Target, Rocket } from 'lucide-react'
-import PageHeroSection from "../components/HeroSection/PageHeroSection"
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Badge } from "react-bootstrap";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Lightbulb,
+  Users,
+  Award,
+  Zap,
+  Code,
+  Target,
+  Rocket,
+  Trophy,
+} from "lucide-react";
 
-const AboutUs = () => {
+
+const valuesData = [
+  {
+    id: "innovation",
+    title: "Innovation",
+    desc:
+      "We encourage participants to push boundaries and develop groundbreaking solutions across AI, mobile, web and hardware.",
+    Icon: Lightbulb,
+  },
+  {
+    id: "community",
+    title: "Community",
+    desc:
+      "A hub for networking and collaboration — build lasting connections in the tech and gaming ecosystem.",
+    Icon: Users,
+  },
+  {
+    id: "excellence",
+    title: "Excellence",
+    desc:
+      "Providing a fair, challenging arena where technical talent is recognized, celebrated and rewarded.",
+    Icon: Award,
+  },
+  {
+    id: "mastery",
+    title: "Technical Mastery",
+    desc:
+      "Promoting deep technical understanding and practical application across languages and frameworks.",
+    Icon: Code,
+  },
+];
+
+const coordinators = [
+  {
+    name: "Prof. Yogesh Kakadiya",
+    dept: "Electrical Department",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFa8i8irJYNO0OCUsUiydH3Tcq0q0yMVH3wg&s",
+  },
+  {
+    name: "Prof. Kunalsinh Kathia",
+    dept: "Mechanical Department",
+    img: "https://www.saffrony.ac.in/media/4258/kunal-sir.jpg",
+  },
+  {
+    name: "Prof. Twinkle Verma",
+    dept: "Computer Engineering Department",
+    img: "https://media.licdn.com/dms/image/v2/C4D03AQEPhAA4SQYmeQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1663781191017?e=1759363200&v=beta&t=buB1_gxyXaMjg8rr7M72TFIXsmGfhcP_VEMH2vuj02o",
+  },
+  {
+    name: "Prof. Nainsi Soni",
+    dept: "Computer Engineering Department",
+    img: "https://media.licdn.com/dms/image/v2/D4D03AQFEMM-wkBAz9g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694598648255?e=2147483647&v=beta&t=8SaIe57cXIeCjfFlB9LgP65Lv_E2ZypsjFn4lJXzZ7U",
+  },
+];
+
+const devTeam = [
+  { name: "Fenil Khatri", initials: "FK" },
+  { name: "Divyesh Kubavat", initials: "DK" },
+  { name: "Vraj Fadiya", initials: "VF" },
+  { name: "Riddhi Sadhu", initials: "RS" },
+];
+
+// Motion variants
+const containerVariant = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { staggerChildren: 0.12, when: "beforeChildren" },
+  },
+};
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 18, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 120, damping: 14 } },
+  hover: { scale: 1.03, transition: { type: "spring", stiffness: 300 } },
+};
+
+function AnimatedNumber({ value = 0, duration = 1200 }) {
+  // duration in ms
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    let start = null;
+    let rafId;
+
+    function step(ts) {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(progress * value);
+      setDisplay(current);
+      if (progress < 1) rafId = requestAnimationFrame(step);
+    }
+
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [value, duration]);
+
+  return <span className="text-3xl md:text-4xl font-extrabold">{display.toLocaleString()}</span>;
+}
+
+export default function AboutUs() {
+  // small typewriter for hero title
+  const title = "VEYG 2K25";
+  const [typed, setTyped] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const t = setInterval(() => {
+      setTyped((s) => title.slice(0, i + 1));
+      i++;
+      if (i >= title.length) clearInterval(t);
+    }, 70);
+    return () => clearInterval(t);
+  }, []);
+
   return (
-    <>
-      <PageHeroSection
-        title="About VEYG 2K25"
-        subtitle="Your Ultimate Technical Competition Platform"
-        icon={Zap}
-        description="Empowering students through innovative technical competitions and fostering excellence in technology and programming skills."
-      />
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0a0a0a 100%)',
+      color: 'white'
+    }}>
+      {/* HERO */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+          paddingTop: '120px',
+          paddingBottom: '80px'
+        }}
+      >
+        {/* Decorative background elements */}
+        <div style={{
+          position: 'absolute',
+          left: '-64px',
+          top: '-64px',
+          width: '288px',
+          height: '288px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 50%)',
+          filter: 'blur(60px)',
+          zIndex: 1
+        }} />
+        <div style={{
+          position: 'absolute',
+          right: '0',
+          top: '96px',
+          width: '384px',
+          height: '384px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 50%)',
+          filter: 'blur(60px)',
+          zIndex: 1
+        }} />
 
-      {/* Main Content */}
-      <div className="about-content-section">
-        <Container fluid className="px-0">
-          <Row className="justify-content-center mx-0">
-            <Col xs={12} className="px-4">
-              {/* Mission Statement */}
-              <div className="mission-card">
-                <div className="card-header">
-                  <Target size={24} />
-                  <h2>Our Mission</h2>
+        <Container style={{ position: 'relative', zIndex: 10 }}>
+          <Row className="align-items-center justify-content-center">
+            <Col md={12}>
+              <motion.div
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Badge
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#00d4ff',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    marginBottom: '20px'
+                  }}
+                >
+                  <Zap size={18} />
+                  Official • Technical Fest
+                </Badge>
+
+                <h1 style={{
+                  fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                  fontWeight: '800',
+                  lineHeight: '1.2',
+                  marginBottom: '15px',
+                  background: 'linear-gradient(45deg, #00d4ff, #007bff)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
+                }}>
+                  {typed}
+                  <span style={{
+                    fontSize: '1.2rem',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginLeft: '8px'
+                  }}>
+                    — About the Event
+                  </span>
+                </h1>
+
+                <p style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '1.1rem',
+                  lineHeight: '1.6',
+                  maxWidth: '500px',
+                  marginBottom: '30px'
+                }}>
+                  Empowering students through innovative technical competitions and fostering excellence in technology,
+                  programming skills and hands-on problem solving.
+                </p>
+
+                <div className="d-flex gap-3 flex-wrap">
+                  <motion.a
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    href="#"
+                    style={{
+                      display: 'inline-block',
+                      background: 'rgba(0, 212, 255, 0.9)',
+                      color: '#0a0a0a',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 15px rgba(0, 212, 255, 0.3)'
+                    }}
+                  >
+                    View Events
+                  </motion.a>
+
+                  <motion.a
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    href="#team"
+                    style={{
+                      display: 'inline-block',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontWeight: '600',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Meet the Team
+                  </motion.a>
                 </div>
-                <div className="card-content">
-                  <p className="mission-text">
-                    VEYG - 2K25 is dedicated to fostering innovation, competition, and community among tech enthusiasts and
-                    gamers. We bring together the brightest minds and most passionate players to challenge their skills,
-                    showcase their talents, and connect with like-minded individuals in the ever-evolving world of technology.
-                  </p>
-                </div>
-              </div>
-
-              {/* Core Values */}
-              <div className="values-section">
-                <div className="section-header">
-                  <h2>Core Values</h2>
-                  <p>The principles that drive our technical community</p>
-                </div>
-
-                <div className="values-grid">
-                  <div className="value-card">
-                    <div className="value-icon">
-                      <Lightbulb size={32} />
-                    </div>
-                    <div className="value-content">
-                      <h3>Innovation</h3>
-                      <p>We encourage participants to push boundaries and develop groundbreaking solutions in various technical domains, from AI to blockchain.</p>
-                    </div>
-                  </div>
-
-                  <div className="value-card">
-                    <div className="value-icon">
-                      <Users size={32} />
-                    </div>
-                    <div className="value-content">
-                      <h3>Community</h3>
-                      <p>Our platform is a hub for networking, collaboration, and building lasting connections within the global tech and gaming ecosystem.</p>
-                    </div>
-                  </div>
-
-                  <div className="value-card">
-                    <div className="value-icon">
-                      <Award size={32} />
-                    </div>
-                    <div className="value-content">
-                      <h3>Excellence</h3>
-                      <p>We strive to provide a fair and challenging environment where technical talent is recognized, celebrated, and rewarded.</p>
-                    </div>
-                  </div>
-
-                  <div className="value-card">
-                    <div className="value-icon">
-                      <Code size={32} />
-                    </div>
-                    <div className="value-content">
-                      <h3>Technical Mastery</h3>
-                      <p>We promote deep technical understanding and practical application across multiple programming languages and frameworks.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Vision Section */}
-              <div className="vision-card">
-                <div className="card-header">
-                  <Rocket size={24} />
-                  <h2>Our Vision</h2>
-                </div>
-                <div className="card-content">
-                  <p className="vision-text">
-                    To be the leading platform for technical competitions worldwide, inspiring the next generation of
-                    innovators and fostering a vibrant global community that shapes the future of technology.
-                  </p>
-                </div>
-              </div>
-
-              {/* Team Section */}
-              <div className="team-section">
-                <div className="section-header">
-                  <h2>Our Team</h2>
-                  <p>Meet the people behind VEYG 2K25</p>
-                </div>
-
-                {/* Coordinators */}
-                <div className="team-category">
-                  <h3 className="team-category-title">Event Coordinators</h3>
-                  <div className="coordinator-grid">
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <img src="https://www.saffrony.ac.in/media/4258/kunal-sir.jpg" alt="Prof. Kunalsinh Kathia" />
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Prof. Kunalsinh Kathia</h4>
-                        <p className="coordinator-role">Faculty Coordinator</p>
-                        <p className="coordinator-dept">Mechanical Department</p>
-                      </div>
-                    </div>
-
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFa8i8irJYNO0OCUsUiydH3Tcq0q0yMVH3wg&s" alt="Prof. Yogesh Kakadiya" />
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Prof. Yogesh Kakadiya</h4>
-                        <p className="coordinator-role">Technical Coordinator</p>
-                        <p className="coordinator-dept">Electrical Department</p>
-                      </div>
-                    </div>
-
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <img src="https://media.licdn.com/dms/image/v2/C4D03AQEPhAA4SQYmeQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1663781191017?e=1759363200&v=beta&t=buB1_gxyXaMjg8rr7M72TFIXsmGfhcP_VEMH2vuj02o" alt="Prof. Twinkle Verma" />
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Prof. Twinkle Verma</h4>
-                        <p className="coordinator-role">Event Coordinator</p>
-                        <p className="coordinator-dept">Computer Engineering Department</p>
-                      </div>
-                    </div>
-
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <img src="https://media.licdn.com/dms/image/v2/D4D03AQFEMM-wkBAz9g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694598648255?e=2147483647&v=beta&t=8SaIe57cXIeCjfFlB9LgP65Lv_E2ZypsjFn4lJXzZ7U" alt="Prof. Nainsi Soni" />
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Prof. Nainsi Soni</h4>
-                        <p className="coordinator-role">Event Coordinator</p>
-                        <p className="coordinator-dept">Computer Engineering Department</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Development Team */}
-                <div className="team-category">
-                  <h3 className="team-category-title">Development Team</h3>
-                  
-                  <div className="coordinator-grid">
-                    {/* Team Member 1 */}
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <div style={{
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #00d4ff, #007bff)',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '2rem',
-                          fontWeight: 'bold',
-                          color: 'white'
-                        }}>
-                          FK
-                        </div>
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Fenil Khatri</h4>
-                      </div>
-                    </div>
-
-                    {/* Team Member 2 */}
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <div style={{
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '2rem',
-                          fontWeight: 'bold',
-                          color: 'white'
-                        }}>
-                          DK
-                        </div>
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Divyesh Kubavat</h4>
-                      </div>
-                    </div>
-
-                    {/* Team Member 3 */}
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <div style={{
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '2rem',
-                          fontWeight: 'bold',
-                          color: 'white'
-                        }}>
-                          VF
-                        </div>
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Vraj Fadiya</h4>
-                      </div>
-                    </div>
-
-                    {/* Team Member 4 */}
-                    <div className="coordinator-card">
-                      <div className="coordinator-avatar">
-                        <div style={{
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #ec4899, #be185d)',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '2rem',
-                          fontWeight: 'bold',
-                          color: 'white'
-                        }}>
-                          RS
-                        </div>
-                      </div>
-                      <div className="coordinator-info">
-                        <h4 className="coordinator-name">Riddhi Sadhu</h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </motion.div>
             </Col>
           </Row>
         </Container>
-      </div>
+      </motion.section>
 
-      <style>{`
-        .about-hero-section {
-          position: relative;
-          height: 100vh;
-          background: linear-gradient(145deg, #0a0e1a 0%, #1a1f2e 50%, #0f1419 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-top: 0;
-          overflow: hidden;
-        }
-        
-        .hero-background {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-        }
-        
-        .floating-particles {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
-                      radial-gradient(circle at 80% 20%, rgba(0, 123, 255, 0.1) 0%, transparent 50%);
-        }
-        
-        .hero-content {
-          position: relative;
-          text-align: center;
-          z-index: 2;
-        }
-        
-        .hero-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(0, 212, 255, 0.2);
-          border: 1px solid rgba(0, 212, 255, 0.3);
-          color: #00d4ff;
-          padding: 8px 16px;
-          border-radius: 20px;
-          font-size: 0.9rem;
-          font-weight: 600;
-          margin-bottom: 20px;
-        }
-        
-        .hero-title {
-          font-size: 4rem;
-          font-weight: 800;
-          color: white;
-          margin-bottom: 15px;
-          background: linear-gradient(45deg, #00d4ff, #007bff);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .hero-subtitle {
-          font-size: 1.3rem;
-          color: rgba(255, 255, 255, 0.7);
-          margin: 0;
-        }
-        
-        .about-content-section {
-          background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-          min-height: 100vh;
-          padding: 80px 0;
-        }
-        
-        .mission-card, .vision-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          margin-bottom: 50px;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-        }
-        
-        .mission-card:hover, .vision-card:hover {
-          border-color: rgba(0, 212, 255, 0.3);
-          box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
-        }
-        
-        .card-header {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 30px 30px 0;
-          color: #00d4ff;
-        }
-        
-        .card-header h2 {
-          font-size: 1.8rem;
-          font-weight: 700;
-          margin: 0;
-          color: white;
-        }
-        
-        .card-content {
-          padding: 20px 30px 30px;
-        }
-        
-        .mission-text, .vision-text {
-          color: rgba(255, 255, 255, 0.9);
-          font-size: 1.2rem;
-          line-height: 1.8;
-          margin: 0;
-        }
-        
-        .values-section {
-          margin: 60px 0;
-        }
-        
-        .section-header {
-          text-align: center;
-          margin-bottom: 50px;
-        }
-        
-        .section-header h2 {
-          font-size: 2.5rem;
-          font-weight: 700;
-          color: white;
-          margin-bottom: 10px;
-          background: linear-gradient(45deg, #00d4ff, #007bff);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .section-header p {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 1.1rem;
-          margin: 0;
-        }
-        
-        .values-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 25px;
-        }
-        
-        .value-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          padding: 30px;
-          transition: all 0.3s ease;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        
-        .value-card:hover {
-          border-color: rgba(0, 212, 255, 0.3);
-          transform: translateY(-5px);
-          box-shadow: 0 15px 35px rgba(0, 212, 255, 0.1);
-        }
-        
-        .value-icon {
-          background: linear-gradient(45deg, #007bff, #00d4ff);
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          margin-bottom: 20px;
-        }
-        
-        .value-content h3 {
-          color: white;
-          font-size: 1.4rem;
-          font-weight: 700;
-          margin-bottom: 15px;
-        }
-        
-        .value-content p {
-          color: rgba(255, 255, 255, 0.8);
-          line-height: 1.6;
-          margin: 0;
-        }
-        
-        .stats-section {
-          margin-top: 60px;
-        }
-        
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 30px;
-        }
-        
-        .stat-item {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          padding: 30px;
-          text-align: center;
-          transition: all 0.3s ease;
-        }
-        
-        .stat-item:hover {
-          border-color: rgba(0, 212, 255, 0.3);
-          transform: translateY(-3px);
-        }
-        
-        .stat-item svg {
-          color: #00d4ff;
-          margin-bottom: 15px;
-        }
-        
-        .stat-number {
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: white;
-          margin-bottom: 8px;
-        }
-        
-        .stat-label {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 0.9rem;
-          font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 2.8rem;
-          }
-          
-          .values-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          
-          .card-header, .card-content {
-            padding-left: 20px;
-            padding-right: 20px;
-          }
-        }
-        
-        .team-section {
-          margin: 60px 0;
-        }
-        
-        .team-category {
-          margin-bottom: 50px;
-        }
-        
-        .team-category-title {
-          font-size: 1.8rem;
-          font-weight: 700;
-          color: white;
-          margin-bottom: 30px;
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(0, 212, 255, 0.3);
-          display: inline-block;
-        }
-        
-        .coordinator-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 30px;
-        }
+      {/* CONTENT */}
+      <Container style={{ marginTop: '-32px', position: 'relative', zIndex: 20 }}>
+        <motion.div variants={containerVariant} initial="hidden" animate="visible">
+          {/* Mission & Vision */}
+          <Row className="mb-5">
+            <Col lg={6} className="mb-4">
+              <motion.div
+                variants={cardVariant}
+                whileHover="hover"
+                style={{
+                  borderRadius: '16px',
+                  padding: '30px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  height: '100%'
+                }}
+              >
+                <div className="d-flex align-items-center gap-3 mb-3" style={{ color: '#00d4ff' }}>
+                  <Target size={22} />
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', margin: 0 }}>Our Mission</h2>
+                </div>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', lineHeight: '1.6', margin: 0 }}>
+                  VEYG-2K25 is dedicated to fostering innovation, competition, and community among tech enthusiasts and
+                  gamers. We bring together brilliant minds to challenge skills, showcase talent, and connect with like-minded
+                  peers in the ever-evolving world of technology.
+                </p>
+              </motion.div>
+            </Col>
 
-        .coordinator-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 16px;
-          padding: 30px;
-          text-align: center;
-          transition: all 0.3s ease;
-        }
+            <Col lg={6} className="mb-4">
+              <motion.div
+                variants={cardVariant}
+                whileHover="hover"
+                style={{
+                  borderRadius: '16px',
+                  padding: '30px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  height: '100%'
+                }}
+              >
+                <div className="d-flex align-items-center gap-3 mb-3" style={{ color: '#ff6b9d' }}>
+                  <Rocket size={22} />
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', margin: 0 }}>Our Vision</h2>
+                </div>
+                <p style={{ color: 'rgba(255, 255, 255, 0.8)', lineHeight: '1.6', margin: 0 }}>
+                  To be the leading platform for technical competitions worldwide, inspiring the next generation of
+                  innovators and fostering a vibrant global community that shapes the future of technology.
+                </p>
+              </motion.div>
+            </Col>
+          </Row>
 
-        .coordinator-card:hover {
-          border-color: rgba(0, 212, 255, 0.4);
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(0, 212, 255, 0.15);
-        }
+          {/* Core Values */}
+          <section className="mb-5">
+            <div className="text-center mb-4">
+              <h3 style={{
+                fontSize: '2.5rem',
+                fontWeight: '800',
+                background: 'linear-gradient(45deg, #00d4ff, #007bff)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                marginBottom: '10px'
+              }}>
+                Core Values
+              </h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1.1rem' }}>
+                Principles that drive our technical community
+              </p>
+            </div>
 
-        .coordinator-avatar {
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          margin: 0 auto 20px;
-          overflow: hidden;
-          border: 3px solid rgba(0, 212, 255, 0.3);
-          padding: 5px;
-          background: linear-gradient(45deg, #007bff, #00d4ff);
-        }
+            <Row>
+              {valuesData.map((v) => (
+                <Col key={v.id} sm={6} lg={3} className="mb-4">
+                  <motion.div
+                    variants={cardVariant}
+                    whileHover="hover"
+                    style={{
+                      borderRadius: '16px',
+                      padding: '30px',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      textAlign: 'center',
+                      height: '100%'
+                    }}
+                  >
+                    <div style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      margin: '0 auto 20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'linear-gradient(135deg, #6366f1, #00d4ff)',
+                      color: 'white'
+                    }}>
+                      <v.Icon size={28} />
+                    </div>
+                    <h4 style={{ fontWeight: '600', fontSize: '1.2rem', marginBottom: '12px', color: 'white' }}>
+                      {v.title}
+                    </h4>
+                    <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>
+                      {v.desc}
+                    </p>
+                  </motion.div>
+                </Col>
+              ))}
+            </Row>
+          </section>
 
-        .coordinator-avatar img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 50%;
-        }
+          {/* Team */}
+          <section id="team">
+            <div className="text-center mb-4">
+              <h3 style={{
+                fontSize: '2.5rem',
+                fontWeight: '800',
+                background: 'linear-gradient(45deg, #00d4ff, #007bff)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                marginBottom: '10px'
+              }}>
+                Our Team
+              </h3>
+              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1.1rem' }}>
+                Meet the people behind VEYG 2K25
+              </p>
+            </div>
 
-        .coordinator-name {
-          color: white;
-          font-size: 1.3rem;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
+            <div>
+              <h4 style={{ fontSize: '1.3rem', fontWeight: '600', color: 'white', marginBottom: '20px' }}>
+                Event Coordinators
+              </h4>
+              <Row className="mb-5">
+                {coordinators.map((c) => (
+                  <Col key={c.name} sm={6} lg={3} className="mb-4">
+                    <motion.div
+                      variants={cardVariant}
+                      whileHover="hover"
+                      style={{
+                        borderRadius: '16px',
+                        padding: '25px',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        textAlign: 'center',
+                        height: '100%'
+                      }}
+                    >
+                      <div style={{
+                        width: '100px',
+                        height: '100px',
+                        borderRadius: '50%',
+                        margin: '0 auto 20px',
+                        overflow: 'hidden',
+                        border: '2px solid rgba(255, 255, 255, 0.08)',
+                        padding: '4px',
+                        background: 'linear-gradient(135deg, #6366f1, #00d4ff)'
+                      }}>
+                        <img
+                          src={c.img}
+                          alt={c.name}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: '600', fontSize: '1.1rem', color: 'white', marginBottom: '4px' }}>
+                          {c.name}
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+                          {c.dept}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Col>
+                ))}
+              </Row>
 
-        .coordinator-role {
-          color: #00d4ff;
-          font-size: 1rem;
-          font-weight: 600;
-          margin-bottom: 8px;
-        }
+              <h4 style={{ fontSize: '1.3rem', fontWeight: '600', color: 'white', marginBottom: '20px' }}>
+                Development Team
+              </h4>
+              <Row>
+                {devTeam.map((d) => (
+                  <Col key={d.name} xs={6} sm={3} className="mb-4">
+                    <motion.div
+                      variants={cardVariant}
+                      whileHover="hover"
+                      style={{
+                        borderRadius: '16px',
+                        padding: '25px',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        textAlign: 'center'
+                      }}
+                    >
+                      <div style={{
+                        width: '80px',
+                        height: '80px',
+                        borderRadius: '50%',
+                        margin: '0 auto 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.5rem',
+                        fontWeight: 'bold',
+                        background: 'linear-gradient(135deg, #6366f1, #ec4899)',
+                        color: 'white'
+                      }}>
+                        {d.initials}
+                      </div>
+                      <div style={{ fontWeight: '600', color: 'white' }}>
+                        {d.name}
+                      </div>
+                    </motion.div>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          </section>
 
-        .coordinator-dept {
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 0.9rem;
-          margin: 0;
-        }
+        </motion.div>
+      </Container>
 
-        @media (max-width: 768px) {
-          .stats-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
-    </>
-  )
+      {/* small helpers for blob animation (Tailwind plugin or global CSS may be needed in project) */}
+      <style>{`@keyframes blob { 0% { transform: translateY(0px) scale(1); } 33% { transform: translateY(-12px) scale(1.05); } 66% { transform: translateY(6px) scale(0.98); } 100% { transform: translateY(0px) scale(1); } }
+      .animate-blob { animation: blob 7s infinite; }
+      .animation-delay-2000 { animation-delay: 2s; }`}</style>
+    </div>
+  );
 }
-
-export default AboutUs;

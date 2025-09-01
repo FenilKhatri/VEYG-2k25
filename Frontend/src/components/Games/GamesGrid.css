@@ -1,0 +1,72 @@
+/* Overall Container */
+.games-grid-container {
+      background-color: #0a0a0f;
+      min-height: 100vh;
+      padding-top: 40px;
+      padding-bottom: 40px;
+}
+
+/* Header Section */
+.games-header {
+      text-align: center;
+}
+
+.games-title {
+      font-size: 2.5rem;
+      color: #fff;
+      letter-spacing: 1px;
+}
+
+.highlight {
+      color: #00d4ff;
+      text-shadow: 0px 0px 10px rgba(0, 212, 255, 0.9);
+}
+
+.games-subtitle {
+      color: #b8b8b8;
+      max-width: 600px;
+      margin: 0 auto;
+}
+
+/* Empty State */
+.games-empty {
+      background-color: #0a0a0f;
+      padding: 50px 20px;
+      text-align: center;
+}
+
+.no-games-title {
+      color: #fff;
+      font-size: 1.5rem;
+}
+
+.no-games-subtitle {
+      color: #b8b8b8;
+      font-size: 1rem;
+}
+
+/* Game Card Wrapper */
+.game-card-wrapper {
+      background: linear-gradient(135deg, #1e1e2f, #111119);
+      padding: 15px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+      transition: all 0.3s ease-in-out;
+      width: 100%;
+}
+
+.game-card-wrapper:hover {
+      box-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
+      transform: translateY(-6px) scale(1.02);
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+      .games-title {
+            font-size: 2rem;
+      }
+
+      .games-subtitle {
+            font-size: 1rem;
+      }
+}
