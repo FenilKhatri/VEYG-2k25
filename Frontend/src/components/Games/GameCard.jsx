@@ -176,7 +176,22 @@ const GameCard = ({
                 boxShadow: '0 0 15px rgba(0, 255, 100, 0.3)'
               }}
             >
-              ✓ You already registered
+              ✓ You registered for Day {game.day}
+            </Badge>
+          )}
+          
+          {/* Day-wise registration status for other games */}
+          {!isThisGameRegistered && hasRegisteredForDay && (
+            <Badge
+              bg="warning"
+              className="px-3 py-2 fw-semibold"
+              style={{
+                fontSize: '0.85rem',
+                boxShadow: '0 0 15px rgba(255, 193, 7, 0.3)',
+                color: '#000'
+              }}
+            >
+              You registered for another Day {game.day} game
             </Badge>
           )}
 

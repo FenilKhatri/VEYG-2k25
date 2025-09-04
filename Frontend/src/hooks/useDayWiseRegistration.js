@@ -15,9 +15,7 @@ export const useDayWiseRegistration = (registeredGames, user) => {
                   }
             }
 
-            console.log('=== Day-wise Registration Debug ===')
-            console.log('User:', { username: user.username, name: user.name, id: user.id })
-            console.log('Registered Games:', registeredGames)
+            // Day-wise registration processing
 
             // Find user's registrations with comprehensive matching
             const userRegistrations = registeredGames.filter(reg => {
@@ -35,16 +33,12 @@ export const useDayWiseRegistration = (registeredGames, user) => {
                   ]
 
                   const isMatch = matches.some(Boolean)
-                  console.log(`Registration ${reg.gameName}: ${isMatch ? 'MATCH' : 'NO MATCH'}`, {
-                        regUserId: reg.userId,
-                        teamLeader: reg.teamLeader?.fullName,
-                        matches
-                  })
+                  // Processing registration match
 
                   return isMatch
             })
 
-            console.log('User Registrations Found:', userRegistrations)
+            // User registrations processed
 
             // Check day-wise registrations
             let hasDay1Registration = false
@@ -54,17 +48,17 @@ export const useDayWiseRegistration = (registeredGames, user) => {
 
             userRegistrations.forEach(reg => {
                   const gameData = getGameById(parseInt(reg.gameId))
-                  console.log(`Game ${reg.gameName} (ID: ${reg.gameId}):`, gameData)
+                  // Processing game data
 
                   if (gameData) {
                         if (gameData.day === 1) {
                               hasDay1Registration = true
                               day1GameName = reg.gameName
-                              console.log('Found Day 1 registration:', reg.gameName)
+                              // Day 1 registration found
                         } else if (gameData.day === 2) {
                               hasDay2Registration = true
                               day2GameName = reg.gameName
-                              console.log('Found Day 2 registration:', reg.gameName)
+                              // Day 2 registration found
                         }
                   }
             })
@@ -91,8 +85,7 @@ export const useDayWiseRegistration = (registeredGames, user) => {
                   userRegistrations // For debugging
             }
 
-            console.log('Final Result:', result)
-            console.log('=== End Debug ===')
+            // Day-wise registration check completed
 
             return result
       }, [registeredGames, user])

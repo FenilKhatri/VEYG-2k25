@@ -221,13 +221,52 @@ const updateRegistrationStatus = async (req, res) => {
       id,
       { 
         approvalStatus: approvalStatus,
-        approvedBy: approvedBy
+        approvedBy: approvedBy,
+        approvedAt: approvalStatus === 'approved' ? new Date() : null
       },
       { new: true }
     )
 
     if (!registration) {
       return errorResponse(res, 404, 'Registration not found')
+    }
+
+    // Send payment approval email if status is approved
+    if (approvalStatus === 'approved') {
+      try {
+        // Prepare participant data
+        const participantData = {
+          name: registration.teamLeader?.fullName || 'Participant',
+          email: registration.teamLeader?.email || '',
+          contact: registration.teamLeader?.contactNumber || '',
+          college: registration.teamLeader?.collegeName || ''
+        };
+
+        // Prepare game data
+        const gameData = {
+          gameName: registration.gameName || 'Game',
+          registrationType: registration.registrationType || 'Individual',
+          registrationFee: registration.totalAmount || 0,
+          baseFee: registration.totalAmount || 0,
+          teamMembers: registration.teamMembers || [],
+          teamLeader: registration.teamLeader?.fullName || 'Team Leader',
+          paymentStatus: 'confirmed'
+        };
+
+        // Prepare registration data
+        const registrationData = {
+          registrationId: registration.registrationId || registration._id,
+          receiptNumber: registration.registrationId || registration._id
+        };
+
+        // Send payment approval email - temporarily disabled
+        // await sendPaymentApprovalEmail(registration);
+        
+        console.log('✅ Payment approval status updated for registration:', registration.registrationId);
+      } catch (emailError) {
+        console.error('❌ Failed to send payment approval email:', emailError);
+        // Don't fail the approval process if email fails
+      }
     }
 
     successResponse(res, 200, 'Approval status updated successfully', { registration })

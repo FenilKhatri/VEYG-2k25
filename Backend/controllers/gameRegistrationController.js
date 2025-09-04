@@ -1,6 +1,5 @@
 const { GameRegistration } = require('../models')
 const { successResponse, errorResponse } = require('../utils/response')
-const autoExcelStore = require('../utils/autoExcelStore')
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -247,14 +246,19 @@ const registerGame = async (req, res) => {
     await registration.save()
     console.log('Registration saved successfully with ID:', registration._id)
 
-    // Auto-save game registration to Excel (with error handling)
+    // Send registration receipt email to all participants
     try {
-      await autoExcelStore.saveGameRegistration(registration)
-      await autoExcelStore.saveCombinedRegistration(null, registration)
-    } catch (excelError) {
-      console.error('Excel store error (non-critical):', excelError)
-      // Continue with registration even if Excel fails
+      console.log('📧 Sending registration receipt email...');
+      
+      await sendRegistrationReceiptEmail(registration, false);
+      
+      console.log('✅ Registration receipt email sent successfully');
+    } catch (emailError) {
+      console.error('❌ Failed to send registration receipt email:', emailError);
+      // Don't fail the registration process if email fails
     }
+
+    console.log('✅ Game registration completed successfully')
 
     // Populate user data for response
     await registration.populate('userId', 'name email contactNumber')

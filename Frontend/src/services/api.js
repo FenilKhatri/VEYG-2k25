@@ -5,7 +5,7 @@ const API_BASE_URL =
   import.meta.env.VITE_FALLBACK_API_URL ||
   'http://localhost:8000';
 
-console.log("🌐 Using API Base URL:", API_BASE_URL);
+// API Base URL configured
 
 
 class ApiService {

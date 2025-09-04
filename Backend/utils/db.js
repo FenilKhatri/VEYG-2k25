@@ -5,10 +5,7 @@ const connectDB = async () => {
     const mongoURI = process.env.MONGODB_URI ||
       "mongodb+srv://veygnotification:veyg039@veyg-2k25-db.nznvcbe.mongodb.net/veygdb?retryWrites=true&w=majority&appName=VEYG-2k25-DB";
 
-    await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(mongoURI);
 
     console.log(`✅ MongoDB Connected: ${mongoose.connection.host}`);
     console.log(`📦 Database Name: ${mongoose.connection.name}`);

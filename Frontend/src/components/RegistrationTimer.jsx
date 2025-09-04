@@ -126,7 +126,7 @@ const RegistrationTimer = ({ deadline = '2025-09-13T23:59:59', onExpired }) => {
                         )}
                   </div>
                   
-                  <style jsx>{`
+                  <style>{`
                         .registration-timer-container {
                               background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
                               border: 1px solid rgba(0, 212, 255, 0.3);

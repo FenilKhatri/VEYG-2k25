@@ -156,10 +156,50 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
   }
 
 
+  const scrollToFirstError = () => {
+    const firstErrorElement = document.querySelector('.form-control[style*="border: 2px solid rgb(255, 107, 107)"], .form-select[style*="border: 2px solid rgb(255, 107, 107)"]')
+    if (firstErrorElement) {
+      firstErrorElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      })
+      firstErrorElement.focus()
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validateForm()) {
-      showToast("Please correct the errors in the form.", "error")
+      const errorKeys = Object.keys(errors)
+      const firstErrorKey = errorKeys[0]
+      let errorMessage = "Please correct the errors in the form."
+      
+      // Create more specific error messages
+      if (firstErrorKey) {
+        if (firstErrorKey.includes('fullName')) {
+          errorMessage = "Please enter a valid full name."
+        } else if (firstErrorKey.includes('email')) {
+          errorMessage = "Please enter a valid email address."
+        } else if (firstErrorKey.includes('contactNumber')) {
+          errorMessage = "Please enter a valid 10-digit contact number."
+        } else if (firstErrorKey.includes('enrollmentNumber')) {
+          errorMessage = "Please enter a valid enrollment number."
+        } else if (firstErrorKey.includes('collegeName')) {
+          errorMessage = "Please select or enter your college name."
+        } else if (firstErrorKey === 'teamName') {
+          errorMessage = "Please enter a team name."
+        } else if (firstErrorKey === 'teamSize') {
+          errorMessage = errors.teamSize
+        }
+      }
+      
+      showToast(errorMessage, "error")
+      
+      // Scroll to first error after a short delay to ensure DOM is updated
+      setTimeout(() => {
+        scrollToFirstError()
+      }, 100)
+      
       return
     }
     setLoading(true)
@@ -187,8 +227,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
         specialRequirements: "" // Add any special requirements if needed
       }
 
-      // Log registration data to console
-      console.log("Registration Data Submitted:", registrationData)
+      // Registration data prepared for submission
 
       // Make actual API call to register for the game
       const response = await apiService.registerForGame(registrationData)
@@ -638,7 +677,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
   )
 
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered>
+    <Modal show={show} onHide={handleClose} size="lg" centered backdrop="static">
       <div style={{
         background: 'linear-gradient(135deg, #1a0a2e 0%, #16213e 25%, #0f3460 50%, #533a7d 75%, #1a0a2e 100%)',
         border: '1px solid rgba(138, 43, 226, 0.3)',

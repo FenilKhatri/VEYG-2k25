@@ -50,7 +50,7 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
         password: formData.password.trim()
       }
       
-      console.log('Sending login data:', { email: loginData.email, password: '[HIDDEN]' })
+      // Sending login request
       const data = await apiService.studentLogin(loginData)
 
       if (data.success) {

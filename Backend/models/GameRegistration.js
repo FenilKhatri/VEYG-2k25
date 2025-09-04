@@ -121,8 +121,7 @@ gameRegistrationSchema.index({ gameName: 1 })
 gameRegistrationSchema.index({ gameDay: 1 })
 gameRegistrationSchema.index({ approvalStatus: 1 })
 gameRegistrationSchema.index({ paymentStatus: 1 })
-gameRegistrationSchema.index({ registrationId: 1 }, { unique: true })
-gameRegistrationSchema.index({ receiptNumber: 1 }, { unique: true })
+// registrationId and receiptNumber indexes are already created by unique: true in schema
 
 // Compound index for day-wise registration validation (one registration per user per day)
 gameRegistrationSchema.index({ userId: 1, gameDay: 1 }, { unique: true })

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 import { motion } from 'framer-motion'
 import GameCard from './GameCard'
+import RegistrationRules from '../RegistrationRules'
 import apiService from '../../services/api'
 
 const GamesSection = ({ 
@@ -188,6 +189,17 @@ const GamesSection = ({
           >
             Choose one game per day. Register for your preferred competition.
           </p>
+        </motion.div>
+
+        {/* Registration Rules */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mb-5"
+        >
+          <RegistrationRules />
         </motion.div>
 
         {/* Day 1 Games */}

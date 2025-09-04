@@ -5,9 +5,7 @@ const router = express.Router()
 const adminRoutes = require('./adminRoutes')
 const studentRoutes = require('./studentRoutes')
 const gameRegistrationRoutes = require('./gameRegistrationRoutes')
-const exportRoutes = require('./exportRoutes')
 const contactRoutes = require('./contactRoutes')
-
 // Health check route
 router.get('/health', (req, res) => {
       res.json({
@@ -22,7 +20,6 @@ router.use('/admin', adminRoutes)
 router.use('/student', studentRoutes)
 router.use('/user', studentRoutes) // Add user alias for student routes
 router.use('/game-registrations', gameRegistrationRoutes)
-router.use('/export', exportRoutes)
 router.use('/form', contactRoutes)
 
 module.exports = router

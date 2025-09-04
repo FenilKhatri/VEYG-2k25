@@ -117,7 +117,7 @@ const AdminDashboardNew = () => {
                   }
 
                   await fetchRegistrations()
-                  console.log(`Registration ${registrationId} status updated to ${newStatus}`)
+                  // Registration status updated successfully
             } catch (error) {
                   console.error('Error updating status:', error)
                   setError('Failed to update registration status')
@@ -146,7 +146,7 @@ const AdminDashboardNew = () => {
                   document.body.removeChild(link)
                   window.URL.revokeObjectURL(url)
 
-                  console.log(`${type} data exported successfully`)
+                  // Data exported successfully
             } catch (error) {
                   console.error('Error exporting data:', error)
                   setError(`Failed to export ${type} data`)
@@ -374,7 +374,7 @@ const AdminDashboardNew = () => {
                                                       </Form.Select>
                                                 </Col>
                                                 <Col lg={4}>
-                                                      <div className="d-flex gap-2">
+                                                      <div className="d-flex gap-2 flex-wrap">
                                                             <Button
                                                                   variant="outline-primary"
                                                                   onClick={fetchRegistrations}
@@ -382,6 +382,20 @@ const AdminDashboardNew = () => {
                                                                   style={{ borderRadius: '12px', fontWeight: '600' }}
                                                             >
                                                                   Refresh Data
+                                                            </Button>
+                                                            <Button
+                                                                  variant="success"
+                                                                  onClick={() => window.open('/admin/google-sheets/student-data', '_blank')}
+                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
+                                                            >
+                                                                  📊 Open Student Data
+                                                            </Button>
+                                                            <Button
+                                                                  variant="info"
+                                                                  onClick={() => window.open('/admin/google-sheets/game-data', '_blank')}
+                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
+                                                            >
+                                                                  🎮 Open Game Data
                                                             </Button>
                                                       </div>
                                                 </Col>

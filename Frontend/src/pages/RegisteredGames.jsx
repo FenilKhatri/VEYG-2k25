@@ -19,27 +19,20 @@ const RegisteredGames = ({ user, showToast }) => {
     try {
       setLoading(true)
       setError('')
-      console.log('Fetching registrations for user:', user)
+      // Fetching registrations for user
 
       const response = await apiService.getMyRegistrations()
-      console.log('API Response:', response)
-      console.log('Response structure:', {
-        success: response.success,
-        data: response.data,
-        registrations: response.registrations,
-        message: response.message
-      })
+      // Processing API response
 
       if (response.success) {
         // Handle different response structures
         const registrationsArray = response.registrations || response.data?.registrations || response.data || []
-        console.log('Registrations found:', registrationsArray)
-        console.log('Registrations array length:', registrationsArray.length)
+        // Processing registrations data
 
         setRegistrations(Array.isArray(registrationsArray) ? registrationsArray : [])
 
         if (registrationsArray.length === 0) {
-          console.log('No registrations found - this might be expected for new registrations')
+          // No registrations found
           setError('')  // Don't set error for empty results
         }
       } else {

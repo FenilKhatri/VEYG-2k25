@@ -26,6 +26,15 @@ export default function VEYGReceipt({ show, onHide, game }) {
         return
       }
 
+      // Check if we're on mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      
+      if (isMobile) {
+        // For mobile devices, use a different approach
+        handleMobileDownload()
+        return
+      }
+
       const printWindow = window.open("", "_blank")
       if (!printWindow) {
         alert("Please allow popups to download the receipt.")
@@ -44,6 +53,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <html>
         <head>
           <title>VEYG 2K25 - Official Payment Receipt</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
@@ -55,7 +65,8 @@ export default function VEYGReceipt({ show, onHide, game }) {
               line-height: 1.6;
             }
             .page {
-              width: 210mm;
+              width: 100%;
+              max-width: 210mm;
               min-height: 297mm;
               margin: 0 auto 20px;
               background: white;
@@ -92,6 +103,8 @@ export default function VEYGReceipt({ show, onHide, game }) {
               display: flex;
               align-items: center;
               justify-content: space-between;
+              flex-wrap: wrap;
+              gap: 1rem;
             }
             .logo-container {
               width: 80px;
@@ -104,6 +117,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
               padding: 8px;
               border: 1px solid rgba(255,255,255,0.4);
               overflow: hidden;
+              flex-shrink: 0;
             }
             .logo-image {
               width: 100%;
@@ -124,7 +138,8 @@ export default function VEYGReceipt({ show, onHide, game }) {
             .center-title {
               text-align: center;
               flex: 1;
-              margin: 0 2rem;
+              margin: 0 1rem;
+              min-width: 200px;
             }
             .institute-name {
               font-size: 1.5rem;
@@ -143,41 +158,41 @@ export default function VEYGReceipt({ show, onHide, game }) {
             }
             .page-body {
               flex: 1;
-              padding: 2rem;
+              padding: 1rem;
             }
             .tech-footer {
               background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
               color: white;
-              padding: 1rem 2rem;
+              padding: 1rem;
               text-align: center;
               font-size: 0.875rem;
             }
             .event-title {
-              font-size: 3rem;
+              font-size: 2.5rem;
               font-weight: 800;
               text-align: center;
               background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
               -webkit-background-clip: text;
               -webkit-text-fill-color: transparent;
               background-clip: text;
-              margin: 2rem 0;
+              margin: 1.5rem 0;
             }
             .event-date {
-              font-size: 1.5rem;
+              font-size: 1.25rem;
               font-weight: 600;
               text-align: center;
               color: #059669;
-              margin-bottom: 2rem;
+              margin-bottom: 1.5rem;
             }
             .info-card {
               background: #f8fafc;
               border-radius: 12px;
-              padding: 1.5rem;
-              margin-bottom: 1.5rem;
+              padding: 1rem;
+              margin-bottom: 1rem;
               border: 1px solid #e2e8f0;
             }
             .section-title {
-              font-size: 1.25rem;
+              font-size: 1.1rem;
               font-weight: 600;
               color: #1e293b;
               margin-bottom: 1rem;
@@ -187,23 +202,23 @@ export default function VEYGReceipt({ show, onHide, game }) {
             }
             .info-grid {
               display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 1rem;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 0.75rem;
             }
             .info-item {
               display: flex;
               align-items: center;
-              gap: 0.75rem;
+              gap: 0.5rem;
               padding: 0.75rem;
               background: white;
               border-radius: 8px;
               border: 1px solid #e2e8f0;
             }
             .info-icon {
-              width: 32px;
-              height: 32px;
+              width: 28px;
+              height: 28px;
               background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
-              border-radius: 8px;
+              border-radius: 6px;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -211,31 +226,31 @@ export default function VEYGReceipt({ show, onHide, game }) {
               flex-shrink: 0;
             }
             .info-label {
-              font-size: 0.875rem;
+              font-size: 0.8rem;
               color: #64748b;
               font-weight: 500;
             }
             .info-value {
-              font-size: 1rem;
+              font-size: 0.9rem;
               color: #1e293b;
               font-weight: 600;
             }
             .member-card {
               background: white;
               border-radius: 8px;
-              padding: 1rem;
+              padding: 0.75rem;
               border: 1px solid #e2e8f0;
-              margin-bottom: 0.75rem;
+              margin-bottom: 0.5rem;
             }
             .member-header {
               display: flex;
               align-items: center;
-              gap: 0.75rem;
-              margin-bottom: 0.75rem;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
             }
             .member-number {
-              width: 32px;
-              height: 32px;
+              width: 28px;
+              height: 28px;
               background: linear-gradient(135deg, #10b981 0%, #059669 100%);
               border-radius: 50%;
               display: flex;
@@ -243,7 +258,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
               justify-content: center;
               color: white;
               font-weight: 600;
-              font-size: 0.875rem;
+              font-size: 0.8rem;
             }
             .thank-you-page {
               display: flex;
@@ -251,34 +266,58 @@ export default function VEYGReceipt({ show, onHide, game }) {
               align-items: center;
               justify-content: center;
               text-align: center;
-              padding: 3rem 2rem;
+              padding: 2rem 1rem;
             }
             .thank-you-title {
-              font-size: 2.5rem;
+              font-size: 2rem;
               font-weight: 700;
               color: #1e293b;
-              margin-bottom: 1.5rem;
+              margin-bottom: 1rem;
             }
             .thank-you-content {
-              font-size: 1.1rem;
+              font-size: 1rem;
               color: #64748b;
-              line-height: 1.8;
-              max-width: 600px;
+              line-height: 1.6;
+              max-width: 500px;
             }
             .contact-info {
               background: #f0f9ff;
               border-radius: 12px;
-              padding: 1.5rem;
-              margin: 2rem 0;
+              padding: 1rem;
+              margin: 1.5rem 0;
               border: 1px solid #bae6fd;
             }
             .tech-team {
               background: #fef3c7;
               border-radius: 12px;
-              padding: 1.5rem;
-              margin-top: 2rem;
+              padding: 1rem;
+              margin-top: 1.5rem;
               border: 1px solid #fde68a;
             }
+            
+            /* Mobile specific styles */
+            @media (max-width: 768px) {
+              .header-content {
+                flex-direction: column;
+                text-align: center;
+              }
+              .center-title {
+                margin: 1rem 0;
+              }
+              .institute-name {
+                font-size: 1.2rem;
+              }
+              .event-title {
+                font-size: 2rem;
+              }
+              .info-grid {
+                grid-template-columns: 1fr;
+              }
+              .page-body {
+                padding: 0.75rem;
+              }
+            }
+            
             @media print {
               body { background: white; }
               .page { 
@@ -308,6 +347,111 @@ export default function VEYGReceipt({ show, onHide, game }) {
     } catch (error) {
       console.error("Error downloading PDF:", error)
       alert("Failed to download receipt. Please try again.")
+    }
+  }
+
+  const handleMobileDownload = () => {
+    try {
+      const receiptContent = document.getElementById("veyg-receipt-content")
+      if (!receiptContent) {
+        alert("Receipt content not found. Please try again.")
+        return
+      }
+
+      // Create a blob with the receipt HTML
+      const receiptHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>VEYG 2K25 Receipt</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: white; }
+            .receipt-container { max-width: 100%; margin: 0 auto; }
+            .header { background: #1e40af; color: white; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 15px; }
+            .content { padding: 10px; }
+            .info-section { margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; }
+            .info-title { font-weight: bold; color: #1e40af; margin-bottom: 8px; }
+            .info-item { margin-bottom: 5px; }
+            .footer { text-align: center; padding: 10px; background: #374151; color: white; border-radius: 6px; margin-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="receipt-container">
+            <div class="header">
+              <h2>VEYG 2K25 Receipt</h2>
+              <p>Registration ID: ${game?.registrationDetails?.registrationId || 'N/A'}</p>
+            </div>
+            <div class="content">
+              <div class="info-section">
+                <div class="info-title">Game Information</div>
+                <div class="info-item"><strong>Game:</strong> ${game?.name || game?.gameName || 'N/A'}</div>
+                <div class="info-item"><strong>Fee:</strong> ₹${game?.registrationFee || game?.totalFee || '0'}</div>
+                <div class="info-item"><strong>Status:</strong> ${game?.approvalStatus === "approved" ? "Payment Confirmed" : "Payment Pending"}</div>
+              </div>
+              <div class="info-section">
+                <div class="info-title">Participant Details</div>
+                <div class="info-item"><strong>Name:</strong> ${game?.registrationDetails?.teamLeader?.fullName || 'N/A'}</div>
+                <div class="info-item"><strong>Email:</strong> ${game?.registrationDetails?.teamLeader?.email || 'N/A'}</div>
+                <div class="info-item"><strong>Contact:</strong> ${game?.registrationDetails?.teamLeader?.contactNumber || 'N/A'}</div>
+                <div class="info-item"><strong>College:</strong> ${game?.registrationDetails?.teamLeader?.collegeName || 'N/A'}</div>
+              </div>
+            </div>
+            <div class="footer">
+              <p>VEYG 2025 - Saffrony Institute of Technology</p>
+              <p>Contact: veyg.notification@gmail.com</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+
+      // Create blob and download link
+      const blob = new Blob([receiptHTML], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      
+      // Create temporary download link
+      const downloadLink = document.createElement('a')
+      downloadLink.href = url
+      downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
+      downloadLink.style.display = 'none'
+      
+      // Trigger download
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+      
+      // Clean up
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      
+      alert("Receipt downloaded successfully! You can open the HTML file in any browser to view or print.")
+      
+    } catch (error) {
+      console.error("Mobile download error:", error)
+      
+      // Fallback: try to open in new tab
+      try {
+        const newWindow = window.open('', '_blank')
+        if (newWindow) {
+          newWindow.document.write(`
+            <html>
+            <head><title>VEYG 2K25 Receipt</title></head>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+              <h2>VEYG 2K25 Receipt</h2>
+              <p><strong>Registration ID:</strong> ${game?.registrationDetails?.registrationId || 'N/A'}</p>
+              <p><strong>Game:</strong> ${game?.name || game?.gameName || 'N/A'}</p>
+              <p><strong>Fee:</strong> ₹${game?.registrationFee || game?.totalFee || '0'}</p>
+              <p>Use your browser's share or print function to save this receipt.</p>
+            </body>
+            </html>
+          `)
+          newWindow.document.close()
+        } else {
+          alert("Please enable popups to download the receipt, or take a screenshot of this page.")
+        }
+      } catch (fallbackError) {
+        alert("Unable to download receipt. Please take a screenshot of this page for your records.")
+      }
     }
   }
 

@@ -22,6 +22,8 @@ import AdminLogin from "./components/auth/AdminLogin"
 import AdminSignup from "./components/auth/AdminSignup"
 import Profile from "./pages/Profile"
 import AdminProfile from "./pages/AdminProfileNew"
+import GoogleSheetsStudentData from "./pages/GoogleSheetsStudentData"
+import GoogleSheetsGameData from "./pages/GoogleSheetsGameData"
 import ToastMessage from "./components/Toast"
 import { AuthProvider } from "./context/AuthContext"
 import cookieAuth from "./utils/cookieAuth"
@@ -174,6 +176,22 @@ const App = () => {
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminPage showToast={showToast} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/google-sheets/student-data"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <GoogleSheetsStudentData showToast={showToast} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/google-sheets/game-data"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <GoogleSheetsGameData showToast={showToast} />
                   </ProtectedRoute>
                 }
               />
