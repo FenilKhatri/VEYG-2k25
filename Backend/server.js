@@ -6,6 +6,8 @@ const authRoutes = require('./router');
 const connectDB = require('./utils/db');
 const { errorMiddleware } = require('./middleware/middleware');
 
+// Game routes are already included in the main router via gameRegistrationRoutes
+
 // ------------------- CORS CONFIG -------------------
 const allowedOrigins = [
   "http://localhost:5173",
@@ -58,7 +60,11 @@ connectDB().then(() => {
   console.log("✅ Database connected successfully!");
   
   const server = app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    if (process.env.NODE_ENV === 'production') {
+      console.log(`🚀 Server running on port ${PORT}`);
+    } else {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    }
   });
 
   // Handle server errors
@@ -76,7 +82,11 @@ connectDB().then(() => {
           console.log(`🔄 Trying port ${altPort}...`);
           
           const altServer = app.listen(altPort, () => {
-            console.log(`🚀 Server running on http://localhost:${altPort}`);
+            if (process.env.NODE_ENV === 'production') {
+              console.log(`🚀 Server running on port ${altPort}`);
+            } else {
+              console.log(`🚀 Server running on http://localhost:${altPort}`);
+            }
             console.log(`⚠️  Note: Using alternative port ${altPort} instead of ${PORT}`);
           });
           

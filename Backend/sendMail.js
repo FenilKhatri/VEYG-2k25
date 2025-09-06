@@ -1,244 +1,208 @@
-const nodemailer = require('nodemailer');
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
-const mongoose = require('mongoose');
-const GameRegistration = require('./models/GameRegistration');
-require('dotenv').config();
+require("dotenv").config();
+const nodemailer = require("nodemailer");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const path = require("path");
+const QRCode = require("qrcode");
 
-// Create PDF with dynamic registration data
-function createRegistrationPDF(registrationData) {
-    return new Promise((resolve, reject) => {
-        const doc = new PDFDocument();
-        const fileName = 'registration_confirmation.pdf';
-        const filePath = path.join(__dirname, fileName);
+// ---------- CONFIG ----------
+const EMAIL_USER = process.env.EMAIL_USER || "veyg.notification@gmail.com";
+const EMAIL_PASS = process.env.EMAIL_PASS || "gmsuduskeqjiqinf";
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "veyg.notification@gmail.com";
+const ORG_NAME = process.env.ORG_NAME || "VEYG 2025";
+const RECEIPTS_DIR = path.join(__dirname, "receipts");
+if (!fs.existsSync(RECEIPTS_DIR)) fs.mkdirSync(RECEIPTS_DIR, { recursive: true });
 
-        doc.pipe(fs.createWriteStream(filePath));
+// ---------- TRANSPORTER ----------
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: { user: EMAIL_USER, pass: EMAIL_PASS },
+    tls: { rejectUnauthorized: false }
+});
 
-        // Add content to PDF with dynamic data
-        doc.fontSize(28)
-            .fillColor('#007bff')
-            .text('VEYG 2025', 50, 50, { align: 'center' });
+transporter.verify().then(() => {
+    console.log("✅ Mail transporter verified.");
+}).catch(err => {
+    console.error("⚠️ Mail transporter verification failed:", err.message);
+});
 
-        doc.fontSize(20)
-            .fillColor('#333')
-            .text('Registration Confirmation', 50, 100, { align: 'center' });
+// ---------- GENERATE RECEIPT ID ----------
+const generateReceiptId = () => `VEYG-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 900 + 100)}`;
 
-        doc.fontSize(18)
-            .fillColor('#28a745')
-            .text('🎉 Thank you for registration!', 50, 150, { align: 'center' });
+// ---------- GENERATE PDF ----------
+async function generateReceiptPDF(participant, game, registration, status = "Pending") {
+    return new Promise(async (resolve, reject) => {
+        try {
+            registration.id = registration.id || generateReceiptId();
+            registration.paymentStatus = status === "Confirmed" ? "Confirmed" : "Pending";
 
-        // Registration Details
-        doc.fontSize(14)
-            .fillColor('#333')
-            .text('Registration Details:', 50, 200);
+            const filename = `receipt_${registration.id}_${registration.paymentStatus}_${Date.now()}.pdf`;
+            const pdfPath = path.join(RECEIPTS_DIR, filename);
 
-        doc.fontSize(12)
-            .fillColor('#666')
-            .text(`Registration ID: ${registrationData.registrationId || registrationData._id}`, 70, 230)
-            .text(`Game: ${registrationData.gameName}`, 70, 250)
-            .text(`Registration Type: ${registrationData.registrationType}`, 70, 270)
-            .text(`Total Amount: ₹${registrationData.totalAmount}`, 70, 290)
-            .text(`Status: ${registrationData.approvalStatus || 'Pending'}`, 70, 310);
+            const doc = new PDFDocument({ size: "A4", margin: 50 });
+            const stream = fs.createWriteStream(pdfPath);
+            doc.pipe(stream);
 
-        // Team Leader Details
-        doc.fontSize(14)
-            .fillColor('#333')
-            .text('Team Leader Details:', 50, 350);
+            // Header - Horizontal Layout with Logos
+            const headerY = doc.y;
+            const pageWidth = doc.page.width - 100; // Account for margins
+            const logoSize = 60;
+            const centerX = doc.page.width / 2;
+            
+            // Left: College Logo placeholder
+            doc.fontSize(10).fillColor("#666").text("[College Logo]", 50, headerY + 20, { width: logoSize, align: "center" });
+            
+            // Center: Organization Name
+            doc.fontSize(20).fillColor("#0B3D91").text(ORG_NAME, centerX - 100, headerY, { width: 200, align: "center" });
+            doc.fontSize(12).fillColor("#333").text("Registration Receipt", centerX - 100, headerY + 25, { width: 200, align: "center" });
+            
+            // Right: VEYG Logo placeholder
+            doc.fontSize(10).fillColor("#666").text("[VEYG Logo]", doc.page.width - 50 - logoSize, headerY + 20, { width: logoSize, align: "center" });
+            
+            doc.moveDown(4);
 
-        doc.fontSize(12)
-            .fillColor('#666')
-            .text(`Name: ${registrationData.teamLeader?.fullName || 'N/A'}`, 70, 380)
-            .text(`Email: ${registrationData.teamLeader?.email || 'N/A'}`, 70, 400)
-            .text(`Contact: ${registrationData.teamLeader?.contactNumber || 'N/A'}`, 70, 420)
-            .text(`College: ${registrationData.teamLeader?.collegeName || 'N/A'}`, 70, 440);
+            // Participant
+            doc.fontSize(14).fillColor("#000").text("Participant Details", { underline: true });
+            doc.fontSize(12).text(`Name: ${participant.name || "-"}`);
+            doc.text(`Email: ${participant.email || "-"}`);
+            if (participant.phone) doc.text(`Phone: ${participant.phone}`);
+            if (participant.college) doc.text(`College: ${participant.college}`);
+            doc.moveDown();
 
-        // Team Members (if any)
-        if (registrationData.teamMembers && registrationData.teamMembers.length > 0) {
-            doc.fontSize(14)
-                .fillColor('#333')
-                .text('Team Members:', 50, 480);
+            // Game
+            doc.fontSize(14).text("Game Details", { underline: true });
+            doc.fontSize(12).text(`Game: ${game.name}`);
+            if (game.date) doc.text(`Date: ${game.date}`);
+            if (game.venue) doc.text(`Venue: ${game.venue}`);
+            doc.moveDown();
 
-            let yPos = 510;
-            registrationData.teamMembers.forEach((member, index) => {
-                doc.fontSize(12)
-                    .fillColor('#666')
-                    .text(`${index + 1}. ${member.fullName} - ${member.email}`, 70, yPos);
-                yPos += 20;
-            });
-        }
+            // Registration
+            doc.fontSize(14).text("Registration Info", { underline: true });
+            doc.fontSize(12).text(`Registration ID: ${registration.id}`);
+            doc.text(`Amount: ₹${registration.amount}`);
+            doc.text(`Status: ${registration.paymentStatus}`);
+            doc.moveDown(1);
 
-        // Footer
-        doc.fontSize(12)
-            .fillColor('#666')
-            .text('Your registration has been successfully processed.', 50, 600, { align: 'center' })
-            .text('We look forward to seeing you at VEYG 2025!', 50, 620, { align: 'center' });
+            // QR Code
+            try {
+                const qrPayload = { id: registration.id, name: participant.name, email: participant.email, game: game.name };
+                const qrDataUrl = await QRCode.toDataURL(JSON.stringify(qrPayload));
+                const qrBase64 = qrDataUrl.split(",")[1];
+                const qrBuffer = Buffer.from(qrBase64, "base64");
+                doc.image(qrBuffer, (doc.page.width - 110) / 2, doc.y, { width: 110 });
+                doc.moveDown(6);
+            } catch {
+                doc.moveDown(1);
+            }
 
-        doc.fontSize(10)
-            .fillColor('#999')
-            .text(`Generated on: ${new Date().toLocaleString()}`, 50, 660, { align: 'center' })
-            .text('VEYG 2025 - Saffrony Institute of Technology', 50, 680, { align: 'center' });
+            // Status Message
+            if (registration.paymentStatus === "Pending") {
+                doc.fontSize(16).fillColor("red").text("⚠️ Please confirm your payment to complete your registration!", { align: "center" });
+            } else {
+                doc.fontSize(16).fillColor("green").text("✅ Payment Confirmed — You are registered!", { align: "center" });
+            }
 
-        doc.end();
+            doc.end();
 
-        doc.on('end', () => {
-            resolve(filePath);
-        });
-
-        doc.on('error', (err) => {
+            stream.on("finish", () => resolve({ pdfPath, registration }));
+            stream.on("error", reject);
+        } catch (err) {
             reject(err);
-        });
+        }
     });
 }
 
-// Send email to individual participant
-async function sendRegistrationEmail(registration) {
-    try {
-        console.log(`📧 Processing email for: ${registration.teamLeader?.fullName}`);
-        
-        // Create personalized PDF
-        const pdfPath = await createRegistrationPDF(registration);
-        
-        // Setup email transporter
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
+// ---------- SEND EMAIL WITH RETRY ----------
+async function sendMailWithRetry(mailOptions, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await transporter.sendMail(mailOptions);
+        } catch (err) {
+            console.warn(`⚠️ Attempt ${attempt} failed: ${err.message}`);
+            if (attempt === retries) throw err;
+            await new Promise(res => setTimeout(res, 1000 * attempt));
+        }
+    }
+}
+
+// ---------- SEND REGISTRATION EMAIL ----------
+async function sendRegistrationConfirmationEmail(registrationData) {
+    const participant = {
+        name: registrationData.teamLeader?.fullName,
+        email: registrationData.teamLeader?.email,
+        phone: registrationData.teamLeader?.contactNumber,
+        college: registrationData.teamLeader?.collegeName
+    };
+    const game = { name: registrationData.gameName, date: registrationData.gameDay, venue: "VEYG 2025 Venue" };
+    const registration = { id: registrationData.registrationId || registrationData._id, amount: registrationData.totalFee };
+
+    const { pdfPath } = await generateReceiptPDF(participant, game, registration, "Pending");
+
+    const mailOptions = {
+        from: `"${ORG_NAME}" <${EMAIL_USER}>`,
+        to: participant.email,
+        cc: SUPPORT_EMAIL,
+        subject: `🎫 Registration Received - ${game.name}`,
+        html: `
+            <h2>Hi ${participant.name},</h2>
+            <p>Thank you for registering for <b>${game.name}</b>.</p>
+            <p><b>Registration ID:</b> ${registration.id}</p>
+            <p style="color:red;"><b>Payment Pending</b></p>
+            <p>Please confirm your payment to complete registration.</p>
+        `,
+        attachments: [{ filename: path.basename(pdfPath), path: pdfPath }]
+    };
+
+    await sendMailWithRetry(mailOptions);
+    console.log(`📧 Registration email sent to ${participant.email}`);
+}
+
+// ---------- SEND PAYMENT CONFIRMATION EMAIL ----------
+async function sendPaymentConfirmationEmail(registrationData) {
+    const participant = {
+        name: registrationData.teamLeader?.fullName,
+        email: registrationData.teamLeader?.email,
+        phone: registrationData.teamLeader?.contactNumber,
+        college: registrationData.teamLeader?.collegeName
+    };
+    const game = { name: registrationData.gameName, date: registrationData.gameDay, venue: "VEYG 2025 Venue" };
+    const registration = { id: registrationData.registrationId || registrationData._id, amount: registrationData.totalFee };
+
+    const { pdfPath } = await generateReceiptPDF(participant, game, registration, "Confirmed");
+
+    // Create array of all participant emails (team leader + team members)
+    const allParticipantEmails = [participant.email];
+    
+    // Add team member emails if they exist
+    if (registrationData.teamMembers && Array.isArray(registrationData.teamMembers)) {
+        registrationData.teamMembers.forEach(member => {
+            if (member.email && member.email !== participant.email) {
+                allParticipantEmails.push(member.email);
             }
         });
-
-        let mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: registration.teamLeader?.email,
-            subject: 'VEYG 2025 - Registration Confirmation',
-            html: `
-                <div style="font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa;">
-                    <div style="background: white; padding: 30px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <div style="text-align: center; margin-bottom: 30px;">
-                            <h1 style="color: #007bff; margin: 0;">VEYG 2025</h1>
-                            <p style="color: #6c757d; margin: 5px 0;">Registration Confirmation</p>
-                        </div>
-                        
-                        <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 20px; margin: 20px 0;">
-                            <h3 style="color: #155724; margin: 0 0 10px 0;">🎉 Registration Confirmed!</h3>
-                            <p style="color: #155724; margin: 0;"><strong>Thank you for registering for VEYG 2025!</strong></p>
-                        </div>
-                        
-                        <div style="margin: 20px 0;">
-                            <p>Dear <strong>${registration.teamLeader?.fullName || 'Participant'}</strong>,</p>
-                            <p>Your registration has been successfully processed. Here are your details:</p>
-                            <ul style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
-                                <li><strong>Registration ID:</strong> ${registration.registrationId || registration._id}</li>
-                                <li><strong>Game:</strong> ${registration.gameName}</li>
-                                <li><strong>Type:</strong> ${registration.registrationType}</li>
-                                <li><strong>Amount:</strong> ₹${registration.totalAmount}</li>
-                                <li><strong>Status:</strong> ${registration.approvalStatus || 'Pending'}</li>
-                            </ul>
-                            <p>Please find your detailed confirmation document attached as a PDF.</p>
-                        </div>
-                        
-                        <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
-                        
-                        <p style="color: #6c757d; font-size: 14px; text-align: center; margin: 0;">
-                            Best regards,<br>
-                            <strong>VEYG 2025 Team</strong><br>
-                            <small>Saffrony Institute of Technology</small>
-                        </p>
-                    </div>
-                </div>
-            `,
-            attachments: [
-                {
-                    filename: 'Registration_Confirmation.pdf',
-                    path: pdfPath,
-                    contentType: 'application/pdf'
-                }
-            ]
-        };
-
-        console.log('📧 Sending email with PDF attachment...');
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`✅ Email sent to ${registration.teamLeader?.fullName}: ${info.messageId}`);
-
-        // Clean up PDF file
-        if (fs.existsSync(pdfPath)) {
-            fs.unlinkSync(pdfPath);
-        }
-
-        return { success: true, participant: registration.teamLeader?.fullName, messageId: info.messageId };
-
-    } catch (error) {
-        console.error(`❌ Failed to send email to ${registration.teamLeader?.fullName}:`, error.message);
-        return { success: false, participant: registration.teamLeader?.fullName, error: error.message };
     }
+
+    const mailOptions = {
+        from: `"${ORG_NAME}" <${EMAIL_USER}>`,
+        to: allParticipantEmails,
+        cc: SUPPORT_EMAIL,
+        subject: `✅ Payment Confirmed - ${game.name}`,
+        html: `
+            <h2>Hi ${participant.name},</h2>
+            <p>Your payment has been <b style="color:green;">successfully completed</b>.</p>
+            <p>🎉 You are successfully registered!</p>
+            <p><b>After completing the payment, please go to the Registered Games tab and download your official receipt.</b></p>
+            <p>Visit our website and navigate to the Registered Games section to access your official receipt in PDF format.</p>
+        `
+    };
+
+    const info = await sendMailWithRetry(mailOptions);
+    console.log(`📧 Payment confirmation email sent to ${participant.email} (msgId=${info.messageId})`);
 }
 
-// Main function to send emails to all registered participants
-async function sendBulkRegistrationEmails() {
-    try {
-        console.log('🚀 Starting bulk email process...');
-        
-        // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log('📊 Connected to database');
-        
-        // Fetch all game registrations
-        const registrations = await GameRegistration.find({});
-        console.log(`👥 Found ${registrations.length} game registrations`);
-        
-        if (registrations.length === 0) {
-            console.log('📭 No registrations found in database');
-            return;
-        }
-        
-        const results = [];
-        let successCount = 0;
-        let failureCount = 0;
-        
-        // Send emails with delay to avoid rate limiting
-        for (let i = 0; i < registrations.length; i++) {
-            const registration = registrations[i];
-            console.log(`\n📧 Processing ${i + 1}/${registrations.length}: ${registration.teamLeader?.fullName}`);
-            
-            const result = await sendRegistrationEmail(registration);
-            results.push(result);
-            
-            if (result.success) {
-                successCount++;
-            } else {
-                failureCount++;
-            }
-            
-            // Add delay between emails to avoid rate limiting (2 seconds)
-            if (i < registrations.length - 1) {
-                console.log('⏳ Waiting 2 seconds before next email...');
-                await new Promise(resolve => setTimeout(resolve, 2000));
-            }
-        }
-        
-        // Summary
-        console.log('\n🎉 Bulk email process completed!');
-        console.log(`✅ Successful: ${successCount}`);
-        console.log(`❌ Failed: ${failureCount}`);
-        console.log(`📊 Total: ${registrations.length}`);
-        
-        // Show failed emails if any
-        if (failureCount > 0) {
-            console.log('\n❌ Failed emails:');
-            results.filter(r => !r.success).forEach(r => {
-                console.log(`  - ${r.participant}: ${r.error}`);
-            });
-        }
-        
-    } catch (error) {
-        console.error('💥 Bulk email process failed:', error.message);
-    } finally {
-        // Close database connection
-        await mongoose.connection.close();
-        console.log('📊 Database connection closed');
-    }
-}
-
-// Run the bulk email function
-sendBulkRegistrationEmails();
+module.exports = {
+    sendRegistrationConfirmationEmail,
+    sendPaymentConfirmationEmail
+};

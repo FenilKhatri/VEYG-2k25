@@ -677,7 +677,7 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
   )
 
   return (
-    <Modal show={show} onHide={handleClose} size="lg" centered backdrop="static">
+    <Modal show={show} size="lg" centered backdrop={true}>
       <div style={{
         background: 'linear-gradient(135deg, #1a0a2e 0%, #16213e 25%, #0f3460 50%, #533a7d 75%, #1a0a2e 100%)',
         border: '1px solid rgba(138, 43, 226, 0.3)',
@@ -686,29 +686,17 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
         overflow: 'hidden',
         boxShadow: '0 25px 50px rgba(138, 43, 226, 0.3), 0 0 100px rgba(0, 212, 255, 0.1)'
       }}>
-        {/* Enhanced Tech Background */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          opacity: 0.05,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ctext x='10' y='25' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;form&gt;%3C/text%3E%3Ctext x='70' y='25' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;input&gt;%3C/text%3E%3Ctext x='10' y='45' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;team&gt;%3C/text%3E%3Ctext x='70' y='45' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;user&gt;%3C/text%3E%3Ctext x='10' y='65' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;data&gt;%3C/text%3E%3Ctext x='70' y='65' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;reg&gt;%3C/text%3E%3Ctext x='10' y='85' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;/form&gt;%3C/text%3E%3Ctext x='70' y='85' font-family='monospace' font-size='12' fill='%2300d4ff'%3E&lt;/reg&gt;%3C/text%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '150px 150px'
-        }}></div>
 
         <Modal.Header
           closeButton
           closeVariant="white"
-          onHide={handleClose}
+          onClick={handleClose}
           style={{
             background: 'linear-gradient(135deg, #007bff, #00d4ff)',
             border: 'none',
             color: 'white',
             borderRadius: '20px 20px 0 0',
-            padding: '20px 24px'
+            padding: '20px 24px',
           }}
         >
           <Modal.Title style={{

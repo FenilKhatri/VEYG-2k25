@@ -1,238 +1,407 @@
-import React, { useState } from 'react'
-import { Card, Accordion, Badge } from 'react-bootstrap'
-import { CheckCircle, User, Calendar, CreditCard, Download, Shield, Trophy } from 'lucide-react'
+import React, { useState } from "react";
+import { Card, Accordion, Badge } from "react-bootstrap";
+import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  User,
+  Calendar,
+  CreditCard,
+  Download,
+  Shield,
+  Trophy,
+  Star,
+  Users,
+} from "lucide-react";
 
 const RegistrationRules = () => {
-  const [activeKey, setActiveKey] = useState('0')
+  const [activeKey, setActiveKey] = useState("0");
 
   const steps = [
     {
-      id: '0',
-      title: 'Create an account & log in',
+      id: "0",
+      title: "Create an account & log in",
       icon: <User size={24} />,
-      description: 'Register using your college email address and log in. (If the site requires email verification, complete that step.)',
-      color: '#00d4ff'
+      description:
+        "Register using your college email address and log in. (If the site requires email verification, complete that step.)",
+      color: "#00d4ff",
     },
     {
-      id: '1',
-      title: 'Explore events',
+      id: "1",
+      title: "Explore events",
       icon: <Calendar size={24} />,
-      description: 'Browse the Day 1 and Day 2 game lists and read each game\'s description, rules, team size, and schedule carefully.',
-      color: '#007bff'
+      description:
+        "Browse the Day 1 and Day 2 game lists and read each game's description, rules, team size, and schedule carefully.",
+      color: "#007bff",
     },
     {
-      id: '2',
-      title: 'Choose wisely',
+      id: "2",
+      title: "Choose wisely",
       icon: <CheckCircle size={24} />,
-      description: 'You may register for only one game per day. If you register for a Day 1 game, you cannot register for another Day 1 game (same rule for Day 2). Decide carefully before submitting.',
-      color: '#ffc107',
-      important: true
+      description:
+        "You may register for only one game per day. If you register for a Day 1 game, you cannot register for another Day 1 game (same rule for Day 2). Decide carefully before submitting.",
+      color: "#ffc107",
+      important: true,
     },
     {
-      id: '3',
-      title: 'Register and pay',
+      id: "3",
+      title: "Register and pay",
       icon: <CreditCard size={24} />,
       description: [
-        'Fill out the registration form for the game you choose.',
-        'Go to the Registered Games page and download your registration receipt (it contains your registration ID).',
-        'Visit the cashier, present the downloaded receipt/registration ID, and make the payment. The cashier will verify your registration and confirm payment.'
+        "Fill out the registration form for the game you choose.",
+        "Go to the Registered Games page and download your registration receipt (it contains your registration ID).",
+        "Visit the cashier, present the downloaded receipt/registration ID, and make the payment. The cashier will verify your registration and confirm payment.",
       ],
-      color: '#28a745'
+      color: "#28a745",
     },
     {
-      id: '4',
-      title: 'Confirmation & receipt',
+      id: "4",
+      title: "Confirmation & receipt",
       icon: <Download size={24} />,
-      description: 'After payment is confirmed you can download the final payment-confirmed receipt. A confirmation email will be sent to all participating members.',
-      color: '#17a2b8'
+      description:
+        "After payment is confirmed you can download the final payment-confirmed receipt. A confirmation email will be sent to all participating members.",
+      color: "#17a2b8",
     },
     {
-      id: '5',
-      title: 'Keep your receipt safe',
+      id: "5",
+      title: "Keep your receipt safe",
       icon: <Shield size={24} />,
-      description: 'Store the payment receipt securely. If the receipt is lost or missing, resolving issues will be your responsibility—keep the document as proof of payment.',
-      color: '#dc3545',
-      important: true
+      description:
+        "Store the payment receipt securely. If the receipt is lost or missing, resolving issues will be your responsibility—keep the document as proof of payment.",
+      color: "#dc3545",
+      important: true,
     },
     {
-      id: '6',
-      title: 'Enjoy the game!',
+      id: "6",
+      title: "Enjoy the game!",
       icon: <Trophy size={24} />,
-      description: 'You\'re all set! Show up on time and have fun competing in your registered games.',
-      color: '#6f42c1'
-    }
-  ]
+      description:
+        "You're all set! Show up on time and have fun competing in your registered games.",
+      color: "#6f42c1",
+    },
+  ];
 
   return (
-    <Card
-      className="registration-rules-card"
-      style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(0, 212, 255, 0.3)',
-        borderRadius: '18px',
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 0 25px rgba(0, 234, 255, 0.15)',
-        overflow: 'hidden'
-      }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
     >
-      <Card.Header
-        className="text-center py-4"
-        style={{
-          background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 140, 255, 0.15))',
-          borderBottom: '1px solid rgba(0, 212, 255, 0.25)'
-        }}
+      {/* Expert Session Card */}
+      <motion.div
+        initial={{ y: 40, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
       >
-        <h3
-          className="mb-0 fw-bold"
+        <Card
+          className="expert-session-card mb-4"
           style={{
-            color: '#00eaff',
-            textShadow: '0 0 10px rgba(0, 234, 255, 0.6)',
-            fontSize: '1.8rem'
+            background: "rgba(255, 193, 7, 0.1)",
+            border: "1px solid rgba(255, 193, 7, 0.4)",
+            borderRadius: "18px",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 0 25px rgba(255, 193, 7, 0.3)",
+            overflow: "hidden",
           }}
         >
-          Registration Rules & Steps
-        </h3>
-        <p
-          className="mb-0 mt-2"
-          style={{
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontSize: '1.1rem'
-          }}
-        >
-          Follow these steps to successfully register for VEYG 2025
-        </p>
-      </Card.Header>
-
-      <Card.Body className="p-4">
-        <Accordion 
-          activeKey={activeKey} 
-          onSelect={(key) => setActiveKey(key)}
-          className="registration-accordion"
-        >
-          {steps.map((step, index) => (
-            <Accordion.Item
-              key={step.id}
-              eventKey={step.id}
-              className="mb-3"
-              style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: `1px solid ${step.important ? '#ffc107' : 'rgba(0, 212, 255, 0.2)'}`,
-                borderRadius: '12px',
-                overflow: 'hidden'
-              }}
+          <Card.Header
+            className="text-center py-4"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255, 193, 7, 0.25), rgba(255, 152, 0, 0.2))",
+              borderBottom: "1px solid rgba(255, 193, 7, 0.3)",
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.6 }}
+              className="d-flex align-items-center justify-content-center mb-2"
             >
-              <Accordion.Header
+              <Star size={32} style={{ color: "#ffc107", marginRight: "10px" }} />
+              <h3
+                className="mb-0 fw-bold"
                 style={{
-                  background: step.important 
-                    ? 'linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1))'
-                    : 'rgba(0, 212, 255, 0.05)',
-                  border: 'none'
+                  color: "#ffc107",
+                  textShadow: "0 0 12px rgba(255, 193, 7, 0.7)",
+                  fontSize: "1.9rem",
                 }}
               >
-                <div className="d-flex align-items-center w-100">
+                Expert Session
+              </h3>
+              <Star size={32} style={{ color: "#ffc107", marginLeft: "10px" }} />
+            </motion.div>
+            <p
+              className="mb-0"
+              style={{
+                color: "rgba(255, 255, 255, 0.9)",
+                fontSize: "1.1rem",
+              }}
+            >
+              Special Technical Workshop by Industry Expert
+            </p>
+          </Card.Header>
+
+          <Card.Body className="p-4">
+            <div className="row align-items-center">
+              <div className="col-md-8">
+                <div className="d-flex align-items-center mb-3">
                   <div
                     className="me-3 d-flex align-items-center justify-content-center"
                     style={{
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '50%',
-                      background: `linear-gradient(135deg, ${step.color}, ${step.color}80)`,
-                      color: 'white',
-                      flexShrink: 0
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, #ffc107, #ff8f00)",
+                      color: "white",
+                      flexShrink: 0,
                     }}
                   >
-                    {step.icon}
+                    <Users size={28} />
                   </div>
-                  <div className="flex-grow-1">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <h5
-                        className="mb-0 fw-bold"
-                        style={{
-                          color: '#fff',
-                          fontSize: '1.2rem'
-                        }}
-                      >
-                        Step {index + 1}: {step.title}
-                      </h5>
-                      {step.important && (
-                        <Badge
-                          bg="warning"
-                          className="ms-2"
-                          style={{
-                            color: '#000',
-                            fontWeight: '600'
-                          }}
-                        >
-                          Important
-                        </Badge>
-                      )}
-                    </div>
+                  <div>
+                    <h4 className="mb-1 fw-bold" style={{ color: "#fff" }}>
+                      Mr. Nikhil Methiya
+                    </h4>
+                    <p
+                      className="mb-0"
+                      style={{
+                        color: "rgba(255, 255, 255, 0.8)",
+                        fontSize: "1rem",
+                      }}
+                    >
+                      CEO | Dronelab Technologies Ahmedabad
+                    </p>
                   </div>
                 </div>
-              </Accordion.Header>
-              <Accordion.Body
-                style={{
-                  background: 'rgba(0, 0, 0, 0.1)',
-                  borderTop: '1px solid rgba(0, 212, 255, 0.1)',
-                  color: '#dffaff'
-                }}
-              >
-                {Array.isArray(step.description) ? (
-                  <ul className="mb-0" style={{ fontSize: '1.05rem', lineHeight: '1.6' }}>
-                    {step.description.map((item, idx) => (
-                      <li key={idx} className="mb-2">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="mb-0" style={{ fontSize: '1.05rem', lineHeight: '1.6' }}>
-                    {step.description}
+
+                <div className="mb-3">
+                  <p
+                    style={{
+                      color: "#dffaff",
+                      fontSize: "1.05rem",
+                      lineHeight: "1.6",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    Join us for an exclusive expert session on{" "}
+                    <strong>"TechShield - Role of Drone Technologies"</strong>
                   </p>
-                )}
-              </Accordion.Body>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-      </Card.Body>
+                </div>
 
-      <style>{`
-        .registration-rules-card .accordion-button {
-          background: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-          color: white !important;
-          padding: 1.5rem !important;
-        }
-        
-        .registration-rules-card .accordion-button:not(.collapsed) {
-          background: transparent !important;
-          color: white !important;
-        }
-        
-        .registration-rules-card .accordion-button::after {
-          filter: brightness(0) invert(1);
-        }
-        
-        .registration-rules-card .accordion-button:focus {
-          box-shadow: none !important;
-        }
-        
-        .registration-rules-card .accordion-body {
-          padding: 1.5rem !important;
-        }
-        
-        .registration-accordion .accordion-item {
-          transition: all 0.3s ease;
-        }
-        
-        .registration-accordion .accordion-item:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
-        }
-      `}</style>
-    </Card>
-  )
-}
+                <div
+                  className="alert alert-warning d-flex align-items-center"
+                  style={{
+                    background: "rgba(220, 53, 69, 0.15)",
+                    border: "1px solid rgba(220, 53, 69, 0.4)",
+                    borderRadius: "10px",
+                    color: "#fff",
+                  }}
+                >
+                  <Shield
+                    size={20}
+                    className="me-2"
+                    style={{ color: "#dc3545" }}
+                  />
+                  <div>
+                    <strong>Important Notice:</strong> This expert session is
+                    exclusively available for{" "}
+                    <strong className="text-warning">Saffronites students only</strong>.
+                  </div>
+                </div>
+              </div>
 
-export default RegistrationRules
+              <div className="col-md-4 text-center">
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    background: "rgba(255, 193, 7, 0.1)",
+                    border: "2px solid rgba(255, 193, 7, 0.3)",
+                    borderRadius: "15px",
+                    padding: "20px",
+                  }}
+                >
+                  <h5 style={{ color: "#ffc107", marginBottom: "15px" }}>
+                    Session Details
+                  </h5>
+                  <div style={{ color: "#dffaff", fontSize: "0.95rem" }}>
+                    <p className="mb-2">
+                      <strong>Date:</strong> Day 1 of VEYG
+                    </p>
+                    <p className="mb-2">
+                      <strong>Venue:</strong> Main Auditorium
+                    </p>
+                    <p className="mb-2">
+                      <strong>Price:</strong> Free of cost
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      </motion.div>
+
+      {/* Registration Rules Section */}
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <Card
+          className="registration-rules-card"
+          style={{
+            background: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid rgba(0, 212, 255, 0.3)",
+            borderRadius: "18px",
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 0 25px rgba(0, 234, 255, 0.2)",
+            overflow: "hidden",
+          }}
+        >
+          <Card.Header
+            className="text-center py-4"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 140, 255, 0.15))",
+              borderBottom: "1px solid rgba(0, 212, 255, 0.25)",
+            }}
+          >
+            <h3
+              className="mb-0 fw-bold"
+              style={{
+                color: "#00eaff",
+                textShadow: "0 0 10px rgba(0, 234, 255, 0.7)",
+                fontSize: "1.9rem",
+              }}
+            >
+              Registration Rules & Steps
+            </h3>
+            <p
+              className="mb-0 mt-2"
+              style={{
+                color: "rgba(255, 255, 255, 0.8)",
+                fontSize: "1.1rem",
+              }}
+            >
+              Follow these steps to successfully register for VEYG 2025
+            </p>
+          </Card.Header>
+
+          <Card.Body className="p-4">
+            <Accordion
+              activeKey={activeKey}
+              onSelect={(key) => setActiveKey(key)}
+              className="registration-accordion"
+            >
+              {steps.map((step, index) => (
+                <motion.div
+                  key={step.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.15 }}
+                >
+                  <Accordion.Item
+                    eventKey={step.id}
+                    className="mb-3"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.03)",
+                      border: `1px solid ${
+                        step.important ? "#ffc107" : "rgba(0, 212, 255, 0.25)"
+                      }`,
+                      borderRadius: "12px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Accordion.Header
+                      style={{
+                        background: step.important
+                          ? "linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.2))"
+                          : "linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(138, 43, 226, 0.1))",
+                        border: "none",
+                      }}
+                    >
+                      <div className="d-flex align-items-center w-100">
+                        <div
+                          className="me-3 d-flex align-items-center justify-content-center"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                            background: `linear-gradient(135deg, ${step.color}, ${step.color}80)`,
+                            color: "white",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {step.icon}
+                        </div>
+                        <div className="flex-grow-1">
+                          <div className="d-flex align-items-center justify-content-between">
+                            <h5
+                              className="mb-0 fw-bold"
+                              style={{
+                                color: "#00eaff",
+                                fontSize: "1.2rem",
+                              }}
+                            >
+                              Step {index + 1}: {step.title}
+                            </h5>
+                            {step.important && (
+                              <Badge
+                                bg="warning"
+                                className="ms-2"
+                                style={{
+                                  color: "#000",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                Important
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Accordion.Header>
+                    <Accordion.Body
+                      style={{
+                        background: "linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.7))",
+                        borderTop: "1px solid rgba(0, 212, 255, 0.2)",
+                        color: "#e2e8f0",
+                      }}
+                    >
+                      {Array.isArray(step.description) ? (
+                        <ul
+                          className="mb-0"
+                          style={{ fontSize: "1.05rem", lineHeight: "1.6" }}
+                        >
+                          {step.description.map((item, idx) => (
+                            <li key={idx} className="mb-2">
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p
+                          className="mb-0"
+                          style={{ fontSize: "1.05rem", lineHeight: "1.6" }}
+                        >
+                          {step.description}
+                        </p>
+                      )}
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </motion.div>
+              ))}
+            </Accordion>
+          </Card.Body>
+        </Card>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default RegistrationRules;

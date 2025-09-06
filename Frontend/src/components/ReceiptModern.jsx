@@ -60,32 +60,30 @@ export default function VEYGReceipt({ show, onHide, game }) {
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
               font-family: 'Inter', sans-serif; 
-              background: #f8fafc;
+              background: white;
               color: #1e293b;
-              line-height: 1.6;
+              line-height: 1.4;
             }
             .page {
               width: 100%;
               max-width: 210mm;
-              min-height: 297mm;
-              margin: 0 auto 20px;
+              height: auto;
+              margin: 0 auto 5px;
               background: white;
-              border: 2px solid #e2e8f0;
-              border-radius: 12px;
+              border: 1px solid #e2e8f0;
               display: flex;
               flex-direction: column;
               page-break-after: always;
-              overflow: hidden;
+              page-break-inside: avoid;
             }
             .page:last-child {
               page-break-after: avoid;
             }
             .tech-header {
-              background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #581c87 100%);
+              background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
               color: white;
-              padding: 1.5rem;
+              padding: 1rem;
               position: relative;
-              overflow: hidden;
             }
             .tech-header::before {
               content: '';
@@ -107,14 +105,14 @@ export default function VEYGReceipt({ show, onHide, game }) {
               gap: 1rem;
             }
             .logo-container {
-              width: 80px;
-              height: 80px;
+              width: 60px;
+              height: 60px;
               background: #ffffff;
-              border-radius: 8px;
+              border-radius: 6px;
               display: flex;
               align-items: center;
               justify-content: center;
-              padding: 8px;
+              padding: 6px;
               border: 1px solid rgba(255,255,255,0.4);
               overflow: hidden;
               flex-shrink: 0;
@@ -123,7 +121,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
               width: 100%;
               height: 100%;
               object-fit: contain;
-              border-radius: 12px;
+              border-radius: 6px;
             }
             .logo-placeholder {
               display: flex;
@@ -131,71 +129,88 @@ export default function VEYGReceipt({ show, onHide, game }) {
               align-items: center;
               justify-content: center;
               text-align: center;
-              font-size: 0.7rem;
+              font-size: 0.6rem;
               font-weight: 500;
               opacity: 0.9;
             }
             .center-title {
               text-align: center;
               flex: 1;
-              margin: 0 1rem;
-              min-width: 200px;
+              margin: 0 0.5rem;
+              min-width: 150px;
             }
             .institute-name {
-              font-size: 1.5rem;
+              font-size: 1.1rem;
               font-weight: 600;
-              margin-bottom: 0.25rem;
+              margin-bottom: 0.125rem;
             }
             .location {
-              font-size: 0.9rem;
+              font-size: 0.75rem;
               opacity: 0.9;
-              margin-bottom: 0.5rem;
+              margin-bottom: 0.25rem;
             }
             .receipt-title {
-              font-size: 1rem;
+              font-size: 0.875rem;
               font-weight: 500;
               opacity: 0.8;
             }
             .page-body {
-              flex: 1;
-              padding: 1rem;
+              padding: 0.75rem;
             }
             .tech-footer {
-              background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-              color: white;
-              padding: 1rem;
+              margin-top: auto;
+              padding: 0.5rem 1rem;
+              background-color: #f8fafc;
+              border-top: 1px solid #e2e8f0;
+              font-size: 0.75rem;
+              color: #64748b;
               text-align: center;
-              font-size: 0.875rem;
-            }
-            .event-title {
-              font-size: 2.5rem;
-              font-weight: 800;
-              text-align: center;
-              background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
-              background-clip: text;
-              margin: 1.5rem 0;
-            }
-            .event-date {
-              font-size: 1.25rem;
-              font-weight: 600;
-              text-align: center;
-              color: #059669;
-              margin-bottom: 1.5rem;
+              flex-shrink: 0;
+              page-break-inside: avoid;
             }
             .info-card {
               background: #f8fafc;
-              border-radius: 12px;
+              border-radius: 8px;
               padding: 1rem;
               margin-bottom: 1rem;
               border: 1px solid #e2e8f0;
+              page-break-inside: avoid;
+            }
+            .member-card {
+              background: white;
+              border-radius: 6px;
+              padding: 0.5rem;
+              border: 1px solid #e2e8f0;
+              margin-bottom: 0.5rem;
+              page-break-inside: avoid;
+            }
+            .event-title {
+              font-size: 1.5rem;
+              font-weight: 700;
+              text-align: center;
+              color: #4338ca;
+              margin: 0.25rem 0;
+            }
+            .event-date {
+              font-size: 0.9rem;
+              font-weight: 600;
+              text-align: center;
+              color: #6b7280;
+              margin-bottom: 0.5rem;
+            }
+            .info-card {
+              background: #f8fafc;
+              border-radius: 8px;
+              padding: 0.75rem;
+              margin-bottom: 0.5rem;
+              border: 1px solid #e2e8f0;
+              page-break-inside: avoid;
             }
             .section-title {
-              font-size: 1.1rem;
+              font-size: 1rem;
               font-weight: 600;
               color: #1e293b;
-              margin-bottom: 1rem;
+              margin-bottom: 0.5rem;
               display: flex;
               align-items: center;
               gap: 0.5rem;
@@ -203,35 +218,36 @@ export default function VEYGReceipt({ show, onHide, game }) {
             .info-grid {
               display: grid;
               grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-              gap: 0.75rem;
+              gap: 0.5rem;
             }
             .info-item {
               display: flex;
               align-items: center;
               gap: 0.5rem;
-              padding: 0.75rem;
+              padding: 0.5rem;
               background: white;
-              border-radius: 8px;
+              border-radius: 6px;
               border: 1px solid #e2e8f0;
             }
             .info-icon {
-              width: 28px;
-              height: 28px;
-              background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+              width: 24px;
+              height: 24px;
+              background: #ede9fe;
+              color: #6d28d9;
               border-radius: 6px;
               display: flex;
               align-items: center;
               justify-content: center;
-              color: white;
               flex-shrink: 0;
             }
             .info-label {
-              font-size: 0.8rem;
+              font-size: 0.75rem;
               color: #64748b;
               font-weight: 500;
+              margin-bottom: 0.125rem;
             }
             .info-value {
-              font-size: 0.9rem;
+              font-size: 0.875rem;
               color: #1e293b;
               font-weight: 600;
             }
@@ -241,6 +257,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
               padding: 0.75rem;
               border: 1px solid #e2e8f0;
               margin-bottom: 0.5rem;
+              page-break-inside: avoid;
             }
             .member-header {
               display: flex;
@@ -352,13 +369,22 @@ export default function VEYGReceipt({ show, onHide, game }) {
 
   const handleMobileDownload = () => {
     try {
+      // Check if we're actually on mobile
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      
+      if (!isMobile) {
+        // If not mobile, use regular download
+        handleDownloadPDF()
+        return
+      }
+
       const receiptContent = document.getElementById("veyg-receipt-content")
       if (!receiptContent) {
         alert("Receipt content not found. Please try again.")
         return
       }
 
-      // Create a blob with the receipt HTML
+      // Create a simplified mobile-friendly receipt HTML
       const receiptHTML = `
         <!DOCTYPE html>
         <html>
@@ -366,92 +392,179 @@ export default function VEYGReceipt({ show, onHide, game }) {
           <title>VEYG 2K25 Receipt</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background: white; }
-            .receipt-container { max-width: 100%; margin: 0 auto; }
-            .header { background: #1e40af; color: white; padding: 15px; text-align: center; border-radius: 8px; margin-bottom: 15px; }
-            .content { padding: 10px; }
-            .info-section { margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; }
-            .info-title { font-weight: bold; color: #1e40af; margin-bottom: 8px; }
-            .info-item { margin-bottom: 5px; }
-            .footer { text-align: center; padding: 10px; background: #374151; color: white; border-radius: 6px; margin-top: 15px; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: Arial, sans-serif; 
+              background: white; 
+              color: #1e293b;
+              line-height: 1.4;
+              padding: 10px;
+            }
+            .receipt-container { 
+              max-width: 100%; 
+              margin: 0 auto; 
+              background: white;
+              border: 1px solid #e2e8f0;
+            }
+            .header { 
+              background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); 
+              color: white; 
+              padding: 1rem; 
+              text-align: center; 
+            }
+            .institute-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
+            .location { font-size: 0.75rem; margin-bottom: 0.5rem; }
+            .receipt-title { font-size: 0.875rem; background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; }
+            .content { padding: 1rem; }
+            .event-title { font-size: 1.5rem; font-weight: 700; text-align: center; color: #4338ca; margin: 0.5rem 0; }
+            .event-date { font-size: 0.9rem; text-align: center; color: #6b7280; margin-bottom: 1rem; }
+            .info-section { 
+              margin-bottom: 1rem; 
+              padding: 1rem; 
+              background: #f8fafc; 
+              border-radius: 8px; 
+              border: 1px solid #e2e8f0;
+            }
+            .info-title { 
+              font-weight: 600; 
+              color: #1e293b; 
+              margin-bottom: 0.75rem; 
+              font-size: 1rem;
+            }
+            .info-item { 
+              margin-bottom: 0.5rem; 
+              padding: 0.5rem;
+              background: white;
+              border-radius: 6px;
+              border: 1px solid #e2e8f0;
+            }
+            .info-label { font-size: 0.75rem; color: #64748b; margin-bottom: 0.125rem; }
+            .info-value { font-size: 0.875rem; color: #1e293b; font-weight: 600; }
+            .footer { 
+              text-align: center; 
+              padding: 0.5rem 1rem; 
+              background: #f8fafc; 
+              border-top: 1px solid #e2e8f0; 
+              font-size: 0.75rem; 
+              color: #64748b;
+            }
+            .payment-status {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              padding: 0.5rem 1rem;
+              border-radius: 50px;
+              font-weight: 600;
+              font-size: 0.875rem;
+              margin: 1rem 0;
+            }
+            .payment-status.confirmed {
+              background-color: #dcfce7;
+              color: #166534;
+            }
+            .payment-status.pending {
+              background-color: #fef3c7;
+              color: #92400e;
+            }
           </style>
         </head>
         <body>
           <div class="receipt-container">
             <div class="header">
-              <h2>VEYG 2K25 Receipt</h2>
-              <p>Registration ID: ${game?.registrationDetails?.registrationId || 'N/A'}</p>
+              <div class="institute-name">Saffrony Institute of Technology</div>
+              <div class="location">Location: Linch, Mehsana</div>
+              <div class="receipt-title">Official Payment Receipt</div>
             </div>
             <div class="content">
+              <div class="event-title">VEYG-2K25</div>
+              <div class="event-date">Date: 15-16 Sept</div>
+              
               <div class="info-section">
-                <div class="info-title">Game Information</div>
-                <div class="info-item"><strong>Game:</strong> ${game?.name || game?.gameName || 'N/A'}</div>
-                <div class="info-item"><strong>Fee:</strong> ₹${game?.registrationFee || game?.totalFee || '0'}</div>
-                <div class="info-item"><strong>Status:</strong> ${game?.approvalStatus === "approved" ? "Payment Confirmed" : "Payment Pending"}</div>
+                <div class="info-title">Registration Information</div>
+                <div class="info-item">
+                  <div class="info-label">Game Name</div>
+                  <div class="info-value">${game?.name || game?.gameName || 'N/A'}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Registration ID</div>
+                  <div class="info-value">${game?.registrationDetails?.registrationId || 'N/A'}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Registration Fee</div>
+                  <div class="info-value">₹${game?.registrationFee || game?.totalFee || '0'}</div>
+                </div>
+                <div style="text-align: center;">
+                  <div class="payment-status ${game?.approvalStatus === "approved" ? 'confirmed' : 'pending'}">
+                    ${game?.approvalStatus === "approved" ? '✓ Payment Confirmed' : '⏳ Payment Pending'}
+                  </div>
+                </div>
               </div>
+              
               <div class="info-section">
                 <div class="info-title">Participant Details</div>
-                <div class="info-item"><strong>Name:</strong> ${game?.registrationDetails?.teamLeader?.fullName || 'N/A'}</div>
-                <div class="info-item"><strong>Email:</strong> ${game?.registrationDetails?.teamLeader?.email || 'N/A'}</div>
-                <div class="info-item"><strong>Contact:</strong> ${game?.registrationDetails?.teamLeader?.contactNumber || 'N/A'}</div>
-                <div class="info-item"><strong>College:</strong> ${game?.registrationDetails?.teamLeader?.collegeName || 'N/A'}</div>
+                <div class="info-item">
+                  <div class="info-label">Full Name</div>
+                  <div class="info-value">${game?.registrationDetails?.teamLeader?.fullName || 'N/A'}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Email Address</div>
+                  <div class="info-value">${game?.registrationDetails?.teamLeader?.email || 'N/A'}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Contact Number</div>
+                  <div class="info-value">${game?.registrationDetails?.teamLeader?.contactNumber || 'N/A'}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">College Name</div>
+                  <div class="info-value">${game?.registrationDetails?.teamLeader?.collegeName || 'N/A'}</div>
+                </div>
               </div>
             </div>
             <div class="footer">
-              <p>VEYG 2025 - Saffrony Institute of Technology</p>
-              <p>Contact: veyg.notification@gmail.com</p>
+              <div><strong>Technical Team:</strong> Fenil Khatri, Divyesh Khubavat, Vraj Fadiya, Riddhi Sadhu</div>
+              <div style="margin-top: 0.25rem;"><strong>Contact:</strong> veyg.notification@gmail.com</div>
             </div>
           </div>
         </body>
         </html>
       `
 
-      // Create blob and download link
-      const blob = new Blob([receiptHTML], { type: 'text/html' })
-      const url = URL.createObjectURL(blob)
+      // Try to download as file first
+      try {
+        const blob = new Blob([receiptHTML], { type: 'text/html' })
+        const url = URL.createObjectURL(blob)
+        
+        const downloadLink = document.createElement('a')
+        downloadLink.href = url
+        downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
+        downloadLink.style.display = 'none'
+        
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+        
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+        
+        alert("Receipt downloaded successfully! You can open the HTML file in any browser to view or print.")
+        return
+        
+      } catch (downloadError) {
+        console.log("Download failed, trying fallback method")
+      }
       
-      // Create temporary download link
-      const downloadLink = document.createElement('a')
-      downloadLink.href = url
-      downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
-      downloadLink.style.display = 'none'
-      
-      // Trigger download
-      document.body.appendChild(downloadLink)
-      downloadLink.click()
-      document.body.removeChild(downloadLink)
-      
-      // Clean up
-      setTimeout(() => URL.revokeObjectURL(url), 1000)
-      
-      alert("Receipt downloaded successfully! You can open the HTML file in any browser to view or print.")
+      // Fallback: open in new window
+      const newWindow = window.open('', '_blank')
+      if (newWindow) {
+        newWindow.document.write(receiptHTML)
+        newWindow.document.close()
+        alert("Receipt opened in new tab. Use your browser's share or print function to save.")
+      } else {
+        alert("Please enable popups to view the receipt, or take a screenshot of this page.")
+      }
       
     } catch (error) {
       console.error("Mobile download error:", error)
-      
-      // Fallback: try to open in new tab
-      try {
-        const newWindow = window.open('', '_blank')
-        if (newWindow) {
-          newWindow.document.write(`
-            <html>
-            <head><title>VEYG 2K25 Receipt</title></head>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-              <h2>VEYG 2K25 Receipt</h2>
-              <p><strong>Registration ID:</strong> ${game?.registrationDetails?.registrationId || 'N/A'}</p>
-              <p><strong>Game:</strong> ${game?.name || game?.gameName || 'N/A'}</p>
-              <p><strong>Fee:</strong> ₹${game?.registrationFee || game?.totalFee || '0'}</p>
-              <p>Use your browser's share or print function to save this receipt.</p>
-            </body>
-            </html>
-          `)
-          newWindow.document.close()
-        } else {
-          alert("Please enable popups to download the receipt, or take a screenshot of this page.")
-        }
-      } catch (fallbackError) {
-        alert("Unable to download receipt. Please take a screenshot of this page for your records.")
-      }
+      alert("Unable to download receipt. Please take a screenshot of this page for your records.")
     }
   }
 
@@ -546,16 +659,6 @@ export default function VEYGReceipt({ show, onHide, game }) {
     </div>
   )
 
-  const Footer = () => (
-    <div className="tech-footer">
-      <div>
-        <strong>Technical Team:</strong> Fenil Khatri, Divyesh Khubavat, Vraj Fadiya, Riddhi Sadhu
-      </div>
-      <div style={{ marginTop: "0.5rem" }}>
-        <strong>Contact:</strong> veyg.notification@gmail.com
-      </div>
-    </div>
-  )
 
   return (
     <Modal show={show} onHide={onHide} size="xl" centered>
@@ -705,7 +808,6 @@ export default function VEYGReceipt({ show, onHide, game }) {
               </div>
             </div>
 
-            <Footer />
           </div>
 
           {/* Page 2: Team Details and Team Leader (if team registration) */}
@@ -883,8 +985,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
                   )}
                 </div>
 
-                <Footer />
-              </div>
+                  </div>
 
               {/* Additional pages for remaining team members */}
               {memberPages.slice(1).map((memberBatch, pageIndex) => (
@@ -929,8 +1030,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
                     </div>
                   </div>
 
-                  <Footer />
-                </div>
+                      </div>
               ))}
             </>
           )}
@@ -973,7 +1073,6 @@ export default function VEYGReceipt({ show, onHide, game }) {
               </div>
             </div>
 
-            <Footer />
           </div>
         </div>
       </Modal.Body>

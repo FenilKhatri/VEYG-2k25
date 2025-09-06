@@ -265,7 +265,7 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
                           fontWeight: '500'
                         }}
                       >
-                        Register here
+                        Signup here
                       </Button>
                     </div>
                   </Form>

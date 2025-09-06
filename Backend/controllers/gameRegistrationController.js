@@ -1,5 +1,6 @@
 const { GameRegistration } = require('../models')
 const { successResponse, errorResponse } = require('../utils/response')
+const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = require('../sendMail')
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -246,15 +247,15 @@ const registerGame = async (req, res) => {
     await registration.save()
     console.log('Registration saved successfully with ID:', registration._id)
 
-    // Send registration receipt email to all participants
+    // Send registration confirmation email (first email with payment pending notice)
     try {
-      console.log('📧 Sending registration receipt email...');
+      console.log('📧 Sending registration confirmation email...');
       
-      await sendRegistrationReceiptEmail(registration, false);
+      await sendRegistrationConfirmationEmail(registration);
       
-      console.log('✅ Registration receipt email sent successfully');
+      console.log('✅ Registration confirmation email sent successfully');
     } catch (emailError) {
-      console.error('❌ Failed to send registration receipt email:', emailError);
+      console.error('❌ Failed to send registration confirmation email:', emailError);
       // Don't fail the registration process if email fails
     }
 
@@ -399,6 +400,20 @@ const updateRegistrationStatus = async (req, res) => {
 
     if (!registration) {
       return errorResponse(res, 404, 'Registration not found')
+    }
+
+    // Send payment confirmation email when payment is approved
+    if (paymentStatus === 'paid' && approvalStatus === 'approved') {
+      try {
+        console.log('📧 Sending payment confirmation email for approved registration...');
+        
+        await sendPaymentConfirmationEmail(registration);
+        
+        console.log('✅ Payment confirmation email sent successfully');
+      } catch (emailError) {
+        console.error('❌ Failed to send payment confirmation email:', emailError);
+        // Don't fail the status update if email fails
+      }
     }
 
     successResponse(res, 200, 'Registration status updated successfully', { registration })
