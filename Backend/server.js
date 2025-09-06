@@ -5,6 +5,7 @@ const app = express();
 const authRoutes = require('./router');
 const connectDB = require('./utils/db');
 const { errorMiddleware } = require('./middleware/middleware');
+const { serveReceiptHandler } = require('./sendMail');
 
 // Game routes are already included in the main router via gameRegistrationRoutes
 
@@ -44,7 +45,18 @@ app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // ------------------- MIDDLEWARE -------------------
 app.use(express.json());
+
+// ------------------- RECEIPT SERVING ROUTE -------------------
+// Mobile-friendly PDF download route
+app.get('/receipts/:filename', serveReceiptHandler);
+
 app.use('/api', authRoutes);
+
+// ------------------- HEALTH CHECK ENDPOINT -------------------
+// Health endpoint to fix frontend popup logic
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true, status: 'healthy', timestamp: new Date().toISOString() });
+});
 
 // ------------------- TEST ENDPOINTS -------------------
 // Email and sheets test endpoints removed

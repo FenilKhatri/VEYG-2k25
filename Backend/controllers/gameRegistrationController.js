@@ -1,6 +1,6 @@
 const { GameRegistration } = require('../models')
 const { successResponse, errorResponse } = require('../utils/response')
-const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = require('../sendMail')
+const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail, generateReceiptPDF } = require('../sendMail')
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -247,9 +247,11 @@ const registerGame = async (req, res) => {
     await registration.save()
     console.log('Registration saved successfully with ID:', registration._id)
 
-    // Send registration confirmation email (first email with payment pending notice)
+    // Skip PDF generation for registration emails - only generate for payment confirmation
+
+    // Send registration confirmation email using the stored PDF
     try {
-      console.log('📧 Sending registration confirmation email...');
+      console.log('📧 Sending registration confirmation email with stored PDF...');
       
       await sendRegistrationConfirmationEmail(registration);
       

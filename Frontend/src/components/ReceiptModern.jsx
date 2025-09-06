@@ -391,80 +391,168 @@ export default function VEYGReceipt({ show, onHide, game }) {
         <head>
           <title>VEYG 2K25 Receipt</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta charset="UTF-8">
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { 
-              font-family: Arial, sans-serif; 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
               background: white; 
               color: #1e293b;
-              line-height: 1.4;
+              line-height: 1.5;
               padding: 10px;
+              font-size: 14px;
             }
             .receipt-container { 
               max-width: 100%; 
               margin: 0 auto; 
               background: white;
               border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              overflow: hidden;
             }
             .header { 
               background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); 
               color: white; 
-              padding: 1rem; 
+              padding: 1.5rem 1rem; 
               text-align: center; 
             }
-            .institute-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
-            .location { font-size: 0.75rem; margin-bottom: 0.5rem; }
-            .receipt-title { font-size: 0.875rem; background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 4px; }
-            .content { padding: 1rem; }
-            .event-title { font-size: 1.5rem; font-weight: 700; text-align: center; color: #4338ca; margin: 0.5rem 0; }
-            .event-date { font-size: 0.9rem; text-align: center; color: #6b7280; margin-bottom: 1rem; }
+            .institute-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+            .location { font-size: 0.85rem; margin-bottom: 0.75rem; opacity: 0.9; }
+            .receipt-title { 
+              font-size: 0.9rem; 
+              background: rgba(255,255,255,0.2); 
+              padding: 0.5rem 1rem; 
+              border-radius: 20px; 
+              display: inline-block;
+            }
+            .content { padding: 1.5rem 1rem; }
+            .event-title { 
+              font-size: 1.8rem; 
+              font-weight: 700; 
+              text-align: center; 
+              color: #4338ca; 
+              margin: 0.75rem 0; 
+              text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            .event-date { 
+              font-size: 1rem; 
+              text-align: center; 
+              color: #6b7280; 
+              margin-bottom: 1.5rem; 
+              font-weight: 500;
+            }
             .info-section { 
-              margin-bottom: 1rem; 
-              padding: 1rem; 
+              margin-bottom: 1.5rem; 
+              padding: 1.25rem; 
               background: #f8fafc; 
-              border-radius: 8px; 
+              border-radius: 12px; 
               border: 1px solid #e2e8f0;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             }
             .info-title { 
-              font-weight: 600; 
+              font-weight: 700; 
               color: #1e293b; 
-              margin-bottom: 0.75rem; 
-              font-size: 1rem;
+              margin-bottom: 1rem; 
+              font-size: 1.1rem;
+              border-bottom: 2px solid #e2e8f0;
+              padding-bottom: 0.5rem;
             }
             .info-item { 
-              margin-bottom: 0.5rem; 
-              padding: 0.5rem;
+              margin-bottom: 0.75rem; 
+              padding: 0.75rem;
               background: white;
-              border-radius: 6px;
+              border-radius: 8px;
               border: 1px solid #e2e8f0;
+              box-shadow: 0 1px 2px rgba(0,0,0,0.03);
             }
-            .info-label { font-size: 0.75rem; color: #64748b; margin-bottom: 0.125rem; }
-            .info-value { font-size: 0.875rem; color: #1e293b; font-weight: 600; }
+            .info-item:last-child { margin-bottom: 0; }
+            .info-label { 
+              font-size: 0.8rem; 
+              color: #64748b; 
+              margin-bottom: 0.25rem; 
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            .info-value { 
+              font-size: 0.95rem; 
+              color: #1e293b; 
+              font-weight: 600; 
+              word-break: break-word;
+            }
             .footer { 
               text-align: center; 
-              padding: 0.5rem 1rem; 
+              padding: 1rem; 
               background: #f8fafc; 
               border-top: 1px solid #e2e8f0; 
-              font-size: 0.75rem; 
+              font-size: 0.8rem; 
               color: #64748b;
+              line-height: 1.6;
             }
             .payment-status {
               display: inline-flex;
               align-items: center;
               justify-content: center;
-              padding: 0.5rem 1rem;
-              border-radius: 50px;
-              font-weight: 600;
-              font-size: 0.875rem;
-              margin: 1rem 0;
+              padding: 0.75rem 1.5rem;
+              border-radius: 25px;
+              font-weight: 700;
+              font-size: 0.95rem;
+              margin: 1.5rem 0;
+              text-align: center;
+              min-width: 200px;
             }
             .payment-status.confirmed {
               background-color: #dcfce7;
               color: #166534;
+              border: 2px solid #bbf7d0;
             }
             .payment-status.pending {
               background-color: #fef3c7;
               color: #92400e;
+              border: 2px solid #fde68a;
+            }
+            .team-members { margin-top: 1rem; }
+            .member-item {
+              background: white;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              padding: 0.75rem;
+              margin-bottom: 0.5rem;
+            }
+            .member-name {
+              font-weight: 600;
+              color: #1e293b;
+              margin-bottom: 0.25rem;
+            }
+            .member-details {
+              font-size: 0.85rem;
+              color: #64748b;
+              line-height: 1.4;
+            }
+            
+            /* Print styles */
+            @media print {
+              body { 
+                background: white; 
+                font-size: 12px;
+                padding: 0;
+              }
+              .receipt-container { 
+                border: none; 
+                border-radius: 0;
+                box-shadow: none;
+              }
+              .info-section {
+                break-inside: avoid;
+              }
+            }
+            
+            /* iOS Safari specific fixes */
+            @supports (-webkit-touch-callout: none) {
+              .receipt-container {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+              }
             }
           </style>
         </head>
@@ -472,15 +560,15 @@ export default function VEYGReceipt({ show, onHide, game }) {
           <div class="receipt-container">
             <div class="header">
               <div class="institute-name">Saffrony Institute of Technology</div>
-              <div class="location">Location: Linch, Mehsana</div>
+              <div class="location">📍 Location: Linch, Mehsana</div>
               <div class="receipt-title">Official Payment Receipt</div>
             </div>
             <div class="content">
               <div class="event-title">VEYG-2K25</div>
-              <div class="event-date">Date: 15-16 Sept</div>
+              <div class="event-date">📅 Date: 15-16 Sept</div>
               
               <div class="info-section">
-                <div class="info-title">Registration Information</div>
+                <div class="info-title">🎮 Registration Information</div>
                 <div class="info-item">
                   <div class="info-label">Game Name</div>
                   <div class="info-value">${game?.name || game?.gameName || 'N/A'}</div>
@@ -490,18 +578,22 @@ export default function VEYGReceipt({ show, onHide, game }) {
                   <div class="info-value">${game?.registrationDetails?.registrationId || 'N/A'}</div>
                 </div>
                 <div class="info-item">
+                  <div class="info-label">Registration Type</div>
+                  <div class="info-value">${game?.registrationDetails?.registrationType || 'Individual'}</div>
+                </div>
+                <div class="info-item">
                   <div class="info-label">Registration Fee</div>
-                  <div class="info-value">₹${game?.registrationFee || game?.totalFee || '0'}</div>
+                  <div class="info-value" style="color: #059669; font-size: 1.1rem;">₹${game?.registrationFee || game?.totalFee || '0'}</div>
                 </div>
                 <div style="text-align: center;">
                   <div class="payment-status ${game?.approvalStatus === "approved" ? 'confirmed' : 'pending'}">
-                    ${game?.approvalStatus === "approved" ? '✓ Payment Confirmed' : '⏳ Payment Pending'}
+                    ${game?.approvalStatus === "approved" ? '✅ Payment Confirmed' : '⏳ Payment Pending'}
                   </div>
                 </div>
               </div>
               
               <div class="info-section">
-                <div class="info-title">Participant Details</div>
+                <div class="info-title">👤 Team Leader Details</div>
                 <div class="info-item">
                   <div class="info-label">Full Name</div>
                   <div class="info-value">${game?.registrationDetails?.teamLeader?.fullName || 'N/A'}</div>
@@ -519,52 +611,140 @@ export default function VEYGReceipt({ show, onHide, game }) {
                   <div class="info-value">${game?.registrationDetails?.teamLeader?.collegeName || 'N/A'}</div>
                 </div>
               </div>
+              
+              ${game?.registrationDetails?.teamMembers && game.registrationDetails.teamMembers.length > 0 ? `
+              <div class="info-section">
+                <div class="info-title">👥 Team Members (${game.registrationDetails.teamMembers.length})</div>
+                <div class="team-members">
+                  ${game.registrationDetails.teamMembers.map((member, index) => {
+                    const memberName = typeof member === 'string' ? member : (member.fullName || member.name || `Member ${index + 1}`)
+                    const isObjectMember = typeof member === 'object' && member !== null
+                    return `
+                      <div class="member-item">
+                        <div class="member-name">${index + 1}. ${memberName}</div>
+                        ${isObjectMember && (member.email || member.contactNumber) ? `
+                          <div class="member-details">
+                            ${member.email ? `📧 ${member.email}<br>` : ''}
+                            ${member.contactNumber ? `📱 ${member.contactNumber}` : ''}
+                          </div>
+                        ` : ''}
+                      </div>
+                    `
+                  }).join('')}
+                </div>
+              </div>
+              ` : ''}
             </div>
             <div class="footer">
               <div><strong>Technical Team:</strong> Fenil Khatri, Divyesh Khubavat, Vraj Fadiya, Riddhi Sadhu</div>
-              <div style="margin-top: 0.25rem;"><strong>Contact:</strong> veyg.notification@gmail.com</div>
+              <div style="margin-top: 0.5rem;"><strong>Contact:</strong> veyg.notification@gmail.com</div>
+              <div style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.8;">Generated on ${new Date().toLocaleString()}</div>
             </div>
           </div>
         </body>
         </html>
       `
 
-      // Try to download as file first
-      try {
-        const blob = new Blob([receiptHTML], { type: 'text/html' })
-        const url = URL.createObjectURL(blob)
+      // Enhanced mobile download with multiple fallback methods
+      const downloadMethods = [
+        // Method 1: Modern Blob download (works on most modern mobile browsers)
+        () => {
+          const blob = new Blob([receiptHTML], { type: 'text/html;charset=utf-8' })
+          const url = URL.createObjectURL(blob)
+          
+          const downloadLink = document.createElement('a')
+          downloadLink.href = url
+          downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
+          downloadLink.style.display = 'none'
+          downloadLink.setAttribute('target', '_blank')
+          
+          document.body.appendChild(downloadLink)
+          
+          // Trigger download with user gesture
+          downloadLink.click()
+          
+          // Cleanup
+          setTimeout(() => {
+            document.body.removeChild(downloadLink)
+            URL.revokeObjectURL(url)
+          }, 1000)
+          
+          return true
+        },
         
-        const downloadLink = document.createElement('a')
-        downloadLink.href = url
-        downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
-        downloadLink.style.display = 'none'
+        // Method 2: Data URL download (fallback for older browsers)
+        () => {
+          const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(receiptHTML)
+          const downloadLink = document.createElement('a')
+          downloadLink.href = dataUrl
+          downloadLink.download = `VEYG_2K25_Receipt_${game?.registrationDetails?.registrationId || Date.now()}.html`
+          downloadLink.style.display = 'none'
+          
+          document.body.appendChild(downloadLink)
+          downloadLink.click()
+          document.body.removeChild(downloadLink)
+          
+          return true
+        },
         
-        document.body.appendChild(downloadLink)
-        downloadLink.click()
-        document.body.removeChild(downloadLink)
-        
-        setTimeout(() => URL.revokeObjectURL(url), 1000)
-        
-        alert("Receipt downloaded successfully! You can open the HTML file in any browser to view or print.")
-        return
-        
-      } catch (downloadError) {
-        console.log("Download failed, trying fallback method")
+        // Method 3: Open in new window (universal fallback)
+        () => {
+          const newWindow = window.open('', '_blank', 'width=400,height=600,scrollbars=yes,resizable=yes')
+          if (newWindow) {
+            newWindow.document.write(receiptHTML)
+            newWindow.document.close()
+            newWindow.document.title = 'VEYG 2K25 Receipt'
+            return true
+          }
+          return false
+        }
+      ]
+
+      // Try each method until one succeeds
+      let downloadSuccessful = false
+      for (let i = 0; i < downloadMethods.length; i++) {
+        try {
+          if (downloadMethods[i]()) {
+            downloadSuccessful = true
+            
+            // Show appropriate success message based on method used
+            if (i === 0 || i === 1) {
+              setTimeout(() => {
+                alert("✅ Receipt downloaded successfully! Check your Downloads folder or browser's download manager.")
+              }, 500)
+            } else if (i === 2) {
+              setTimeout(() => {
+                alert("📱 Receipt opened in new tab. Use your browser's share button or print function to save it.")
+              }, 500)
+            }
+            break
+          }
+        } catch (methodError) {
+          console.log(`Download method ${i + 1} failed:`, methodError)
+          continue
+        }
       }
       
-      // Fallback: open in new window
-      const newWindow = window.open('', '_blank')
-      if (newWindow) {
-        newWindow.document.write(receiptHTML)
-        newWindow.document.close()
-        alert("Receipt opened in new tab. Use your browser's share or print function to save.")
-      } else {
-        alert("Please enable popups to view the receipt, or take a screenshot of this page.")
+      if (!downloadSuccessful) {
+        // Final fallback: copy to clipboard
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(receiptHTML).then(() => {
+              alert("📋 Receipt HTML copied to clipboard! You can paste it into a text editor and save as .html file.")
+            }).catch(() => {
+              alert("❌ Unable to download receipt. Please take a screenshot for your records.")
+            })
+          } else {
+            alert("❌ Unable to download receipt. Please take a screenshot for your records.")
+          }
+        } catch (clipboardError) {
+          alert("❌ Unable to download receipt. Please take a screenshot for your records.")
+        }
       }
       
     } catch (error) {
       console.error("Mobile download error:", error)
-      alert("Unable to download receipt. Please take a screenshot of this page for your records.")
+      alert("❌ Unable to download receipt. Please take a screenshot of this page for your records.")
     }
   }
 

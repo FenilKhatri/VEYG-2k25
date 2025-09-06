@@ -5,6 +5,7 @@ import { Modal, Button, Form, Spinner, Alert, Row, Col } from "react-bootstrap"
 import { Users, Phone, Mail, Hash, User, Building2, PlusCircle, MinusCircle, CreditCard, Trophy, Zap, UserPlus, Trash2, AlertTriangle } from "lucide-react"
 import { collegesInGujarat, semesters, branches, genders, degrees } from "../data/constant"
 import apiService from "../services/api"
+import { registerTeam } from "../utils/registrationUtils"
 
 const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, showToast, registeredGames, isRegistrationExpired = false }) => {
   const initialParticipantState = {
@@ -229,13 +230,13 @@ const RegistrationForm = ({ show, handleClose, game, userId, onRegisterGame, sho
 
       // Registration data prepared for submission
 
-      // Make actual API call to register for the game
-      const response = await apiService.registerForGame(registrationData)
+      // Use the new registration utility with PDF download
+      const response = await registerTeam(registrationData)
 
       if (response.success) {
-        showToast("Registration successful!", "success")
         onRegisterGame() // Call the callback to refresh data
         handleClose()
+        // Success message is handled by registerTeam utility
       } else {
         throw new Error(response.message || "Registration failed")
       }

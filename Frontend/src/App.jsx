@@ -30,6 +30,7 @@ import cookieAuth from "./utils/cookieAuth"
 import apiService from "./services/api"
 import ScrollToTop from "./components/ScrollToTop"
 import ProtectedRoute from "./components/auth/ProtectedRoute"
+import { setupBackendMonitor } from "./utils/registrationUtils"
 
 const App = () => {
   const [toast, setToast] = useState({ show: false, message: "", type: "success" })
@@ -59,14 +60,6 @@ const App = () => {
     setToast({ show: true, message, type })
     setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000)
   }, [])
-
-  const testBackendConnection = useCallback(async () => {
-    try {
-      await apiService.healthCheck()
-    } catch (error) {
-      showToast('Backend server connection failed. Some features may not work properly.', 'warning')
-    }
-  }, [showToast])
 
   const checkAuthenticationStatus = useCallback(async () => {
     try {
@@ -109,9 +102,9 @@ const App = () => {
   useEffect(() => {
     // Check authentication status on app load using API verification
     checkAuthenticationStatus()
-    // Test backend connection
-    testBackendConnection()
-  }, [checkAuthenticationStatus, testBackendConnection])
+    // Setup improved backend monitoring (replaces old popup logic)
+    setupBackendMonitor()
+  }, [checkAuthenticationStatus])
 
 
 

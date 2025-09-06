@@ -108,6 +108,10 @@ const gameRegistrationSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: true
+  },
+  pdfPath: {
+    type: String,
+    default: null
   }
 }, {
   timestamps: true
