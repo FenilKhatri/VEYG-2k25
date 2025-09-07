@@ -1,4 +1,4 @@
-const { successResponse, errorResponse } = require('../utils/responseHandler')
+const { successResponse, errorResponse } = require('../utils/response')
 const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = require('../sendMail')
 const GameRegistration = require('../models/GameRegistration')
 const Student = require('../models/Student')
