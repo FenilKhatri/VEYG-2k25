@@ -187,7 +187,6 @@ async function sendRegistrationConfirmationEmail(registrationData) {
             email: cleanEmail,
             role: 'Team Leader'
         });
-        console.log('📧 Added team leader email:', cleanEmail);
     }
 
     // Add all team member emails with enhanced validation
@@ -202,9 +201,6 @@ async function sendRegistrationConfirmationEmail(registrationData) {
                         email: cleanEmail,
                         role: 'Team Member'
                     });
-                    console.log('📧 Added team member email:', cleanEmail);
-                } else {
-                    console.log('📧 Duplicate email skipped:', cleanEmail);
                 }
             } else {
                 console.warn('⚠️ Team member missing email:', member.fullName || `Member ${index + 1}`);
@@ -291,8 +287,6 @@ async function sendRegistrationConfirmationEmail(registrationData) {
 
 // ---------- SEND PAYMENT CONFIRMATION EMAIL ----------
 async function sendPaymentConfirmationEmail(registrationData) {
-    console.log('📧 Starting payment confirmation email process for registration:', registrationData.registrationId);
-
     const participant = {
         name: registrationData.teamLeader?.fullName || 'Participant',
         email: registrationData.teamLeader?.email,
@@ -301,9 +295,6 @@ async function sendPaymentConfirmationEmail(registrationData) {
     };
     const game = { name: registrationData.gameName, date: registrationData.gameDay, venue: "VEYG 2025 Venue" };
     const registration = { id: registrationData.registrationId || registrationData._id, amount: registrationData.totalFee };
-
-    // No PDF generation needed - users will download from website
-    console.log('📧 Payment confirmation email - directing users to download receipt from website');
 
     // Collect ALL participant emails with enhanced validation
     const allParticipantEmails = new Set(); // Use Set to automatically handle duplicates
@@ -318,7 +309,6 @@ async function sendPaymentConfirmationEmail(registrationData) {
             email: cleanEmail,
             role: 'Team Leader'
         });
-        console.log('📧 Added team leader email:', cleanEmail);
     }
 
     // Add all team member emails with enhanced validation
@@ -333,9 +323,6 @@ async function sendPaymentConfirmationEmail(registrationData) {
                         email: cleanEmail,
                         role: 'Team Member'
                     });
-                    console.log('📧 Added team member email:', cleanEmail);
-                } else {
-                    console.log('📧 Duplicate email skipped:', cleanEmail);
                 }
             } else {
                 console.warn('⚠️ Team member missing email:', member.fullName || `Member ${index + 1}`);
@@ -350,7 +337,6 @@ async function sendPaymentConfirmationEmail(registrationData) {
         throw new Error("No valid participant emails found to send payment confirmation.");
     }
 
-    console.log(`📧 Sending payment confirmation to ${emailList.length} participants:`, participantDetails);
 
     const paymentMailOptions = {
         from: `"${ORG_NAME}" <${EMAIL_USER}>`,

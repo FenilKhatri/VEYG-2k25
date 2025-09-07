@@ -7,7 +7,6 @@ const validateDayWiseRegistration = async (req, res, next) => {
             const userId = req.user.id
             const gameDay = parseInt(req.body.gameDay) || 1
 
-            console.log('Day-wise validation - gameDay:', gameDay, 'type:', typeof gameDay, 'original:', req.body.gameDay)
 
             // Validate gameDay
             if (![1, 2].includes(gameDay)) {

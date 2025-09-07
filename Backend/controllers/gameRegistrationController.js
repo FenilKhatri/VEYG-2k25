@@ -151,10 +151,6 @@ const generateReceiptNumber = async () => {
 // Register for a game
 const registerGame = async (req, res) => {
   try {
-    console.log('=== GAME REGISTRATION REQUEST ===')
-    console.log('User:', req.user)
-    console.log('Request body:', req.body)
-    console.log('Validated gameDay from middleware:', req.validatedGameDay)
 
     const {
       registrationType,
@@ -225,44 +221,17 @@ const registerGame = async (req, res) => {
       receiptNumber
     })
 
-    console.log('Creating registration with userId:', userId)
-    console.log('Registration data to save:', {
-      userId,
-      gameId,
-      gameName,
-      registrationType,
-      teamName,
-      teamLeader,
-      teamMembers: teamMembers ? teamMembers.length : 0,
-      teamSize,
-      totalFee,
-      gameDay: `day${gameDay}`,
-      registrationId,
-      receiptNumber
-    })
 
     await registration.save()
-    console.log('Registration saved successfully with ID:', registration._id)
-
-    // Skip PDF generation for registration emails - only generate for payment confirmation
 
     // Send registration confirmation email asynchronously (non-blocking)
     setImmediate(async () => {
       try {
-        console.log('📧 Sending registration confirmation email asynchronously...');
-        
         await sendRegistrationConfirmationEmail(registration);
-        
-        console.log('✅ Registration confirmation email sent successfully');
       } catch (emailError) {
         console.error('❌ Failed to send registration confirmation email:', emailError);
-        // Email failure doesn't affect registration success
       }
     });
-
-    // Google Sheets sync removed - using database only
-
-    console.log('✅ Game registration completed successfully')
 
     // Populate user data for response
     await registration.populate('userId', 'name email contactNumber')
@@ -274,8 +243,13 @@ const registerGame = async (req, res) => {
       console.warn('Failed to emit new registration notification:', wsError.message);
     }
 
-    // Ensure response is sent immediately
-    return successResponse(res, 201, 'Game registration successful', { registration })
+    // Ensure response is sent immediately with proper JSON format
+    res.status(201).json({
+      success: true,
+      message: 'Game registration successful',
+      data: { registration }
+    })
+    return
   } catch (error) {
     console.error('Game registration error:', error)
 
@@ -285,16 +259,23 @@ const registerGame = async (req, res) => {
       return;
     }
 
-    // Handle specific error types
+    // Handle specific error types with proper JSON format
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message)
-      return errorResponse(res, 400, 'Validation error', validationErrors)
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: validationErrors
+      })
     }
 
     if (error.code === 11000) {
       // Duplicate key error
       const field = Object.keys(error.keyPattern)[0]
-      return errorResponse(res, 400, `Duplicate ${field}. This registration already exists.`)
+      return res.status(400).json({
+        success: false,
+        message: `Duplicate ${field}. This registration already exists.`
+      })
     }
 
     // Log the full error for debugging
@@ -305,7 +286,10 @@ const registerGame = async (req, res) => {
       code: error.code
     })
 
-    return errorResponse(res, 500, 'Server error during game registration')
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during game registration'
+    })
   }
 }
 
@@ -313,23 +297,26 @@ const registerGame = async (req, res) => {
 const getUserRegistrations = async (req, res) => {
   try {
     const userId = req.user.id || req.user._id
-    console.log('Fetching registrations for user ID:', userId)
-    console.log('User object:', req.user)
 
     const registrations = await GameRegistration.find({ userId })
       .populate('userId', 'name email contactNumber')
       .sort({ createdAt: -1 })
 
-    console.log(`Found ${registrations.length} registrations for user ${userId}`)
-
-    // Return registrations in the expected format
-    successResponse(res, 200, 'Registrations retrieved successfully', {
-      registrations,
-      count: registrations.length
+    // Return registrations in proper JSON format
+    return res.status(200).json({
+      success: true,
+      message: 'Registrations retrieved successfully',
+      data: {
+        registrations,
+        count: registrations.length
+      }
     })
   } catch (error) {
     console.error('Get registrations error:', error)
-    errorResponse(res, 500, 'Server error while fetching registrations')
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching registrations'
+    })
   }
 }
 
