@@ -168,7 +168,7 @@ const updateStudentProfile = async (req, res) => {
 // Email sending function
 const sendRegistrationEmail = async (student) => {
   // Create transporter
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
@@ -257,16 +257,16 @@ const generateRegistrationPDF = (student) => {
 
     // Header with gradient effect simulation
     doc.rect(0, 0, doc.page.width, 120).fill('#667eea')
-    
+
     // Title
     doc.fillColor('white')
-       .fontSize(24)
-       .font('Helvetica-Bold')
-       .text('VEYG 2025', 50, 40, { align: 'center' })
-    
+      .fontSize(24)
+      .font('Helvetica-Bold')
+      .text('VEYG 2025', 50, 40, { align: 'center' })
+
     doc.fontSize(16)
-       .font('Helvetica')
-       .text('Registration Confirmation', 50, 70, { align: 'center' })
+      .font('Helvetica')
+      .text('Registration Confirmation', 50, 70, { align: 'center' })
 
     // Reset position and color
     doc.fillColor('black')
@@ -274,15 +274,15 @@ const generateRegistrationPDF = (student) => {
 
     // Confirmation message
     doc.fontSize(18)
-       .font('Helvetica-Bold')
-       .text('Registration Confirmed!', 50, yPosition)
-    
+      .font('Helvetica-Bold')
+      .text('Registration Confirmed!', 50, yPosition)
+
     yPosition += 40
 
     doc.fontSize(14)
-       .font('Helvetica')
-       .text(`Dear ${student.name},`, 50, yPosition)
-    
+      .font('Helvetica')
+      .text(`Dear ${student.name},`, 50, yPosition)
+
     yPosition += 30
 
     doc.text('Congratulations! Your registration for VEYG 2025 has been confirmed successfully.', 50, yPosition, { width: 500 })
@@ -290,20 +290,20 @@ const generateRegistrationPDF = (student) => {
 
     // Registration Details Box
     doc.rect(50, yPosition, 500, 200)
-       .stroke('#667eea')
-       .lineWidth(2)
+      .stroke('#667eea')
+      .lineWidth(2)
 
     yPosition += 20
 
     doc.fontSize(16)
-       .font('Helvetica-Bold')
-       .text('Registration Details:', 70, yPosition)
-    
+      .font('Helvetica-Bold')
+      .text('Registration Details:', 70, yPosition)
+
     yPosition += 30
 
     doc.fontSize(12)
-       .font('Helvetica')
-    
+      .font('Helvetica')
+
     const details = [
       ['Name:', student.name],
       ['Email:', student.email],
@@ -324,18 +324,18 @@ const generateRegistrationPDF = (student) => {
 
     // Instructions
     doc.fontSize(12)
-       .font('Helvetica')
-       .text('Please keep this confirmation for your records. You will receive further updates about the event schedule and game details via email.', 50, yPosition, { width: 500 })
+      .font('Helvetica')
+      .text('Please keep this confirmation for your records. You will receive further updates about the event schedule and game details via email.', 50, yPosition, { width: 500 })
 
     yPosition += 40
 
     // Footer
     doc.fontSize(10)
-       .fillColor('#666')
-       .text('Thank you for registering with VEYG 2025!', 50, yPosition, { align: 'center' })
-    
+      .fillColor('#666')
+      .text('Thank you for registering with VEYG 2025!', 50, yPosition, { align: 'center' })
+
     yPosition += 20
-    
+
     doc.text(`For any queries, contact us at: ${process.env.SUPPORT_EMAIL}`, 50, yPosition, { align: 'center' })
 
     doc.end()
