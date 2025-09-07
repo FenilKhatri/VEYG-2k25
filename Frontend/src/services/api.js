@@ -151,7 +151,7 @@ class ApiService {
 
   // Game Registration APIs
   async registerForGame(registrationData) {
-    return this.request('/game-registrations/my-registrations', {
+    return this.request('/game-registrations/register', {
       method: 'POST',
       body: JSON.stringify(registrationData)
     })

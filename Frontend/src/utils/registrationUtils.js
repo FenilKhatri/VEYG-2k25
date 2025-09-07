@@ -13,7 +13,7 @@ export async function registerTeam(payload) {
       throw new Error('Please log in to register for games.')
     }
 
-    const res = await fetch("https://veyg-2k25-backend.onrender.com/api/game-registrations/my-registrations", {
+    const res = await fetch("https://veyg-2k25-backend.onrender.com/api/game-registrations/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

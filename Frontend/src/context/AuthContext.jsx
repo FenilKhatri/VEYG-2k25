@@ -221,7 +221,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       //const API_BASE_URL = 'https://veyg-2k25-backend.onrender.com'
-      const response = await fetch(`https://veyg-2k25-backend.onrender.com/api/game-registrations/my-registrations`, {
+      const response = await fetch(`https://veyg-2k25-backend.onrender.com/api/game-registrations/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
