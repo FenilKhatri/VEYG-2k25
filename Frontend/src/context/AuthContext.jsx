@@ -220,7 +220,7 @@ export const AuthProvider = ({ children }) => {
         totalAmount: registrationDetails.totalAmount || 0
       }
 
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://veyg-2k25-backend.onrender.com'
+      const API_BASE_URL = 'https://veyg-2k25-backend.onrender.com'
       const response = await fetch(`${API_BASE_URL}/api/game-registrations/my-registrations`, {
         method: 'POST',
         headers: {
