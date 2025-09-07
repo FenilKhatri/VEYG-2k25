@@ -43,11 +43,16 @@ app.options("*", cors(corsOptions)); // Handle preflight requests
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Add explicit JSON response middleware for Render compatibility
+// Add response timeout and JSON middleware for Render compatibility
 app.use((req, res, next) => {
+  // Set timeout for requests (30 seconds)
+  req.setTimeout(30000);
+  res.setTimeout(30000);
+  
   // Only set JSON header for API routes, not for file serving
   if (req.path.startsWith('/api/')) {
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'no-cache');
   }
   next();
 });

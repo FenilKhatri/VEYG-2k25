@@ -222,23 +222,25 @@ const registerGame = async (req, res) => {
     })
 
 
-    await registration.save()
+    // Save registration with explicit error handling
+    const savedRegistration = await registration.save();
+    console.log('✅ Registration saved with ID:', savedRegistration._id);
+
+    // Populate user data for response
+    await savedRegistration.populate('userId', 'name email contactNumber');
 
     // Send registration confirmation email asynchronously (non-blocking)
     setImmediate(async () => {
       try {
-        await sendRegistrationConfirmationEmail(registration);
+        await sendRegistrationConfirmationEmail(savedRegistration);
       } catch (emailError) {
         console.error('❌ Failed to send registration confirmation email:', emailError);
       }
     });
 
-    // Populate user data for response
-    await registration.populate('userId', 'name email contactNumber')
-
     // Emit new registration notification to admins via WebSocket
     try {
-      websocketService.emitNewRegistration(registration);
+      websocketService.emitNewRegistration(savedRegistration);
     } catch (wsError) {
       console.warn('Failed to emit new registration notification:', wsError.message);
     }
@@ -249,7 +251,7 @@ const registerGame = async (req, res) => {
     res.end(JSON.stringify({
       success: true,
       message: 'Game registration successful',
-      data: { registration }
+      data: { registration: savedRegistration }
     }));
     return
   } catch (error) {
@@ -262,41 +264,51 @@ const registerGame = async (req, res) => {
     }
 
     // Handle specific error types with proper JSON format and headers
-    res.setHeader('Content-Type', 'application/json');
-    
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message)
-      res.status(400);
-      return res.end(JSON.stringify({
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      
+      if (error.name === 'ValidationError') {
+        const validationErrors = Object.values(error.errors).map(err => err.message)
+        res.status(400);
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Validation error',
+          errors: validationErrors
+        }));
+        return;
+      }
+
+      if (error.code === 11000) {
+        // Duplicate key error
+        const field = Object.keys(error.keyPattern)[0]
+        res.status(400);
+        res.end(JSON.stringify({
+          success: false,
+          message: `Duplicate ${field}. This registration already exists.`
+        }));
+        return;
+      }
+
+      // Log the full error for debugging
+      console.error('Full error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        code: error.code
+      })
+
+      res.status(500);
+      res.end(JSON.stringify({
         success: false,
-        message: 'Validation error',
-        errors: validationErrors
-      }))
+        message: 'Server error during game registration'
+      }));
+    } catch (responseError) {
+      console.error('Error sending error response:', responseError);
+      // Last resort - try to send basic error
+      if (!res.headersSent) {
+        res.status(500).send('Internal Server Error');
+      }
     }
-
-    if (error.code === 11000) {
-      // Duplicate key error
-      const field = Object.keys(error.keyPattern)[0]
-      res.status(400);
-      return res.end(JSON.stringify({
-        success: false,
-        message: `Duplicate ${field}. This registration already exists.`
-      }))
-    }
-
-    // Log the full error for debugging
-    console.error('Full error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      code: error.code
-    })
-
-    res.status(500);
-    return res.end(JSON.stringify({
-      success: false,
-      message: 'Server error during game registration'
-    }))
   }
 }
 
