@@ -13,15 +13,15 @@ export async function registerTeam(payload) {
       throw new Error('Please log in to register for games.')
     }
 
-    const res = await fetch("/api/game-registrations/register", {
+    const res = await fetch("/api/game-registrations/my-registrations", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${authData.token}`
       },
       body: JSON.stringify(payload)
     });
-    
+
     // Check if response is HTML (error page) instead of JSON
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -29,7 +29,7 @@ export async function registerTeam(payload) {
       console.error('Non-JSON response received:', text);
       throw new Error(`Server returned invalid response (${res.status}). Please try again.`);
     }
-    
+
     let data;
     try {
       data = await res.json();
@@ -37,14 +37,14 @@ export async function registerTeam(payload) {
       console.error('JSON parsing error:', jsonError);
       throw new Error('Server returned invalid JSON response. Please try again.');
     }
-    
+
     if (!res.ok) throw new Error(data.message || "Registration failed");
 
     // If server returned registration with PDF path, trigger download
     if (data.registration?.pdfPath) {
       const pdfFilename = data.registration.pdfPath.split('/').pop();
       const downloadUrl = `/receipts/${pdfFilename}`;
-      
+
       // Try multiple download methods for mobile compatibility
       await downloadPdfFromUrl(downloadUrl, `Registration_${data.registration.registrationId}.pdf`);
     }
@@ -74,12 +74,12 @@ async function downloadPdfFromUrl(url, filename) {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    
+
     // Method 2: Fallback for mobile - open in new tab
     setTimeout(() => {
       window.open(url, "_blank");
     }, 500);
-    
+
   } catch (err) {
     console.error("PDF download error:", err);
     // Final fallback - just open the URL
@@ -120,12 +120,12 @@ export function downloadBase64Pdf(base64, filename) {
 export function setupBackendMonitor() {
   const check = async () => {
     try {
-      const resp = await fetch("/api/health", { 
+      const resp = await fetch("/api/health", {
         method: "GET",
-        timeout: 5000 
+        timeout: 5000
       });
       if (!resp.ok) throw new Error("Backend unhealthy");
-      
+
       // Backend OK -> hide any alerts
       hideBackendAlert();
       console.log("✅ Backend health check passed");
@@ -134,10 +134,10 @@ export function setupBackendMonitor() {
       showBackendAlert("Backend server connection failed. Some features may not work properly.");
     }
   };
-  
+
   // Run once after a short delay (no blind 2-3s popup)
   setTimeout(check, 5000);
-  
+
   // Poll less frequently to reduce performance impact
   setInterval(check, 1000 * 60 * 10); // every 10 minutes
 }
@@ -148,10 +148,10 @@ export function setupBackendMonitor() {
  */
 function showBackendAlert(msg) {
   console.warn("Backend Alert:", msg);
-  
+
   // Try to find existing alert element
   let alertElement = document.getElementById("backend-alert");
-  
+
   if (!alertElement) {
     // Create alert element if it doesn't exist
     alertElement = document.createElement("div");
@@ -172,7 +172,7 @@ function showBackendAlert(msg) {
     `;
     document.body.appendChild(alertElement);
   }
-  
+
   alertElement.innerText = msg;
   alertElement.style.display = "block";
 }
@@ -194,7 +194,7 @@ function hideBackendAlert() {
 function showSuccessMessage(msg) {
   // You can integrate this with your existing notification system
   console.log("✅ Success:", msg);
-  
+
   // Simple toast notification
   const toast = document.createElement("div");
   toast.style.cssText = `
@@ -212,7 +212,7 @@ function showSuccessMessage(msg) {
   `;
   toast.innerText = msg;
   document.body.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.remove();
   }, 5000);
@@ -224,7 +224,7 @@ function showSuccessMessage(msg) {
  */
 function showErrorMessage(msg) {
   console.error("❌ Error:", msg);
-  
+
   // Simple error toast
   const toast = document.createElement("div");
   toast.style.cssText = `
@@ -242,7 +242,7 @@ function showErrorMessage(msg) {
   `;
   toast.innerText = msg;
   document.body.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.remove();
   }, 5000);

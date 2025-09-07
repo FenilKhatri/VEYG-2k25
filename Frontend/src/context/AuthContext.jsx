@@ -29,36 +29,36 @@ export const AuthProvider = ({ children }) => {
     const setupWebSocket = () => {
       if (isLoggedIn) {
         websocketService.connect()
-        
+
         // Listen for payment status updates
         const handlePaymentStatusUpdate = (data) => {
           console.log('📡 Payment status update received:', data)
-          
+
           // Update registeredGames state with new status
-          setRegisteredGames(prev => 
-            prev.map(reg => 
+          setRegisteredGames(prev =>
+            prev.map(reg =>
               reg.registrationId === data.registrationId || reg._id === data.registrationId
                 ? { ...reg, paymentStatus: data.paymentStatus, approvalStatus: data.approvalStatus }
                 : reg
             )
           )
-          
+
           // Update localStorage
-          const updatedRegistrations = registeredGames.map(reg => 
+          const updatedRegistrations = registeredGames.map(reg =>
             reg.registrationId === data.registrationId || reg._id === data.registrationId
               ? { ...reg, paymentStatus: data.paymentStatus, approvalStatus: data.approvalStatus }
               : reg
           )
           localStorage.setItem('registeredGames', JSON.stringify(updatedRegistrations))
-          
+
           // Show notification to user
           if (data.approvalStatus === 'approved') {
             console.log(`🎉 Payment approved for ${data.gameName}!`)
           }
         }
-        
+
         websocketService.on('paymentStatusUpdate', handlePaymentStatusUpdate)
-        
+
         return () => {
           websocketService.off('paymentStatusUpdate', handlePaymentStatusUpdate)
         }
@@ -66,9 +66,9 @@ export const AuthProvider = ({ children }) => {
         websocketService.disconnect()
       }
     }
-    
+
     setupWebSocket()
-    
+
     return () => {
       websocketService.disconnect()
     }
@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json()
         const registrations = data.registrations || data.data?.registrations || data.data || []
         const processedRegistrations = Array.isArray(registrations) ? registrations : []
-        
+
         // Store in both state and localStorage for persistence
         setRegisteredGames(processedRegistrations)
         localStorage.setItem('registeredGames', JSON.stringify(processedRegistrations))
@@ -194,7 +194,7 @@ export const AuthProvider = ({ children }) => {
     // Clear cookies and localStorage
     cookieAuth.clearAuthData()
     localStorage.removeItem('registeredGames')
-    
+
     // Disconnect WebSocket
     websocketService.disconnect()
   }
@@ -221,7 +221,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://veyg-2k25-backend.onrender.com'
-      const response = await fetch(`${API_BASE_URL}/api/game-registrations/register`, {
+      const response = await fetch(`${API_BASE_URL}/api/game-registrations/my-registrations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ export const AuthProvider = ({ children }) => {
         }
         const updatedRegistrations = [...registeredGames, newRegistration]
         setRegisteredGames(updatedRegistrations)
-        
+
         // Persist to localStorage for session persistence
         localStorage.setItem('registeredGames', JSON.stringify(updatedRegistrations))
 
