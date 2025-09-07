@@ -140,8 +140,25 @@ const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gam
 // Generate receipt number based on total registrations
 const generateReceiptNumber = async () => {
   try {
-    const totalRegistrations = await GameRegistration.countDocuments()
-    return `VEYG-${totalRegistrations + 1}`
+    let receiptNumber
+    let isUnique = false
+
+    // Attempt until a unique receipt number is found (very unlikely to loop more than once)
+    while (!isUnique) {
+      // Use current timestamp (milliseconds) for high-entropy sequential IDs
+      receiptNumber = `VEYG - ${Date.now()}`
+
+      // Ensure the generated receipt number does not already exist
+      const existing = await GameRegistration.findOne({ receiptNumber })
+      if (!existing) {
+        isUnique = true
+      } else {
+        // Briefly wait 1 ms before retrying to avoid tight loop in the extremely rare collision case
+        await new Promise(resolve => setTimeout(resolve, 1))
+      }
+    }
+
+    return receiptNumber
   } catch (error) {
     console.error('Error generating receipt number:', error)
     return `VEYG-${Date.now()}`
@@ -266,7 +283,7 @@ const registerGame = async (req, res) => {
     // Handle specific error types with proper JSON format and headers
     try {
       res.setHeader('Content-Type', 'application/json');
-      
+
       if (error.name === 'ValidationError') {
         const validationErrors = Object.values(error.errors).map(err => err.message)
         res.status(400);
@@ -434,9 +451,9 @@ const updateRegistrationStatus = async (req, res) => {
       setImmediate(async () => {
         try {
           console.log('📧 Sending payment confirmation email for approved registration asynchronously...');
-          
+
           await sendPaymentConfirmationEmail(registration);
-          
+
           console.log('✅ Payment confirmation email sent successfully');
         } catch (emailError) {
           console.error('❌ Failed to send payment confirmation email:', emailError);
