@@ -274,9 +274,16 @@ const registerGame = async (req, res) => {
       console.warn('Failed to emit new registration notification:', wsError.message);
     }
 
-    successResponse(res, 201, 'Game registration successful', { registration })
+    // Ensure response is sent immediately
+    return successResponse(res, 201, 'Game registration successful', { registration })
   } catch (error) {
     console.error('Game registration error:', error)
+
+    // Ensure we don't send response if already sent
+    if (res.headersSent) {
+      console.error('Headers already sent, cannot send error response');
+      return;
+    }
 
     // Handle specific error types
     if (error.name === 'ValidationError') {
@@ -298,7 +305,7 @@ const registerGame = async (req, res) => {
       code: error.code
     })
 
-    errorResponse(res, 500, 'Server error during game registration')
+    return errorResponse(res, 500, 'Server error during game registration')
   }
 }
 
