@@ -243,12 +243,14 @@ const registerGame = async (req, res) => {
       console.warn('Failed to emit new registration notification:', wsError.message);
     }
 
-    // Ensure response is sent immediately with proper JSON format
-    res.status(201).json({
+    // Ensure response is sent immediately with proper JSON format and headers
+    res.setHeader('Content-Type', 'application/json');
+    res.status(201);
+    res.end(JSON.stringify({
       success: true,
       message: 'Game registration successful',
       data: { registration }
-    })
+    }));
     return
   } catch (error) {
     console.error('Game registration error:', error)
@@ -259,23 +261,27 @@ const registerGame = async (req, res) => {
       return;
     }
 
-    // Handle specific error types with proper JSON format
+    // Handle specific error types with proper JSON format and headers
+    res.setHeader('Content-Type', 'application/json');
+    
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message)
-      return res.status(400).json({
+      res.status(400);
+      return res.end(JSON.stringify({
         success: false,
         message: 'Validation error',
         errors: validationErrors
-      })
+      }))
     }
 
     if (error.code === 11000) {
       // Duplicate key error
       const field = Object.keys(error.keyPattern)[0]
-      return res.status(400).json({
+      res.status(400);
+      return res.end(JSON.stringify({
         success: false,
         message: `Duplicate ${field}. This registration already exists.`
-      })
+      }))
     }
 
     // Log the full error for debugging
@@ -286,10 +292,11 @@ const registerGame = async (req, res) => {
       code: error.code
     })
 
-    return res.status(500).json({
+    res.status(500);
+    return res.end(JSON.stringify({
       success: false,
       message: 'Server error during game registration'
-    })
+    }))
   }
 }
 
@@ -302,21 +309,25 @@ const getUserRegistrations = async (req, res) => {
       .populate('userId', 'name email contactNumber')
       .sort({ createdAt: -1 })
 
-    // Return registrations in proper JSON format
-    return res.status(200).json({
+    // Return registrations with explicit JSON headers
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200);
+    return res.end(JSON.stringify({
       success: true,
       message: 'Registrations retrieved successfully',
       data: {
         registrations,
         count: registrations.length
       }
-    })
+    }))
   } catch (error) {
     console.error('Get registrations error:', error)
-    return res.status(500).json({
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500);
+    return res.end(JSON.stringify({
       success: false,
       message: 'Server error while fetching registrations'
-    })
+    }))
   }
 }
 

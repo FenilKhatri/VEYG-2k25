@@ -40,7 +40,17 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions)); // Handle preflight requests
 
 // ------------------- MIDDLEWARE -------------------
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Add explicit JSON response middleware for Render compatibility
+app.use((req, res, next) => {
+  // Only set JSON header for API routes, not for file serving
+  if (req.path.startsWith('/api/')) {
+    res.setHeader('Content-Type', 'application/json');
+  }
+  next();
+});
 
 // ------------------- RECEIPT SERVING ROUTE -------------------
 // Mobile-friendly PDF download route
