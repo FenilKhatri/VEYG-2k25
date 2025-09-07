@@ -68,8 +68,8 @@ export const calculateTotalFee = (baseFee, teamSize) => {
   return baseFee * teamSize;
 };
 
-export const getGameById = (id) => games.find((game) => game.id === Number.parseInt(id))
-export const getAllGames = () => games
-export const getGamesByDay = (day) => games.filter((game) => game.day === day)
-export const getDay1Games = () => getGamesByDay(1)
-export const getDay2Games = () => getGamesByDay(2)
+export const getGameById = (id) => games.find((game) => game.id === Number.parseInt(id));
+export const getAllGames = () => games;
+export const getGamesByDay = (day) => games.filter((game) => game.day === day);
+export const getDay1Games = () => getGamesByDay(1);
+export const getDay2Games = () => getGamesByDay(2);

@@ -1,6 +1,9 @@
-const { GameRegistration } = require('../models')
-const { successResponse, errorResponse } = require('../utils/response')
-const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail, generateReceiptPDF } = require('../sendMail')
+const { successResponse, errorResponse } = require('../utils/responseHandler')
+const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = require('../sendMail')
+const GameRegistration = require('../models/GameRegistration')
+const Student = require('../models/Student')
+const dayWiseValidation = require('../middleware/dayWiseValidation')
+const sheetsService = require('../services/googleSheets')
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -259,6 +262,44 @@ const registerGame = async (req, res) => {
     } catch (emailError) {
       console.error('❌ Failed to send registration confirmation email:', emailError);
       // Don't fail the registration process if email fails
+    }
+
+    // Append registration data to Google Sheet (non-blocking)
+    try {
+      console.log('📊 Attempting to sync registration to Google Sheet...');
+      
+      const sheetResult = await sheetsService.addRegistration(registration);
+      
+      // Update registration with sheet sync status
+      registration.sheetSync = {
+        success: sheetResult.success,
+        error: sheetResult.success ? null : sheetResult.error,
+        lastAttempt: new Date(),
+        rowNumber: sheetResult.rowNumber || null
+      };
+      
+      await registration.save();
+      
+      if (sheetResult.success) {
+        console.log('✅ Registration synced to Google Sheet successfully');
+      } else {
+        console.error('❌ Failed to sync registration to Google Sheet:', sheetResult.error);
+      }
+    } catch (sheetError) {
+      console.error('❌ Google Sheet sync error:', sheetError);
+      
+      // Update registration with error status
+      try {
+        registration.sheetSync = {
+          success: false,
+          error: sheetError.message,
+          lastAttempt: new Date(),
+          rowNumber: null
+        };
+        await registration.save();
+      } catch (saveError) {
+        console.error('❌ Failed to save sheet sync error status:', saveError);
+      }
     }
 
     console.log('✅ Game registration completed successfully')

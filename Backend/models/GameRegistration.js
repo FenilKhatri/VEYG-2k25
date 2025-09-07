@@ -112,6 +112,24 @@ const gameRegistrationSchema = new mongoose.Schema({
   pdfPath: {
     type: String,
     default: null
+  },
+  sheetSync: {
+    success: {
+      type: Boolean,
+      default: null
+    },
+    error: {
+      type: String,
+      default: null
+    },
+    lastAttempt: {
+      type: Date,
+      default: null
+    },
+    rowNumber: {
+      type: Number,
+      default: null
+    }
   }
 }, {
   timestamps: true

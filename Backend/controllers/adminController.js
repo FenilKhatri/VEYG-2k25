@@ -2,6 +2,7 @@ const { Admin, GameRegistration } = require('../models')
 const { generateToken } = require('../utils/jwt')
 const { successResponse, errorResponse } = require('../utils/response')
 const { sendPaymentConfirmationEmail } = require('../sendMail')
+const sheetsService = require('../services/googleSheets')
 
 // Admin Registration
 const adminRegister = async (req, res) => {
@@ -256,6 +257,54 @@ const updateRegistrationStatus = async (req, res) => {
   }
 }
 
+// Retry Google Sheets sync for a specific registration
+const retrySheetSync = async (req, res) => {
+  try {
+    const { registrationId } = req.params;
+    
+    // Find the registration
+    const registration = await GameRegistration.findOne({ registrationId });
+    
+    if (!registration) {
+      return errorResponse(res, 404, 'Registration not found');
+    }
+    
+    console.log(`📊 Admin retry: Attempting to sync registration ${registrationId} to Google Sheet...`);
+    
+    // Attempt to sync to Google Sheet
+    const sheetResult = await sheetsService.addRegistration(registration);
+    
+    // Update registration with new sync status
+    registration.sheetSync = {
+      success: sheetResult.success,
+      error: sheetResult.success ? null : sheetResult.error,
+      lastAttempt: new Date(),
+      rowNumber: sheetResult.rowNumber || null
+    };
+    
+    await registration.save();
+    
+    if (sheetResult.success) {
+      console.log(`✅ Admin retry: Registration ${registrationId} synced to Google Sheet successfully`);
+      return successResponse(res, 200, 'Registration synced to Google Sheet successfully', {
+        registrationId,
+        rowNumber: sheetResult.rowNumber,
+        syncedAt: new Date()
+      });
+    } else {
+      console.error(`❌ Admin retry: Failed to sync registration ${registrationId}:`, sheetResult.error);
+      return errorResponse(res, 500, 'Failed to sync registration to Google Sheet', {
+        registrationId,
+        error: sheetResult.error
+      });
+    }
+    
+  } catch (error) {
+    console.error('Admin sheet retry error:', error);
+    return errorResponse(res, 500, 'Internal server error', error.message);
+  }
+};
+
 module.exports = {
   adminRegister,
   adminLogin,
@@ -263,5 +312,6 @@ module.exports = {
   updateAdminProfile,
   changeAdminPassword,
   getAllRegistrations,
-  updateRegistrationStatus
+  updateRegistrationStatus,
+  retrySheetSync
 }

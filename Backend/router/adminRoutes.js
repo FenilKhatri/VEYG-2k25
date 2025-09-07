@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { adminRegister, adminLogin, getAdminProfile, updateAdminProfile, changeAdminPassword, getAllRegistrations, updateRegistrationStatus } = require('../controllers/adminController')
+const { adminRegister, adminLogin, getAdminProfile, updateAdminProfile, changeAdminPassword, getAllRegistrations, updateRegistrationStatus, retrySheetSync } = require('../controllers/adminController')
 const { authenticate, requireAdmin } = require('../middleware/auth')
 const { 
   validateAdminRegister, 
@@ -22,5 +22,8 @@ router.patch('/change-password', authenticate, requireAdmin, changeAdminPassword
 // Admin registration management routes (protected)
 router.get('/registrations', authenticate, requireAdmin, getAllRegistrations)
 router.patch('/registrations/:id/status', authenticate, requireAdmin, updateRegistrationStatus)
+
+// Google Sheets sync retry route (protected)
+router.post('/sheet/retry/:registrationId', authenticate, requireAdmin, retrySheetSync)
 
 module.exports = router
