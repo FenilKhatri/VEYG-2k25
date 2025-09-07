@@ -1,7 +1,7 @@
 // ContactUs.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { Container, Row, Col, Form, Button, Badge, Modal } from "react-bootstrap";
-import { motion, AnimatePresence } from "framer-motion";
+// Removed framer-motion for performance
 import {
   Send,
   Mail,
@@ -212,10 +212,8 @@ export default function ContactUs() {
         }}
       >
         {/* decorative blobs */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.75 }}
-          transition={{ duration: 1.2 }}
+        <div
+          className="fade-in"
           style={{
             position: "absolute",
             left: "-120px",
@@ -228,10 +226,8 @@ export default function ContactUs() {
             zIndex: 1,
           }}
         />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.55 }}
-          transition={{ duration: 1.5 }}
+        <div
+          className="fade-in-delayed"
           style={{
             position: "absolute",
             right: "-160px",
@@ -268,11 +264,11 @@ export default function ContactUs() {
           />
 
           {/* Main grid */}
-          <motion.div variants={containerVariant} initial="hidden" animate="visible">
+          <div className="container-animation">
             <Row className="justify-content-center mt-4 gx-4 gy-4">
               {/* LEFT: CONTACT FORM */}
               <Col xl={7} lg={8} md={10} sm={12}>
-                <motion.div variants={cardVariant} whileHover="hover">
+                <div className="card-hover">
                   <div
                     className="glass-card"
                     style={{
@@ -374,68 +370,57 @@ export default function ContactUs() {
                         </Col>
 
                         <Col xs={12}>
-                          <div className="d-flex gap-3 flex-wrap align-items-center">
-                            <Button
-                              type="submit"
-                              disabled={isSubmitting}
-                              className="btn-primary-glow"
-                              aria-label="Send message"
-                            >
-                              {isSubmitting ? (
-                                <>
-                                  <Loader2 size={16} className="spin" />
-                                  <span style={{ marginLeft: 8 }}>Sending...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Send size={16} />
-                                  <span style={{ marginLeft: 8 }}>Send Message</span>
-                                </>
-                              )}
-                            </Button>
+                          <Row className="align-items-center">
+                            <Col>
+                              <div className="d-flex gap-3 flex-wrap align-items-center">
+                                <Button
+                                  type="submit"
+                                  disabled={isSubmitting}
+                                  className="btn-primary-glow"
+                                  aria-label="Send message"
+                                >
+                                  {isSubmitting ? (
+                                    <>
+                                      <Loader2 size={16} className="spin" />
+                                      <span style={{ marginLeft: 8 }}>Sending...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Send size={16} />
+                                      <span style={{ marginLeft: 8 }}>Send Message</span>
+                                    </>
+                                  )}
+                                </Button>
 
-                            <Button
-                              variant="outline-light"
-                              onClick={() => {
-                                setFormData({ username: "", email: "", message: "" });
-                                setSubmitMessage("");
-                                setSubmitType("");
-                              }}
-                              disabled={isSubmitting}
-                            >
-                              Reset
-                            </Button>
+                                <Button
+                                  variant="outline-light"
+                                  onClick={() => {
+                                    setFormData({ username: "", email: "", message: "" });
+                                    setSubmitMessage("");
+                                    setSubmitType("");
+                                  }}
+                                  disabled={isSubmitting}
+                                >
+                                  Reset
+                                </Button>
 
-                            {/* quick helper */}
-                            <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.7)", fontSize: 13 }}>
-                              <strong>Response:</strong> Usually within 24 hours
-                            </div>
-                          </div>
-
-                          {/* feedback */}
-                          <AnimatePresence>
-                            {submitMessage && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -6 }}
-                                className={`submit-message ${submitType === "success" ? "success" : "error"}`}
-                                style={{ marginTop: 14 }}
-                              >
-                                {submitMessage}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                                {/* quick helper */}
+                                <div style={{ marginLeft: "auto", color: "rgba(255,255,255,0.7)", fontSize: 13 }}>
+                                  <strong>Response:</strong> Usually within 24 hours
+                                </div>
+                              </div>
+                            </Col>
+                          </Row>
                         </Col>
                       </Row>
                     </Form>
                   </div>
-                </motion.div>
+                </div>
               </Col>
 
               {/* RIGHT: CONTACT INFO + QUICK HELP */}
               <Col xl={4} lg={4} md={10} sm={12}>
-                <motion.div variants={cardVariant}>
+                <div className="card-hover">
                   <div
                     className="glass-card"
                     style={{
@@ -459,11 +444,10 @@ export default function ContactUs() {
                       {contactItems.map((ci) => {
                         const Icon = ci.Icon;
                         return (
-                          <motion.button
-                            {...glowHover}
+                          <button
+                            className="glow-hover contact-item-btn"
                             onClick={ci.action}
                             key={ci.id}
-                            className="contact-item-btn"
                             aria-label={ci.title}
                             style={{
                               display: "flex",
@@ -501,7 +485,7 @@ export default function ContactUs() {
                             <div style={{ marginLeft: "8px", color: "#9be7ff", fontSize: 13, fontWeight: 700 }}>
                               {ci.value}
                             </div>
-                          </motion.button>
+                          </button>
                         );
                       })}
                     </div>
@@ -535,10 +519,10 @@ export default function ContactUs() {
                       <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Official • VEYG 2K25</div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </Col>
             </Row>
-          </motion.div>
+          </div>
         </Container>
 
         {/* Map modal fallback */}

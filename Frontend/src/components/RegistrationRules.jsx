@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Card, Accordion, Badge } from "react-bootstrap";
-import { motion } from "framer-motion";
+// Removed framer-motion for performance
 import {
   CheckCircle,
   User,
@@ -81,18 +81,9 @@ const RegistrationRules = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.8 }}
-    >
+    <div className="fade-in">
       {/* Expert Session Card */}
-      <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
+      <div className="fade-in-up">
         <Card
           className="expert-session-card mb-4"
           style={{
@@ -112,25 +103,26 @@ const RegistrationRules = () => {
               borderBottom: "1px solid rgba(255, 193, 7, 0.3)",
             }}
           >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="d-flex align-items-center justify-content-center mb-2"
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "15px",
+              }}
             >
-              <Star size={32} style={{ color: "#ffc107", marginRight: "10px" }} />
               <h3
-                className="mb-0 fw-bold"
                 style={{
                   color: "#ffc107",
-                  textShadow: "0 0 12px rgba(255, 193, 7, 0.7)",
-                  fontSize: "1.9rem",
+                  fontSize: "2rem",
+                  fontWeight: "bold",
+                  textShadow: "0 0 10px rgba(255, 193, 7, 0.6)",
                 }}
               >
                 Expert Session
               </h3>
               <Star size={32} style={{ color: "#ffc107", marginLeft: "10px" }} />
-            </motion.div>
+            </div>
             <p
               className="mb-0"
               style={{
@@ -212,45 +204,42 @@ const RegistrationRules = () => {
               </div>
 
               <div className="col-md-4 text-center">
-                <motion.div
-                  initial={{ scale: 0.9 }}
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
+                <div
                   style={{
-                    background: "rgba(255, 193, 7, 0.1)",
-                    border: "2px solid rgba(255, 193, 7, 0.3)",
+                    background: "rgba(255, 193, 7, 0.15)",
                     borderRadius: "15px",
                     padding: "20px",
+                    border: "1px solid rgba(255, 193, 7, 0.3)",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "transform 0.3s ease",
                   }}
+                  className="sponsor-card-hover"
                 >
-                  <h5 style={{ color: "#ffc107", marginBottom: "15px" }}>
-                    Session Details
-                  </h5>
-                  <div style={{ color: "#dffaff", fontSize: "0.95rem" }}>
-                    <p className="mb-2">
-                      <strong>Date:</strong> Day 1 of VEYG
-                    </p>
-                    <p className="mb-2">
-                      <strong>Venue:</strong> Main Auditorium
-                    </p>
-                    <p className="mb-2">
+                  <div style={{ marginBottom: "15px" }}>
+                    <Trophy
+                      size={48}
+                      style={{ color: "#ffc107", marginBottom: "10px" }}
+                    />
+                    <h5 style={{ color: "#ffc107", fontWeight: "bold" }}>
+                      Free Workshop
+                    </h5>
+                    <p style={{ color: "rgba(255, 255, 255, 0.8)", margin: 0 }}>
                       <strong>Price:</strong> Free of cost
                     </p>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </div>
           </Card.Body>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Registration Rules Section */}
-      <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
+      <div className="fade-in-up">
         <Card
           className="registration-rules-card"
           style={{
@@ -298,13 +287,7 @@ const RegistrationRules = () => {
               className="registration-accordion"
             >
               {steps.map((step, index) => (
-                <motion.div
-                  key={step.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.15 }}
-                >
+                <div key={step.id} className="fade-in-up">
                   <Accordion.Item
                     eventKey={step.id}
                     className="mb-3"
@@ -394,13 +377,13 @@ const RegistrationRules = () => {
                       )}
                     </Accordion.Body>
                   </Accordion.Item>
-                </motion.div>
+                </div>
               ))}
             </Accordion>
           </Card.Body>
         </Card>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

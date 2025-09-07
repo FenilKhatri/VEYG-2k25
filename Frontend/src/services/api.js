@@ -3,7 +3,7 @@ import cookieAuth from '../utils/cookieAuth'
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   import.meta.env.VITE_FALLBACK_API_URL ||
-  'http://localhost:8000';
+  'https://veyg-2k25-backend.onrender.com';
 
 // API Base URL configured
 
@@ -18,11 +18,11 @@ class ApiService {
     }
   }
 
-  // Helper method for API requests
+  // Helper method for API requests with performance optimization
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}/api${endpoint}`
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 8000) // Reduced timeout for better performance
 
     const config = {
       headers: this.getAuthHeaders(),
@@ -195,63 +195,6 @@ class ApiService {
     })
   }
 
-  // Excel Export APIs
-  async exportStudentRegistrations() {
-    const url = `${API_BASE_URL}/api/export/students`
-    const config = {
-      headers: this.getAuthHeaders(),
-      method: 'GET'
-    }
-
-    try {
-      const response = await fetch(url, config)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      return response.blob()
-    } catch (error) {
-      console.error(`Export students failed:`, error)
-      throw error
-    }
-  }
-
-  async exportGameRegistrations() {
-    const url = `${API_BASE_URL}/api/export/game-registrations`
-    const config = {
-      headers: this.getAuthHeaders(),
-      method: 'GET'
-    }
-
-    try {
-      const response = await fetch(url, config)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      return response.blob()
-    } catch (error) {
-      console.error(`Export game registrations failed:`, error)
-      throw error
-    }
-  }
-
-  async exportAllRegistrations() {
-    const url = `${API_BASE_URL}/api/export/all`
-    const config = {
-      headers: this.getAuthHeaders(),
-      method: 'GET'
-    }
-
-    try {
-      const response = await fetch(url, config)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      return response.blob()
-    } catch (error) {
-      console.error(`Export all registrations failed:`, error)
-      throw error
-    }
-  }
 
   // Utility method to verify token validity
   async verifyToken() {

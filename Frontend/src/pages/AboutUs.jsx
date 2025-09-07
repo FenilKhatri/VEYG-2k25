@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Badge } from "react-bootstrap";
-import { motion, AnimatePresence } from "framer-motion";
+// Removed framer-motion for performance
 import {
   Lightbulb,
   Users,
@@ -136,10 +136,8 @@ export default function AboutUs() {
       color: 'white'
     }}>
       {/* HERO */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+      <section
+        className="fade-in"
         style={{
           position: 'relative',
           overflow: 'hidden',
@@ -174,10 +172,8 @@ export default function AboutUs() {
         <Container style={{ position: 'relative', zIndex: 10 }}>
           <Row className="align-items-center justify-content-center">
             <Col md={12}>
-              <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6 }}
+              <div
+                className="slide-in-left"
               >
                 <Badge
                   style={{
@@ -231,9 +227,8 @@ export default function AboutUs() {
                 </p>
 
                 <div className="d-flex gap-3 flex-wrap">
-                  <motion.a
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
+                  <a
+                    className="hover-scale"
                     href="#"
                     style={{
                       display: 'inline-block',
@@ -247,11 +242,10 @@ export default function AboutUs() {
                     }}
                   >
                     View Events
-                  </motion.a>
+                  </a>
 
-                  <motion.a
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
+                  <a
+                    className="hover-scale"
                     href="#team"
                     style={{
                       display: 'inline-block',
@@ -264,23 +258,22 @@ export default function AboutUs() {
                     }}
                   >
                     Meet the Team
-                  </motion.a>
+                  </a>
                 </div>
-              </motion.div>
+              </div>
             </Col>
           </Row>
         </Container>
-      </motion.section>
+      </section>
 
       {/* CONTENT */}
       <Container style={{ marginTop: '-32px', position: 'relative', zIndex: 20 }}>
-        <motion.div variants={containerVariant} initial="hidden" animate="visible">
+        <div className="container-animation">
           {/* Mission & Vision */}
           <Row className="mb-5">
             <Col lg={6} className="mb-4">
-              <motion.div
-                variants={cardVariant}
-                whileHover="hover"
+              <div
+                className="card-hover"
                 style={{
                   borderRadius: '16px',
                   padding: '30px',
@@ -298,13 +291,12 @@ export default function AboutUs() {
                   gamers. We bring together brilliant minds to challenge skills, showcase talent, and connect with like-minded
                   peers in the ever-evolving world of technology.
                 </p>
-              </motion.div>
+              </div>
             </Col>
 
             <Col lg={6} className="mb-4">
-              <motion.div
-                variants={cardVariant}
-                whileHover="hover"
+              <div
+                className="card-hover"
                 style={{
                   borderRadius: '16px',
                   padding: '30px',
@@ -321,7 +313,7 @@ export default function AboutUs() {
                   To be the leading platform for technical competitions worldwide, inspiring the next generation of
                   innovators and fostering a vibrant global community that shapes the future of technology.
                 </p>
-              </motion.div>
+              </div>
             </Col>
           </Row>
 
@@ -347,9 +339,8 @@ export default function AboutUs() {
             <Row>
               {valuesData.map((v) => (
                 <Col key={v.id} sm={6} lg={3} className="mb-4">
-                  <motion.div
-                    variants={cardVariant}
-                    whileHover="hover"
+                  <div
+                    className="card-hover"
                     style={{
                       borderRadius: '16px',
                       padding: '30px',
@@ -378,7 +369,7 @@ export default function AboutUs() {
                     <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.9rem', lineHeight: '1.5', margin: 0 }}>
                       {v.desc}
                     </p>
-                  </motion.div>
+                  </div>
                 </Col>
               ))}
             </Row>
@@ -410,9 +401,8 @@ export default function AboutUs() {
               <Row className="mb-5">
                 {coordinators.map((c) => (
                   <Col key={c.name} sm={6} lg={3} className="mb-4">
-                    <motion.div
-                      variants={cardVariant}
-                      whileHover="hover"
+                    <div
+                      className="card-hover"
                       style={{
                         borderRadius: '16px',
                         padding: '25px',
@@ -451,7 +441,7 @@ export default function AboutUs() {
                           {c.dept}
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   </Col>
                 ))}
               </Row>
@@ -462,9 +452,8 @@ export default function AboutUs() {
               <Row>
                 {devTeam.map((d) => (
                   <Col key={d.name} xs={6} sm={3} className="mb-4">
-                    <motion.div
-                      variants={cardVariant}
-                      whileHover="hover"
+                    <div
+                      className="card-hover"
                       style={{
                         borderRadius: '16px',
                         padding: '25px',
@@ -491,14 +480,14 @@ export default function AboutUs() {
                       <div style={{ fontWeight: '600', color: 'white' }}>
                         {d.name}
                       </div>
-                    </motion.div>
+                    </div>
                   </Col>
                 ))}
               </Row>
             </div>
           </section>
 
-        </motion.div>
+        </div>
       </Container>
 
       {/* small helpers for blob animation (Tailwind plugin or global CSS may be needed in project) */}

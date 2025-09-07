@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import cookieAuth from '../utils/cookieAuth'
+import websocketService from '../services/websocket'
 
 const AuthContext = createContext()
 
@@ -23,6 +24,56 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus()
   }, [])
 
+  // Setup WebSocket connection and listeners
+  useEffect(() => {
+    const setupWebSocket = () => {
+      if (isLoggedIn) {
+        websocketService.connect()
+        
+        // Listen for payment status updates
+        const handlePaymentStatusUpdate = (data) => {
+          console.log('📡 Payment status update received:', data)
+          
+          // Update registeredGames state with new status
+          setRegisteredGames(prev => 
+            prev.map(reg => 
+              reg.registrationId === data.registrationId || reg._id === data.registrationId
+                ? { ...reg, paymentStatus: data.paymentStatus, approvalStatus: data.approvalStatus }
+                : reg
+            )
+          )
+          
+          // Update localStorage
+          const updatedRegistrations = registeredGames.map(reg => 
+            reg.registrationId === data.registrationId || reg._id === data.registrationId
+              ? { ...reg, paymentStatus: data.paymentStatus, approvalStatus: data.approvalStatus }
+              : reg
+          )
+          localStorage.setItem('registeredGames', JSON.stringify(updatedRegistrations))
+          
+          // Show notification to user
+          if (data.approvalStatus === 'approved') {
+            console.log(`🎉 Payment approved for ${data.gameName}!`)
+          }
+        }
+        
+        websocketService.on('paymentStatusUpdate', handlePaymentStatusUpdate)
+        
+        return () => {
+          websocketService.off('paymentStatusUpdate', handlePaymentStatusUpdate)
+        }
+      } else {
+        websocketService.disconnect()
+      }
+    }
+    
+    setupWebSocket()
+    
+    return () => {
+      websocketService.disconnect()
+    }
+  }, [isLoggedIn, registeredGames])
+
   const checkAuthStatus = async () => {
     try {
       const authData = cookieAuth.getAuthData()
@@ -40,6 +91,17 @@ export const AuthProvider = ({ children }) => {
       })
       setIsLoggedIn(true)
       setIsAdminLoggedIn(authData.isAdmin || false)
+
+      // Load cached registrations from localStorage first
+      const cachedRegistrations = localStorage.getItem('registeredGames')
+      if (cachedRegistrations) {
+        try {
+          setRegisteredGames(JSON.parse(cachedRegistrations))
+        } catch (parseError) {
+          console.warn('Failed to parse cached registrations:', parseError)
+          localStorage.removeItem('registeredGames')
+        }
+      }
 
       // Fetch user registrations if student (with error handling)
       if (!authData.isAdmin) {
@@ -71,12 +133,24 @@ export const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json()
         const registrations = data.registrations || data.data?.registrations || data.data || []
-        setRegisteredGames(Array.isArray(registrations) ? registrations : [])
+        const processedRegistrations = Array.isArray(registrations) ? registrations : []
+        
+        // Store in both state and localStorage for persistence
+        setRegisteredGames(processedRegistrations)
+        localStorage.setItem('registeredGames', JSON.stringify(processedRegistrations))
       } else {
-        // Don't clear registrations on API failure
+        // Try to load from localStorage if API fails
+        const cachedRegistrations = localStorage.getItem('registeredGames')
+        if (cachedRegistrations) {
+          setRegisteredGames(JSON.parse(cachedRegistrations))
+        }
       }
     } catch (error) {
-      // Don't clear registrations on network error
+      // Try to load from localStorage if network error
+      const cachedRegistrations = localStorage.getItem('registeredGames')
+      if (cachedRegistrations) {
+        setRegisteredGames(JSON.parse(cachedRegistrations))
+      }
     }
   }
 
@@ -117,8 +191,12 @@ export const AuthProvider = ({ children }) => {
     setIsAdminLoggedIn(false)
     setRegisteredGames([])
 
-    // Clear cookies
+    // Clear cookies and localStorage
     cookieAuth.clearAuthData()
+    localStorage.removeItem('registeredGames')
+    
+    // Disconnect WebSocket
+    websocketService.disconnect()
   }
 
   const registerGame = async (gameId, registrationDetails) => {
@@ -159,10 +237,14 @@ export const AuthProvider = ({ children }) => {
         const newRegistration = {
           ...data.registration,
           gameId,
-          userId: username,
+          userId: authData.userName,
           paymentStatus: 'pending'
         }
-        setRegisteredGames(prev => [...prev, newRegistration])
+        const updatedRegistrations = [...registeredGames, newRegistration]
+        setRegisteredGames(updatedRegistrations)
+        
+        // Persist to localStorage for session persistence
+        localStorage.setItem('registeredGames', JSON.stringify(updatedRegistrations))
 
         return { success: true, message: 'Game registration successful!' }
       } else {

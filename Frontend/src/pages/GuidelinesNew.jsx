@@ -1,7 +1,7 @@
 // Guidelines.jsx
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Container, Card, Badge, Button, Form, Modal as RBModal } from "react-bootstrap";
-import { motion, AnimatePresence, useMotionValue, useTransform, useAnimation, useDragControls } from "framer-motion";
+// Removed framer-motion for performance
 import { Calendar, Clock, MapPin, Shield, Search, Download, X, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import PageHeroSection from "../components/HeroSection/PageHeroSection";
 import { games } from "../data/gamesData";
@@ -153,21 +153,13 @@ const Guidelines = () => {
   const itemRefs = useRef([]); // individual card refs
   const trackRef = useRef(null); // progress track ref (mobile)
   const dotRef = useRef(null);
-  const dragControls = useDragControls();
-
   const [activeIndex, setActiveIndex] = useState(0);
   const [filter, setFilter] = useState("");
-  const [selectedDay, setSelectedDay] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDay, setSelectedDay] = useState("all");
   const [showExportModal, setShowExportModal] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
-
-  // Motion values for progress dot
-  const progressX = useMotionValue(0);
-  const progressWidth = useMotionValue(0);
-  const dotScale = useMotionValue(1);
-
-  const controls = useAnimation();
+  const [loading, setLoading] = useState(true);
 
   // Slight simulated loading (skeleton) for nicer first paint
   useEffect(() => {
@@ -362,71 +354,35 @@ const Guidelines = () => {
      Small animated guideline card component
      ------------------------- */
   const GuidelineCard = ({ idx, title, content }) => (
-    <motion.div
+    <div
       key={idx}
       className="guideline-item"
-      variants={itemVariant}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 120, damping: 14 }}
       style={{
-        background: "rgba(255,255,255,0.03)",
-        borderRadius: 12,
-        padding: 18,
+        padding: 16,
+        borderRadius: 10,
         border: "1px solid rgba(255,255,255,0.06)",
+        background: "rgba(255,255,255,0.02)",
+        transition: "all 0.2s ease",
+        cursor: "default",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-        <div style={{ background: "#00d4ff", color: "#000", width: 26, height: 26, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>
-          {idx + 1}
-        </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+        <div
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "#00d4ff",
+            flexShrink: 0,
+          }}
+        />
         <h5 style={{ margin: 0, color: "#00d4ff" }}>{title}</h5>
       </div>
       <p style={{ margin: 0, color: "#c7d7e6", lineHeight: 1.6 }}>{content}</p>
-    </motion.div>
+    </div>
   );
 
   /* -------------------------
-     TimelineItem (desktop horizontal or mobile stacked)
-     - includes small motion for dot & card
-     ------------------------- */
-  const TimelineItem = ({ item, isLeft, globalIndex }) => {
-    return (
-      <motion.div
-        className="timeline-item"
-        data-index={globalIndex}
-        ref={(el) => (itemRefs.current[globalIndex] = el)}
-        variants={itemVariant}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-        style={{ display: "flex", alignItems: "center", gap: 12 }}
-      >
-        {/* center dot for desktop */}
-        <motion.div
-          className="timeline-dot"
-          aria-hidden
-          animate={activeIndex === globalIndex ? "active" : "idle"}
-          variants={dotPulse}
-          transition={{ duration: 0.25 }}
-          style={{
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 10,
-            pointerEvents: "none",
-          }}
-        />
-        <div style={{ width: "45%", ...(isLeft ? { paddingRight: 28 } : { marginLeft: "auto", paddingLeft: 28 }) }}>
-          <motion.div whileHover={{ scale: 1.02 }} style={{ cursor: "default" }}>
-            <Card style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12 }}>
-              <Card.Header style={{ background: "transparent", borderBottom: "none", paddingBottom: 8 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <Badge bg="primary" style={{ background: "#00d4ff", color: "#000" }}>{item.day}</Badge>
-                  <span style={{ color: "#9fb0c6", fontSize: 14 }}>{item.date}</span>
-                </div>
                 <Card.Title style={{ margin: 0, color: "#00d4ff", fontSize: 16 }}>{item.name}</Card.Title>
               </Card.Header>
               <Card.Body style={{ paddingTop: 6 }}>

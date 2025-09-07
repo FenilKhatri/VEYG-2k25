@@ -124,41 +124,14 @@ const AdminDashboardNew = () => {
             }
       }
 
-      const handleExport = async (type) => {
-            try {
-                  setLoading(true)
-                  let blob
-
-                  if (type === 'students') {
-                        blob = await apiService.exportStudentRegistrations()
-                  } else if (type === 'games') {
-                        blob = await apiService.exportGameRegistrations()
-                  } else {
-                        blob = await apiService.exportAllRegistrations()
-                  }
-
-                  const url = window.URL.createObjectURL(blob)
-                  const link = document.createElement('a')
-                  link.href = url
-                  link.download = `VEYG_${type}_${new Date().toISOString().split('T')[0]}.xlsx`
-                  document.body.appendChild(link)
-                  link.click()
-                  document.body.removeChild(link)
-                  window.URL.revokeObjectURL(url)
-
-                  // Data exported successfully
-            } catch (error) {
-                  console.error('Error exporting data:', error)
-                  setError(`Failed to export ${type} data`)
-            } finally {
-                  setLoading(false)
-            }
-      }
 
       const filteredRegistrations = Array.isArray(registrations) ? registrations.filter(reg => {
             const matchesSearch = reg.gameName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   reg.teamLeader?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   reg.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  reg.registrationId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  reg.teamLeader?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  reg.teamLeader?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase())
                   reg.registrationId?.toLowerCase().includes(searchTerm.toLowerCase())
 
             let matchesStatusFilter = true
@@ -382,20 +355,6 @@ const AdminDashboardNew = () => {
                                                                   style={{ borderRadius: '12px', fontWeight: '600' }}
                                                             >
                                                                   Refresh Data
-                                                            </Button>
-                                                            <Button
-                                                                  variant="success"
-                                                                  onClick={() => window.open('/admin/google-sheets/student-data', '_blank')}
-                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
-                                                            >
-                                                                  📊 Open Student Data
-                                                            </Button>
-                                                            <Button
-                                                                  variant="info"
-                                                                  onClick={() => window.open('/admin/google-sheets/game-data', '_blank')}
-                                                                  style={{ borderRadius: '12px', fontWeight: '600' }}
-                                                            >
-                                                                  🎮 Open Game Data
                                                             </Button>
                                                       </div>
                                                 </Col>

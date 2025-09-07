@@ -97,29 +97,6 @@ export default function Footer() {
                   </div>
                 </div>
               </Col>
-              
-              <Col md={6} lg={12}>
-                <div className="footer-section">
-                  <h4 className="section-title">
-                    <Code size={18} />
-                    Our Sponsors
-                  </h4>
-                  <div className="footer-links">
-                    <a href="https://www.saffrony.ac.in" target="_blank" rel="noopener noreferrer" className="footer-link">
-                      Saffrony Institute of Technology <ExternalLink size={12} />
-                    </a>
-                    <a href="https://www.techcorp.com" target="_blank" rel="noopener noreferrer" className="footer-link">
-                      TechCorp Solutions <ExternalLink size={12} />
-                    </a>
-                    <a href="https://www.innovatetech.com" target="_blank" rel="noopener noreferrer" className="footer-link">
-                      InnovateTech Labs <ExternalLink size={12} />
-                    </a>
-                    <a href="https://www.digitalfuture.com" target="_blank" rel="noopener noreferrer" className="footer-link">
-                      Digital Future Inc <ExternalLink size={12} />
-                    </a>
-                  </div>
-                </div>
-              </Col>
             </Row>
           </Col>
 

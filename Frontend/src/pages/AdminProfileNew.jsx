@@ -143,34 +143,6 @@ export default function AdminDashboard({ showToast }) {
     }
   }
 
-  const handleExport = async (type) => {
-    try {
-      let blob
-      if (type === 'students') {
-        blob = await apiService.exportStudentRegistrations()
-      } else if (type === 'games') {
-        blob = await apiService.exportGameRegistrations()
-      } else {
-        blob = await apiService.exportAllRegistrations()
-      }
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.style.display = 'none'
-      a.href = url
-      a.download = `${type}_export_${new Date().toISOString().split('T')[0]}.xlsx`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-
-      showToast(`${type} data exported successfully!`, 'success')
-    } catch (error) {
-      console.error('Export error:', error)
-      showToast('Failed to export data', 'error')
-    }
-  }
 
   const handleViewDetails = (registration) => {
     setSelectedRegistration(registration)

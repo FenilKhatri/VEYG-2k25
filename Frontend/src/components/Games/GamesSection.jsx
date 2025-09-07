@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
-import { motion } from 'framer-motion'
 import GameCard from './GameCard'
 import RegistrationRules from '../RegistrationRules'
 import apiService from '../../services/api'
@@ -77,12 +76,8 @@ const GamesSection = ({
   }
 
   const renderGameSection = (games, dayLabel) => (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-      viewport={{ once: true }}
-      className="mb-5"
+    <div
+      className="mb-5 fade-in-up"
     >
       {/* Title */}
       <h3
@@ -125,12 +120,8 @@ const GamesSection = ({
               lg={5}
               className="d-flex"
             >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                viewport={{ once: true }}
-                className="w-100"
+              <div
+                className="w-100 fade-in-scale"
               >
                 <GameCard
                   game={game}
@@ -144,12 +135,12 @@ const GamesSection = ({
                   registeredGameId={registeredGameForDay?.gameId}
                   onRegister={handleRegister}
                 />
-              </motion.div>
+              </div>
             </Col>
           )
         })}
       </Row>
-    </motion.div>
+    </div>
   )
 
   return (
@@ -163,7 +154,7 @@ const GamesSection = ({
     >
       <Container>
         {/* Header */}
-        <motion.div
+        <div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -189,18 +180,14 @@ const GamesSection = ({
           >
             Choose one game per day. Register for your preferred competition.
           </p>
-        </motion.div>
+        </div>
 
         {/* Registration Rules */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-5"
+        <div
+          className="mb-5 fade-in-up"
         >
           <RegistrationRules />
-        </motion.div>
+        </div>
 
         {/* Day 1 Games */}
         {renderGameSection(day1Games, "Day 1")}

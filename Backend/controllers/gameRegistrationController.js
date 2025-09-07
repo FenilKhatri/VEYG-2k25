@@ -3,7 +3,7 @@ const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = requ
 const GameRegistration = require('../models/GameRegistration')
 const Student = require('../models/Student')
 const dayWiseValidation = require('../middleware/dayWiseValidation')
-const sheetsService = require('../services/googleSheets')
+const websocketService = require('../services/websocket')
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -34,16 +34,10 @@ const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gam
 
     // Game code mapping - unique 3-letter codes for each game
     const gameCodeMap = {
-      'cpu assembly': 'CPU',
       'algo cricket': 'ACR',
       'braingo': 'BGO',
       'logo2logic': 'L2L',
-      'code debugging': 'CDB',
-      'web designing': 'WEB',
-      'treasure hunt': 'TRH',
-      'quiz competition': 'QUZ',
-      'coding contest': 'COD',
-      'hackathon': 'HAK'
+      'Blind Code to Key': 'BCK',
     }
 
     // Get college code (default to first 3 letters if not found)
@@ -264,48 +258,19 @@ const registerGame = async (req, res) => {
       // Don't fail the registration process if email fails
     }
 
-    // Append registration data to Google Sheet (non-blocking)
-    try {
-      console.log('📊 Attempting to sync registration to Google Sheet...');
-      
-      const sheetResult = await sheetsService.addRegistration(registration);
-      
-      // Update registration with sheet sync status
-      registration.sheetSync = {
-        success: sheetResult.success,
-        error: sheetResult.success ? null : sheetResult.error,
-        lastAttempt: new Date(),
-        rowNumber: sheetResult.rowNumber || null
-      };
-      
-      await registration.save();
-      
-      if (sheetResult.success) {
-        console.log('✅ Registration synced to Google Sheet successfully');
-      } else {
-        console.error('❌ Failed to sync registration to Google Sheet:', sheetResult.error);
-      }
-    } catch (sheetError) {
-      console.error('❌ Google Sheet sync error:', sheetError);
-      
-      // Update registration with error status
-      try {
-        registration.sheetSync = {
-          success: false,
-          error: sheetError.message,
-          lastAttempt: new Date(),
-          rowNumber: null
-        };
-        await registration.save();
-      } catch (saveError) {
-        console.error('❌ Failed to save sheet sync error status:', saveError);
-      }
-    }
+    // Google Sheets sync removed - using database only
 
     console.log('✅ Game registration completed successfully')
 
     // Populate user data for response
     await registration.populate('userId', 'name email contactNumber')
+
+    // Emit new registration notification to admins via WebSocket
+    try {
+      websocketService.emitNewRegistration(registration);
+    } catch (wsError) {
+      console.warn('Failed to emit new registration notification:', wsError.message);
+    }
 
     successResponse(res, 201, 'Game registration successful', { registration })
   } catch (error) {
@@ -457,6 +422,13 @@ const updateRegistrationStatus = async (req, res) => {
         console.error('❌ Failed to send payment confirmation email:', emailError);
         // Don't fail the status update if email fails
       }
+    }
+
+    // Emit real-time payment status update via WebSocket
+    try {
+      websocketService.emitPaymentStatusUpdate(registration.userId, registration);
+    } catch (wsError) {
+      console.warn('Failed to emit payment status update:', wsError.message);
     }
 
     successResponse(res, 200, 'Registration status updated successfully', { registration })

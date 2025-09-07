@@ -41,9 +41,9 @@ html, body {
   background: transparent;
 }
 
-/* Ensure sections start from top */
-section:first-child,
-div:first-child {
+/* Ensure sections start from top - but not cards in grids */
+section:first-child:not(.card):not([class*="col"]),
+div:first-child:not(.card):not([class*="col"]):not(.game-card-wrapper):not(.embla__slide) {
   margin-top: 0;
 }
 
@@ -65,6 +65,95 @@ div:first-child {
   margin: 0;
 }
 
-.col, .col-* {
+/* Remove the problematic col padding override that affects card spacing */
+/* .col, .col-* {
   padding: 0;
+} */
+
+/* Ensure consistent card spacing in all grid layouts */
+.game-card-wrapper,
+.embla__slide,
+.sponsor-card,
+.card {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Consistent spacing for Bootstrap columns containing cards */
+.col:has(.game-card-wrapper),
+.col:has(.card),
+.col:has(.sponsor-card) {
+  padding: 0.75rem !important;
+}
+
+/* Fix first-child card spacing issues */
+.row > .col:first-child:has(.game-card-wrapper),
+.row > .col:first-child:has(.card),
+.row > .col:first-child:has(.sponsor-card),
+.embla__container > .embla__slide:first-child {
+  margin-left: 0 !important;
+  padding-left: 0.75rem !important;
+}
+
+/* Performance optimizations - replace framer-motion with CSS animations */
+.game-card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card-hover:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.sponsor-card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sponsor-card-hover:hover {
+  transform: translateY(-8px) scale(1.03);
+}
+
+/* Smooth fade-in animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Stagger animation delays */
+.fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-up:nth-child(4) { animation-delay: 0.4s; }
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .game-card-hover,
+  .sponsor-card-hover,
+  .fade-in-up,
+  .fade-in {
+    animation: none;
+    transition: none;
+  }
 }

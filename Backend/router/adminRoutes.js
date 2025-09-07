@@ -23,7 +23,4 @@ router.patch('/change-password', authenticate, requireAdmin, changeAdminPassword
 router.get('/registrations', authenticate, requireAdmin, getAllRegistrations)
 router.patch('/registrations/:id/status', authenticate, requireAdmin, updateRegistrationStatus)
 
-// Google Sheets sync retry route (protected)
-router.post('/sheet/retry/:registrationId', authenticate, requireAdmin, retrySheetSync)
-
 module.exports = router

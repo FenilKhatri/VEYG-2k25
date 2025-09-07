@@ -2,7 +2,7 @@ const { Admin, GameRegistration } = require('../models')
 const { generateToken } = require('../utils/jwt')
 const { successResponse, errorResponse } = require('../utils/response')
 const { sendPaymentConfirmationEmail } = require('../sendMail')
-const sheetsService = require('../services/googleSheets')
+const websocketService = require('../services/websocket')
 
 // Admin Registration
 const adminRegister = async (req, res) => {
@@ -248,6 +248,13 @@ const updateRegistrationStatus = async (req, res) => {
         console.error('❌ Failed to send payment confirmation email:', emailError);
         // Don't fail the approval process if email fails
       }
+    }
+
+    // Emit real-time payment status update via WebSocket
+    try {
+      websocketService.emitPaymentStatusUpdate(registration.userId, registration);
+    } catch (wsError) {
+      console.warn('Failed to emit payment status update:', wsError.message);
     }
 
     successResponse(res, 200, 'Approval status updated successfully', { registration })

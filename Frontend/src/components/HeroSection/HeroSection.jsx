@@ -36,8 +36,8 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Create nodes/particles (a bit larger for richer background)
-    const NODE_COUNT = Math.max(40, Math.floor((width * height) / 60000)); // responsive count
+    // Reduced particle count for better performance
+    const NODE_COUNT = Math.max(20, Math.floor((width * height) / 120000)); // halved for performance
     const nodes = Array.from({ length: NODE_COUNT }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -46,17 +46,7 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
       r: 1.5 + Math.random() * 2.5,
     }));
 
-    // mouse interaction
-    const mouse = { x: -9999, y: -9999, radius: Math.min(width, height) / 6 };
-
-    const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    };
-    const handleMouseLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    };
+    // mouse interaction removed for better performance
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
@@ -78,15 +68,7 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
         if (node.x < 0 || node.x > width) node.dx *= -1;
         if (node.y < 0 || node.y > height) node.dy *= -1;
 
-        // repel a little from mouse
-        const mx = node.x - mouse.x;
-        const my = node.y - mouse.y;
-        const mdist = Math.hypot(mx, my);
-        if (mdist < mouse.radius) {
-          const force = (mouse.radius - mdist) / mouse.radius;
-          node.x += (mx / mdist) * force * 6;
-          node.y += (my / mdist) * force * 6;
-        }
+        // mouse repulsion removed
 
         // draw particle
         ctx.beginPath();
@@ -95,20 +77,21 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
         ctx.fill();
       });
 
-      // connections
+      // connections - optimized for performance
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dist = Math.hypot(a.x - b.x, a.y - b.y);
-          const threshold = clamp(160, 80, 200);
-          if (dist < threshold) {
-            const alpha = clamp(1 - dist / threshold, 0.05, 0.9) * 0.9;
-            ctx.strokeStyle = `rgba(0,234,255,${alpha})`;
-            ctx.lineWidth = 0.9;
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const distance = Math.hypot(dx, dy);
+          const maxDistance = 100; // reduced connection distance for performance
+
+          if (distance < maxDistance) {
+            const opacity = (1 - distance / maxDistance) * 0.3; // reduced opacity
+            ctx.strokeStyle = `rgba(0, 234, 255, ${opacity})`;
+            ctx.lineWidth = 0.8; // thinner lines
             ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.stroke();
           }
         }
@@ -123,20 +106,15 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      mouse.radius = Math.min(width, height) / 6;
       // Note: for simplicity we don't fully recreate nodes here, but it's ok
     };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseleave", handleMouseLeave);
 
     // cleanup
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 

@@ -1,7 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import GameCard from "./GameCard";
-import { motion } from "framer-motion";
 import "./GamesGrid.css"; // Importing styles
 
 const GamesGrid = ({ 
@@ -36,22 +35,12 @@ const GamesGrid = ({
   return (
     <Container className="games-grid-container py-5">
       <div className="games-header text-center mb-5">
-        <motion.h2
-          className="games-title fw-bold mb-3"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+        <h2 className="games-title fw-bold mb-3">
           Technical <span className="highlight">Competitions</span>
-        </motion.h2>
-        <motion.p
-          className="games-subtitle fs-5"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
+        </h2>
+        <p className="games-subtitle fs-5">
           Challenge yourself in cutting-edge technical competitions
-        </motion.p>
+        </p>
       </div>
 
       <Row className="g-4 justify-content-center">
@@ -70,12 +59,7 @@ const GamesGrid = ({
               xl={3}
               className="d-flex"
             >
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="game-card-wrapper"
-              >
+              <div className="game-card-wrapper">
                 <GameCard
                   game={game}
                   userId={userId}
@@ -88,7 +72,7 @@ const GamesGrid = ({
                   registeredGameId={registeredGameForDay?.gameId}
                   onRegister={onRegister}
                 />
-              </motion.div>
+              </div>
             </Col>
           );
         })}

@@ -1,26 +1,22 @@
 require('dotenv').config({ debug: false });
 const cors = require('cors');
 const express = require('express');
+const http = require('http');
 const app = express();
 const authRoutes = require('./router');
 const connectDB = require('./utils/db');
 const { errorMiddleware } = require('./middleware/middleware');
 const { serveReceiptHandler } = require('./sendMail');
+const websocketService = require('./services/websocket');
 
 // Game routes are already included in the main router via gameRegistrationRoutes
 
 // ------------------- CORS CONFIG -------------------
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://127.0.0.1:5173",
-  "http://127.0.0.1:5174",
-  "http://127.0.0.1:3000",
-  "http://127.0.0.1:3001",
   "https://veyg-2k25-frontend.onrender.com",   // Your deployed frontend
   "https://veyg-2k25-backend.onrender.com",   // Your deployed backend
+  "http://localhost:5173",                     // Local development frontend
+  "http://localhost:3000",                     // Alternative local frontend port
 ];
 
 const corsOptions = {
@@ -71,7 +67,13 @@ const PORT = process.env.PORT || 3002;
 connectDB().then(() => {
   console.log("✅ Database connected successfully!");
   
-  const server = app.listen(PORT, () => {
+  // Create HTTP server for Socket.IO
+  const server = http.createServer(app);
+  
+  // Initialize WebSocket service
+  websocketService.initialize(server);
+  
+  server.listen(PORT, () => {
     if (process.env.NODE_ENV === 'production') {
       console.log(`🚀 Server running on port ${PORT}`);
     } else {
@@ -93,7 +95,10 @@ connectDB().then(() => {
           const altPort = alternativePorts[portIndex];
           console.log(`🔄 Trying port ${altPort}...`);
           
-          const altServer = app.listen(altPort, () => {
+          const altServer = http.createServer(app);
+          websocketService.initialize(altServer);
+          
+          altServer.listen(altPort, () => {
             if (process.env.NODE_ENV === 'production') {
               console.log(`🚀 Server running on port ${altPort}`);
             } else {

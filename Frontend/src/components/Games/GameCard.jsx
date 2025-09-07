@@ -2,7 +2,6 @@ import React from 'react'
 import { Card, Badge, Button } from 'react-bootstrap'
 import { Users, Calendar } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 
 const GameCard = ({
   game,
@@ -39,11 +38,7 @@ const GameCard = ({
   }
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.03 }}
-      transition={{ duration: 0.3 }}
-      className="h-100 w-100"
-    >
+    <div className="h-100 w-100 game-card-hover">
       <Card
         className="game-card h-100"
         style={{
@@ -179,21 +174,6 @@ const GameCard = ({
               ✓ You registered for Day {game.day}
             </Badge>
           )}
-          
-          {/* Day-wise registration status for other games */}
-          {!isThisGameRegistered && hasRegisteredForDay && (
-            <Badge
-              bg="warning"
-              className="px-3 py-2 fw-semibold"
-              style={{
-                fontSize: '0.85rem',
-                boxShadow: '0 0 15px rgba(255, 193, 7, 0.3)',
-                color: '#000'
-              }}
-            >
-              You registered for another Day {game.day} game
-            </Badge>
-          )}
 
           {/* Team Size */}
           <div className="d-flex align-items-center">
@@ -207,6 +187,22 @@ const GameCard = ({
           </div>
         </Card.Footer>
 
+        
+          {/* Day-wise registration status for other games */}
+          {!isThisGameRegistered && hasRegisteredForDay && (
+            <Badge
+              bg="warning"
+              className="px-3 py-2 fw-semibold"
+              style={{
+                fontSize: '0.85rem',
+                boxShadow: '0 0 15px rgba(255, 193, 7, 0.3)',
+                color: '#000'
+              }}
+            >
+              You registered {game.name} Game in Day {game.day}! Please register on another day games!
+            </Badge>
+          )}
+
         <style>{`
           .game-card:hover {
             transform: translateY(-4px);
@@ -215,7 +211,7 @@ const GameCard = ({
           }
         `}</style>
       </Card>
-    </motion.div>
+    </div>
   )
 }
 

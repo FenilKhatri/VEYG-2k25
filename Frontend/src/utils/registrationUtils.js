@@ -22,7 +22,22 @@ export async function registerTeam(payload) {
       body: JSON.stringify(payload)
     });
     
-    const data = await res.json();
+    // Check if response is HTML (error page) instead of JSON
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await res.text();
+      console.error('Non-JSON response received:', text);
+      throw new Error(`Server returned invalid response (${res.status}). Please try again.`);
+    }
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonError) {
+      console.error('JSON parsing error:', jsonError);
+      throw new Error('Server returned invalid JSON response. Please try again.');
+    }
+    
     if (!res.ok) throw new Error(data.message || "Registration failed");
 
     // If server returned registration with PDF path, trigger download
@@ -121,10 +136,10 @@ export function setupBackendMonitor() {
   };
   
   // Run once after a short delay (no blind 2-3s popup)
-  setTimeout(check, 2500);
+  setTimeout(check, 5000);
   
-  // Optionally poll less frequently
-  setInterval(check, 1000 * 60 * 5); // every 5 minutes
+  // Poll less frequently to reduce performance impact
+  setInterval(check, 1000 * 60 * 10); // every 10 minutes
 }
 
 /**
