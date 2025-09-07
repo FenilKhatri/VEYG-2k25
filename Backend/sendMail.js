@@ -141,11 +141,20 @@ async function generateReceiptPDF(participant, game, registration, status = "Pen
     });
 }
 
-// ---------- SEND EMAIL WITH RETRY ----------
-async function sendMailWithRetry(mailOptions, retries = 3) {
+// ---------- SEND EMAIL WITH RETRY AND TIMEOUT ----------
+async function sendMailWithRetry(mailOptions, retries = 3, timeoutMs = 30000) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            return await transporter.sendMail(mailOptions);
+            // Create a timeout promise
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error(`Email sending timeout after ${timeoutMs}ms`)), timeoutMs);
+            });
+            
+            // Race between email sending and timeout
+            return await Promise.race([
+                transporter.sendMail(mailOptions),
+                timeoutPromise
+            ]);
         } catch (err) {
             console.warn(`⚠️ Attempt ${attempt} failed: ${err.message}`);
             if (attempt === retries) throw err;

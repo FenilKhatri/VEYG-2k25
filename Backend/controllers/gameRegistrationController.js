@@ -246,17 +246,19 @@ const registerGame = async (req, res) => {
 
     // Skip PDF generation for registration emails - only generate for payment confirmation
 
-    // Send registration confirmation email using the stored PDF
-    try {
-      console.log('📧 Sending registration confirmation email with stored PDF...');
-      
-      await sendRegistrationConfirmationEmail(registration);
-      
-      console.log('✅ Registration confirmation email sent successfully');
-    } catch (emailError) {
-      console.error('❌ Failed to send registration confirmation email:', emailError);
-      // Don't fail the registration process if email fails
-    }
+    // Send registration confirmation email asynchronously (non-blocking)
+    setImmediate(async () => {
+      try {
+        console.log('📧 Sending registration confirmation email asynchronously...');
+        
+        await sendRegistrationConfirmationEmail(registration);
+        
+        console.log('✅ Registration confirmation email sent successfully');
+      } catch (emailError) {
+        console.error('❌ Failed to send registration confirmation email:', emailError);
+        // Email failure doesn't affect registration success
+      }
+    });
 
     // Google Sheets sync removed - using database only
 
@@ -410,18 +412,20 @@ const updateRegistrationStatus = async (req, res) => {
       return errorResponse(res, 404, 'Registration not found')
     }
 
-    // Send payment confirmation email when payment is approved
+    // Send payment confirmation email when payment is approved (non-blocking)
     if (paymentStatus === 'paid' && approvalStatus === 'approved') {
-      try {
-        console.log('📧 Sending payment confirmation email for approved registration...');
-        
-        await sendPaymentConfirmationEmail(registration);
-        
-        console.log('✅ Payment confirmation email sent successfully');
-      } catch (emailError) {
-        console.error('❌ Failed to send payment confirmation email:', emailError);
-        // Don't fail the status update if email fails
-      }
+      setImmediate(async () => {
+        try {
+          console.log('📧 Sending payment confirmation email for approved registration asynchronously...');
+          
+          await sendPaymentConfirmationEmail(registration);
+          
+          console.log('✅ Payment confirmation email sent successfully');
+        } catch (emailError) {
+          console.error('❌ Failed to send payment confirmation email:', emailError);
+          // Email failure doesn't affect status update success
+        }
+      });
     }
 
     // Emit real-time payment status update via WebSocket
