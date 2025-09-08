@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { ChevronRight, Zap, Trophy, Users, Calendar } from "lucide-react";
 
 /**
  * HeroSection.jsx
@@ -36,8 +37,8 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Reduced particle count for better performance
-    const NODE_COUNT = Math.max(20, Math.floor((width * height) / 120000)); // halved for performance
+    // Optimized particle count for smooth performance
+    const NODE_COUNT = Math.max(30, Math.floor((width * height) / 80000));
     const nodes = Array.from({ length: NODE_COUNT }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -51,12 +52,21 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // soft gradient background
-      const g = ctx.createLinearGradient(0, 0, width, height);
-      g.addColorStop(0, "#010114");
-      g.addColorStop(0.5, "#03021a");
-      g.addColorStop(1, "#050017");
+      // Enhanced gradient background with modern colors
+      const g = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height));
+      g.addColorStop(0, "#0a0a23");
+      g.addColorStop(0.3, "#1a1a2e");
+      g.addColorStop(0.7, "#16213e");
+      g.addColorStop(1, "#0f172a");
       ctx.fillStyle = g;
+      ctx.fillRect(0, 0, width, height);
+      
+      // Add subtle overlay pattern
+      const overlay = ctx.createLinearGradient(0, 0, width, height);
+      overlay.addColorStop(0, "rgba(0, 234, 255, 0.03)");
+      overlay.addColorStop(0.5, "rgba(124, 58, 237, 0.02)");
+      overlay.addColorStop(1, "rgba(0, 123, 255, 0.03)");
+      ctx.fillStyle = overlay;
       ctx.fillRect(0, 0, width, height);
 
       // update nodes
@@ -70,10 +80,20 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
 
         // mouse repulsion removed
 
-        // draw particle
+        // draw enhanced particle with glow effect
+        const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, node.r * 3);
+        gradient.addColorStop(0, "rgba(0, 234, 255, 0.9)");
+        gradient.addColorStop(0.5, "rgba(124, 58, 237, 0.6)");
+        gradient.addColorStop(1, "rgba(0, 234, 255, 0)");
+        
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+        
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0, 234, 255, 0.95)";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
         ctx.fill();
       });
 
@@ -83,12 +103,17 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const distance = Math.hypot(dx, dy);
-          const maxDistance = 100; // reduced connection distance for performance
+          const maxDistance = 120;
 
           if (distance < maxDistance) {
-            const opacity = (1 - distance / maxDistance) * 0.3; // reduced opacity
-            ctx.strokeStyle = `rgba(0, 234, 255, ${opacity})`;
-            ctx.lineWidth = 0.8; // thinner lines
+            const opacity = (1 - distance / maxDistance) * 0.4;
+            const gradient = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
+            gradient.addColorStop(0, `rgba(0, 234, 255, ${opacity})`);
+            gradient.addColorStop(0.5, `rgba(124, 58, 237, ${opacity * 0.8})`);
+            gradient.addColorStop(1, `rgba(0, 234, 255, ${opacity})`);
+            
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -365,60 +390,135 @@ const HeroSection = () => {
         position: "relative",
         color: "#fff",
         overflow: "hidden",
-        minHeight: "75vh",
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
-        paddingTop: 36,
-        paddingBottom: 60,
+        paddingTop: 80,
+        paddingBottom: 80,
       }}
     >
       {/* Neural background */}
       <NeuralCanvas zIndex={0} />
 
+      {/* Floating elements */}
+      <div className="floating-elements" style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1,
+        pointerEvents: "none"
+      }}>
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="floating-orb"
+            style={{
+              position: "absolute",
+              width: `${20 + Math.random() * 40}px`,
+              height: `${20 + Math.random() * 40}px`,
+              borderRadius: "50%",
+              background: `linear-gradient(45deg, rgba(0, 234, 255, 0.1), rgba(124, 58, 237, 0.1))`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* Foreground content */}
-      <Container style={{ zIndex: 2, position: "relative" }}>
+      <Container style={{ zIndex: 3, position: "relative" }}>
         <Row className="justify-content-center">
           <Col xs={12} md={11} lg={10} className="text-center">
-            {/* Logo */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
+            {/* Logo with enhanced styling */}
+            <div className="logo-container" style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "2rem",
+              textAlign: "center",
+              width: "100%",
+              background: "none",
+              position: "relative",
+              top: "20px",
+            }}>
+              <div className="logo-glow" style={{
+                position: "absolute",
+                inset: 0,
+                borderRadius: "50%",
+                animation: "pulse 3s ease-in-out infinite"
+              }} />
               <img
                 src="/images/College-logo.png"
                 alt="Saffrony Institute of Technology Logo"
+                className="hero-logo"
                 style={{
-                  height: 140,
-                  width: "auto",
-                  filter: "drop-shadow(0 6px 18px rgba(0,234,255,0.35))",
+                  maxWidth: "400px",
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  margin: "0 auto",
+                  position: "relative",
+                  zIndex: 2,
+                  transition: "transform 0.3s ease",
+                  background: "transparent",
+                  backgroundColor: "transparent",
+                  backdropFilter: "none",
+                  filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
+                  textAlign: "center"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.05) rotate(1deg)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1) rotate(0deg)";
                 }}
               />
             </div>
 
-            {/* Title area */}
-            <div style={{ marginBottom: 10 }}>
+            {/* Enhanced Title area */}
+            <div className="title-container" style={{ marginBottom: "1.5rem", position: "relative" }}>
+              <div className="title-bg-effect" style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "120%",
+                height: "120%",
+                background: "radial-gradient(ellipse, rgba(0, 234, 255, 0.1) 0%, transparent 70%)",
+                borderRadius: "50%",
+                animation: "titleGlow 4s ease-in-out infinite alternate"
+              }} />
               <h1
                 className="hero-title"
                 style={{
                   margin: 0,
-                  fontSize: "clamp(2.2rem, 6.5vw, 4.8rem)",
-                  fontWeight: 800,
-                  lineHeight: 1.03,
-                  letterSpacing: "-0.02em",
+                  fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
+                  fontWeight: 900,
+                  lineHeight: 1.1,
+                  letterSpacing: "-0.03em",
                   marginBottom: 8,
                   display: "inline-block",
                   textAlign: "center",
-                  textShadow: "0 0 30px rgba(0, 212, 255, 0.95)",
+                  position: "relative",
+                  zIndex: 2
                 }}
               >
                 <span
-                  aria-hidden={false}
-                  role="heading"
-                  aria-level={1}
+                  className="gradient-text"
                   style={{
-                    background: "linear-gradient(90deg, #00d4ff, #007bff, #7c3aed)",
+                    background: "linear-gradient(135deg, #00d4ff 0%, #007bff 25%, #7c3aed 50%, #ff006e 75%, #00d4ff 100%)",
+                    backgroundSize: "300% 300%",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
                     display: "inline-block",
                     paddingRight: 8,
+                    animation: "gradientShift 6s ease-in-out infinite",
+                    filter: "drop-shadow(0 0 20px rgba(0, 234, 255, 0.5))"
                   }}
                 >
                   {typed}
@@ -428,32 +528,49 @@ const HeroSection = () => {
                   aria-hidden="true"
                   style={{
                     display: "inline-block",
-                    width: 12,
-                    marginLeft: 2,
-                    background: "rgba(255,255,255,0.9)",
-                    animation: "blink 1s steps(2, start) infinite",
-                    height: "1.05em",
+                    width: 4,
+                    marginLeft: 4,
+                    background: "linear-gradient(45deg, #00d4ff, #7c3aed)",
+                    animation: "blink 1.2s steps(2, start) infinite",
+                    height: "1.1em",
                     verticalAlign: "text-bottom",
                     borderRadius: 2,
+                    boxShadow: "0 0 10px rgba(0, 234, 255, 0.8)"
                   }}
                 />
               </h1>
             </div>
 
-            {/* Subtitle */}
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "clamp(0.95rem, 1.6vw, 1.25rem)",
-                fontWeight: 600,
-                color: "#9ddfff",
-                letterSpacing: "1.5px",
-                textTransform: "uppercase",
-                marginBottom: 22,
-              }}
-            >
-              🚀 Saffrony Institute of Technology • Tech Fest
-            </h2>
+            {/* Enhanced Subtitle */}
+            <div className="subtitle-container" style={{ marginBottom: "2rem" }}>
+              <h2
+                className="hero-subtitle"
+                style={{
+                  margin: 0,
+                  fontSize: "clamp(1rem, 2vw, 1.4rem)",
+                  fontWeight: 700,
+                  color: "transparent",
+                  background: "linear-gradient(90deg, #9ddfff, #00d4ff, #7c3aed)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  letterSpacing: "2px",
+                  textTransform: "uppercase",
+                  marginBottom: 12,
+                  textAlign: "center",
+                  position: "relative"
+                }}
+              >
+                🚀 Saffrony Institute of Technology • Tech Fest
+              </h2>
+              <div className="subtitle-underline" style={{
+                width: "100px",
+                height: "3px",
+                background: "linear-gradient(90deg, #00d4ff, #7c3aed)",
+                margin: "0 auto",
+                borderRadius: "2px",
+                animation: "expandContract 3s ease-in-out infinite"
+              }} />
+            </div>
 
             {/* Highlights cards (responsive grid) */}
             <div style={{ marginBottom: 26 }}>
@@ -605,6 +722,68 @@ const HeroSection = () => {
         /* provide smooth transform behaviours */
         .past-event-card, .detail-card {
           will-change: transform, box-shadow;
+        }
+          .logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 18px rgba(0,234,255,0.35));
+}
+
+/* Tablet Screens */
+@media (max-width: 1024px) {
+  .logo {
+    max-width: 180px;
+  }
+}
+
+/* Mobile Screens */
+@media (max-width: 600px) {
+  .logo {
+    max-width: 140px;
+  }
+}
+
+        
+        /* Enhanced animations */
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes titleGlow {
+          0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+          100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        @keyframes expandContract {
+          0%, 100% { width: 100px; }
+          50% { width: 150px; }
+        }
+        
+        /* Responsive enhancements */
+        @media (max-width: 768px) {
+          .hero-logo { max-width: 280px !important; }
+          .floating-orb { display: none; }
+        }
+        
+        @media (max-width: 576px) {
+          .hero-logo { max-width: 220px !important; }
+          .title-container { margin-bottom: 1rem !important; }
+          .subtitle-container { margin-bottom: 1.5rem !important; }
         }
       `}</style>
     </section>

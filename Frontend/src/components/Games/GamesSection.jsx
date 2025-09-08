@@ -145,6 +145,7 @@ const GamesSection = ({
 
   return (
     <section
+      id="games"
       style={{
         background: 'linear-gradient(135deg, #050c1f 0%, #0f172a 50%, #1e293b 100%)',
         minHeight: '100vh',
@@ -189,8 +190,11 @@ const GamesSection = ({
           <RegistrationRules />
         </div>
 
-        {/* Day 1 Games */}
-        {renderGameSection(day1Games, "Day 1")}
+        {/* Game Cards Section - This is where Games button should scroll to */}
+        <div id="game-cards" style={{ paddingTop: '20px' }}>
+          {/* Day 1 Games */}
+          {renderGameSection(day1Games, "Day 1")}
+        </div>
 
         {/* Day 2 Games */}
         {renderGameSection(day2Games, "Day 2")}

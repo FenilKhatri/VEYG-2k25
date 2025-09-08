@@ -38,6 +38,10 @@ const studentSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters long']
   },
+  originalPassword: {
+    type: String,
+    select: false
+  },
   role: {
     type: String,
     default: 'student',
@@ -46,6 +50,14 @@ const studentSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     default: false
+  },
+  resetPasswordToken: {
+    type: String,
+    select: false
+  },
+  resetPasswordExpires: {
+    type: Date,
+    select: false
   },
 }, {
   timestamps: false

@@ -1,101 +1,91 @@
 const { body, validationResult } = require('express-validator')
 
-// Admin registration validation
+// Validation for admin registration
 const validateAdminRegister = [
-  body('name')
+  body('username')
     .trim()
-    .isLength({ min: 2, max: 50 })
-    .withMessage('Name must be between 2 and 50 characters'),
-  
-  body('contactNumber')
-    .trim()
-    .matches(/^[0-9]{10}$/)
-    .withMessage('Contact number must be a valid 10-digit number'),
+    .isLength({ min: 3, max: 50 })
+    .withMessage('Username must be between 3 and 50 characters')
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage('Username can only contain letters, numbers, and underscores'),
   
   body('email')
-    .trim()
     .isEmail()
     .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please provide a valid email address'),
   
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
-  
-  body('confirmPassword')
-    .custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords do not match')
-      }
-      return true
-    }),
-  
-  body('secretKey')
-    .equals('veyg_039')
-    .withMessage('Invalid admin secret key')
+    .withMessage('Password must be at least 6 characters long')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
 ]
 
-// Admin login validation
+// Validation for admin login
 const validateAdminLogin = [
   body('email')
-    .trim()
     .isEmail()
     .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please provide a valid email address'),
   
   body('password')
     .notEmpty()
     .withMessage('Password is required')
 ]
 
-// Student registration validation
+// Validation for student registration
 const validateStudentRegister = [
   body('name')
     .trim()
     .isLength({ min: 2, max: 50 })
     .withMessage('Name must be between 2 and 50 characters'),
   
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email address'),
+  
   body('contactNumber')
-    .trim()
     .matches(/^[0-9]{10}$/)
     .withMessage('Contact number must be a valid 10-digit number'),
   
-  body('email')
+  body('collegeName')
     .trim()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .isLength({ min: 2 })
+    .withMessage('College name is required'),
   
   body('password')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters long')
 ]
 
-// Student login validation
+// Validation for student login
 const validateStudentLogin = [
   body('email')
-    .trim()
     .isEmail()
     .normalizeEmail()
-    .withMessage('Please provide a valid email'),
+    .withMessage('Please provide a valid email address'),
   
   body('password')
     .notEmpty()
     .withMessage('Password is required')
 ]
 
-// Check validation results
+// Middleware to check validation results
 const checkValidation = (req, res, next) => {
-  console.log('Request Body:', req.body);
   const errors = validationResult(req)
+  
   if (!errors.isEmpty()) {
-    console.error('Validation Errors:', errors.array());
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
-      errors: errors.array()
+      errors: errors.array().map(error => ({
+        field: error.path,
+        message: error.msg
+      }))
     })
   }
+  
   next()
 }
 

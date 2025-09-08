@@ -14,6 +14,13 @@ export const games = [
     minTeamSize: 3,
     maxTeamSize: 3,
     estimatedTime: "1-2 hours",
+    requirements: {
+      mandatory: [
+        "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
+        "- Physical presence is mandatory.",
+        "- E-certificates will only be given to those who are physically present and have completed the event."
+      ],
+    },
   },
   {
     id: 2,
@@ -29,6 +36,13 @@ export const games = [
     minTeamSize: 3,
     maxTeamSize: 3,
     estimatedTime: "2-3 Hours",
+    requirements: {
+      mandatory: [
+        "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
+        "- Physical presence is mandatory.",
+        "- E-certificates will only be given to those who are physically present and have completed the event."
+      ],
+    },
   },
   // Day 2 Games
   {
@@ -45,6 +59,13 @@ export const games = [
     minTeamSize: 4,
     maxTeamSize: 4,
     estimatedTime: "2 hours",
+    requirements: {
+      mandatory: [
+        "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
+        "- Physical presence is mandatory.",
+        "- E-certificates will only be given to those who are physically present and have completed the event."
+      ],
+    },
   },
   {
     id: 4,
@@ -52,7 +73,7 @@ export const games = [
     gameCode: "BCK",
     day: 2,
     classification: "Technical",
-    description: "An interesting challenge for coding on blind screen with round one and two with treasure hunt.A coding challenge where players solve problems on a locked screen, then hunt QR codes to unlock the hidden key—mixing logic, coding, and code-breaking.",
+    description: "An interesting challenge for coding on blind screen with round one and two with treasure hunt.A coding challenge where players solve problems on a locked screen, then hunt QR codes to unlock the hidden key—mixing logic, coding, and code-breaking.",
     image: '/Logo/blind coding to key.jpg',
     logo: "🧠",
     baseFee: 60,
@@ -60,6 +81,13 @@ export const games = [
     minTeamSize: 2,
     maxTeamSize: 2,
     estimatedTime: "1-2 hour",
+    requirements: {
+      mandatory: [
+        "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
+        "- Physical presence is mandatory.",
+        "- E-certificates will only be given to those who are physically present and have completed the event."
+      ],
+    },
   },
 ]
 

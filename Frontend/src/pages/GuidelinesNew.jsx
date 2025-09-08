@@ -203,34 +203,7 @@ const Guidelines = () => {
   useEffect(() => {
     const updateDot = () => {
       if (!itemRefs.current.length || !trackRef.current || !dotRef.current) return;
-
-      // Mobile: vertical scroll mode (avoid horizontal for desktop)
-      if (window.innerWidth > 768) {
-        // hide/move dot off track on larger screens (we'll use desktop highlight)
-        progressX.set(0);
-        progressWidth.set(0);
-        return;
-      }
-
-      const first = itemRefs.current[0];
-      const last = itemRefs.current[itemRefs.current.length - 1];
-      if (!first || !last) return;
-
-      const firstMid = first.getBoundingClientRect().top + window.scrollY + first.getBoundingClientRect().height / 2;
-      const lastMid = last.getBoundingClientRect().top + window.scrollY + last.getBoundingClientRect().height / 2;
-      const viewportMid = window.scrollY + window.innerHeight * 0.5;
-
-      const raw = (viewportMid - firstMid) / Math.max(1, lastMid - firstMid);
-      const clamped = Math.min(1, Math.max(0, raw));
-
-      const trackW = trackRef.current.clientWidth || 0;
-      const dotW = dotRef.current.clientWidth || 0;
-      const travel = Math.max(0, trackW - dotW);
-
-      const x = travel * clamped;
-      progressX.set(x);
-      progressWidth.set(travel * clamped); // unused but available
-      dotScale.set(1 + clamped * 0.2);
+      // Simple scroll handling without motion values
     };
 
     let ticking = false;
@@ -252,7 +225,7 @@ const Guidelines = () => {
       window.removeEventListener("scroll", handler);
       window.removeEventListener("resize", handler);
     };
-  }, [flatGames.length, progressX, progressWidth, dotScale]);
+  }, [flatGames.length]);
 
   /* -------------------------
      Drag handling for desktop horizontal timeline
@@ -442,7 +415,7 @@ const Guidelines = () => {
         </div>
 
         {/* Guidelines Card */}
-        <motion.div initial="hidden" animate="show" variants={containerVariant}>
+        <div>
           <Card className="guidelines-card mb-5" style={{ borderRadius: 14, overflow: "hidden" }}>
             <Card.Body style={{ padding: 24 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
@@ -452,7 +425,7 @@ const Guidelines = () => {
                     <div key={i} style={{ height: 70, background: "linear-gradient(90deg,#0b1520,#0e2130)", borderRadius: 10 }} />
                   ))
                 ) : (
-                  <motion.div style={{ display: "grid", gap: 12 }} variants={containerVariant}>
+                  <div style={{ display: "grid", gap: 12 }}>
                     {[
                       {
                         title: "Registration Requirements",
@@ -481,12 +454,12 @@ const Guidelines = () => {
                     ].map((g, i) => (
                       <GuidelineCard key={i} idx={i} title={g.title} content={g.content} />
                     ))}
-                  </motion.div>
+                  </div>
                 )}
               </div>
             </Card.Body>
           </Card>
-        </motion.div>
+        </div>
       </Container>
 
       {/* Export modal */}

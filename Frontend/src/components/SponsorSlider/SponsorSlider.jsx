@@ -3,12 +3,18 @@ import { Container } from "react-bootstrap";
 import useEmblaCarousel from "embla-carousel-react";
 
 const SponsorSlider = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
+  const OPTIONS = {
     loop: true,
-    align: "center",
+    align: "start",
+    containScroll: "trimSnaps",
+    dragFree: false,
     slidesToScroll: 1,
     skipSnaps: false,
-  });
+    duration: 25,
+    startIndex: 0,
+  };
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(OPTIONS);
 
   const autoPlayRef = useRef(null);
   const isHovered = useRef(false);
@@ -17,27 +23,34 @@ const SponsorSlider = () => {
   const sponsors = [
     {
       id: 1,
+      name: "Dominoz",
+      logo: "/Sponsors_images/Domino's Pizza.png",
+      description: "Domino's is a global leader in pizza delivery, known for fresh, hot pizzas, efficient delivery services",
+      website: "https://pizzaonline.dominos.co.in/",
+    },
+    {
+      id: 2,
       name: "Abacus Peripherals Pvt. Ltd.",
       logo: "/Sponsors_images/Abacus Peripherals Pvt. Ltd..png",
       description: "India's 1st & Largest DRAM Manufacturer",
       website: "https://in.linkedin.com/company/abacusindia",
     },
     {
-      id: 2,
+      id: 3,
       name: "Accent Engineering & Design Services",
       logo: "/Sponsors_images/Accent Engineering & Design Sevices.png",
       description: "World-class & cost-effective engineering solutions",
       website: "https://in.linkedin.com/company/accentengineering&designservices",
     },
     {
-      id: 3,
+      id: 4,
       name: "Amin Infomark Pvt. Ltd.",
       logo: "/Sponsors_images/Amin Infomark Pvt. Ltd.png",
       description: "Leading IT company based in Ahmedabad",
       website: "https://www.zaubacorp.com/AMIN-INFOMARK-PRIVATE-LIMITED-U72200GJ2013PTC077136",
     },
     {
-      id: 4,
+      id: 5,
       name: "Pipefit Engineers Pvt. Ltd.",
       logo: "/Sponsors_images/Pipefit Engineers Pvt. Ltd..png",
       description:
@@ -47,23 +60,37 @@ const SponsorSlider = () => {
     },
   ];
 
-  // Start autoplay (discrete slide next) with safety checks
+  // Enhanced smooth infinite auto-scrolling
   const startAutoplay = () => {
-    // Do not start if reduced motion is requested
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    if (autoPlayRef.current) return; // already running
-    autoPlayRef.current = setInterval(() => {
+  
+    if (autoPlayRef.current) return;
+  
+    let lastTime = 0;
+    const SCROLL_INTERVAL = 2500; // Faster, smoother transitions
+  
+    const animate = (currentTime) => {
+      if (!lastTime) lastTime = currentTime;
+  
+      const delta = currentTime - lastTime;
+  
       if (emblaApi && !isHovered.current && isVisible.current) {
-        // Defensive: only call if emblaApi can scroll
         try {
-          emblaApi.scrollNext();
+          if (delta >= SCROLL_INTERVAL) {
+            // Smooth transition with easing
+            emblaApi.scrollNext();
+            lastTime = currentTime;
+          }
         } catch (e) {
-          // ignore
+          console.warn("Autoplay scroll error:", e);
         }
       }
-    }, 3000); // change this value to speed up / slow down (ms)
-  };
+  
+      autoPlayRef.current = requestAnimationFrame(animate);
+    };
+  
+    autoPlayRef.current = requestAnimationFrame(animate);
+  };  
 
   const stopAutoplay = () => {
     if (autoPlayRef.current) {
@@ -77,9 +104,26 @@ const SponsorSlider = () => {
 
     startAutoplay();
 
-    // Pause autoplay while user is interacting with the carousel by pointer
-    const onPointerDown = () => stopAutoplay();
+    // Pause autoplay while user is interacting with the carousel
+    const onPointerDown = () => {
+      stopAutoplay();
+      // Resume autoplay after a delay when user stops interacting
+      setTimeout(() => {
+        if (!isHovered.current) {
+          startAutoplay();
+        }
+      }, 2000);
+    };
     emblaApi.on("pointerDown", onPointerDown);
+    
+    // Also handle select events for better infinite loop
+    const onSelect = () => {
+      // Ensure autoplay continues after manual navigation
+      if (!isHovered.current && isVisible.current && !autoPlayRef.current) {
+        setTimeout(startAutoplay, 1000);
+      }
+    };
+    emblaApi.on("select", onSelect);
 
     // Pause when tab hidden, resume when visible again
     const handleVisibility = () => {
@@ -94,6 +138,7 @@ const SponsorSlider = () => {
     return () => {
       stopAutoplay();
       emblaApi.off("pointerDown", onPointerDown);
+      emblaApi.off("select", onSelect);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [emblaApi]);
@@ -448,7 +493,7 @@ const SponsorSlider = () => {
       box-shadow: 0 12px 36px rgba(13, 42, 76, 0.12);
 }
 
-@media (prefers-reduced-: reduce) {
+@media (prefers-reduced-motion: reduce) {
       .sponsor-slider::before {
             animation: none;
       }
@@ -504,7 +549,6 @@ const SponsorSlider = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="sponsor-card-link"
-                  aria-label={`Visit ${sponsor.name} website`}
                 >
                   <div className="sponsor-card">
                     <div className="sponsor-logo-container">
@@ -512,25 +556,21 @@ const SponsorSlider = () => {
                         src={sponsor.logo}
                         alt={sponsor.name}
                         className="sponsor-logo"
+                        loading="lazy"
+                        onError={(e) => {
+                          console.warn(`Failed to load sponsor logo: ${sponsor.logo}`);
+                          e.target.style.display = "none";
+                        }}
                       />
                     </div>
                     <div className="sponsor-info">
-                      <h4 className="sponsor-name">{sponsor.name}</h4>
+                      <h3 className="sponsor-name">{sponsor.name}</h3>
                       <p className="sponsor-description">{sponsor.description}</p>
                     </div>
                     <div className="visit-website">
-                      <span>Visit Website</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"
-                        />
+                      Visit Website
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                       </svg>
                     </div>
                   </div>

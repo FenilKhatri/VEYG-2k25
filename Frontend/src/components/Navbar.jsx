@@ -13,12 +13,14 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
   // Nav Links
   const guestLinks = [
     { label: "Home", to: "/" },
+    { label: "Games", to: "/#games" },
     { label: "About", to: "/about" },
     { label: "Contact", to: "/contact" },
     { label: "Guidelines", to: "/guidelines" },
   ];
   const userLinks = [
     { label: "Home", to: "/" },
+    { label: "Games", to: "/#games" },
     { label: "Guidelines", to: "/guidelines" },
     { label: "Registered Games", to: "/registered-games" },
     { label: "About Us", to: "/about" },
@@ -26,6 +28,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
   ];
   const adminLinks = [
     { label: "Admin Panel", to: "/admin", icon: <Settings size={16} /> },
+    { label: "Games", to: "/#games" },
     { label: "Guidelines", to: "/guidelines" },
     { label: "Contact Us", to: "/contact" },
     { label: "About Us", to: "/about" },
@@ -71,10 +74,52 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
     if (expanded) requestAnimationFrame(() => firstLinkRef.current?.focus());
   }, [expanded]);
 
+  // Handle Games link click
+  const handleGamesClick = (e) => {
+    e.preventDefault();
+    setExpanded(false);
+    
+    // If we're not on home page, navigate to home first
+    if (location.pathname !== '/') {
+      window.location.href = '/#games';
+      return;
+    }
+    
+    // If we're on home page, scroll to game cards section with offset for fixed navbar
+    const gameCardsSection = document.getElementById('game-cards');
+    if (gameCardsSection) {
+      const navbarHeight = 80; // Account for fixed navbar height
+      const elementPosition = gameCardsSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Render Nav Links
   const renderLinks = (linksArray) =>
     linksArray.map((item, idx) => {
       const isActive = location.pathname === item.to;
+      
+      // Special handling for Games link
+      if (item.label === "Games") {
+        return (
+          <Nav.Link
+            href="#games"
+            onClick={handleGamesClick}
+            key={item.to}
+            ref={idx === 0 ? firstLinkRef : null}
+            className={`nav-link${isActive ? " active" : ""}`}
+          >
+            {item.icon && <span className="me-1">{item.icon}</span>}
+            {item.label}
+          </Nav.Link>
+        );
+      }
+      
       return (
         <Nav.Link
           as={Link}
@@ -98,7 +143,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
         expanded={expanded}
         className={`app-navbar ${scrolled ? "scrolled" : ""}`}
       >
-        <Container fluid className="d-flex align-items-center justify-content-between m-3">
+        <Container fluid className="d-flex align-items-center justify-content-between px-3">
           {/* Logo Only */}
           <Navbar.Brand as={Link} to="/" className="brand d-flex align-items-center">
             <img
@@ -151,7 +196,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
                   <Dropdown.Menu className="user-menu">
                     {isAdminLoggedIn ? (
                       <>
-                        <Dropdown.Item as={Link} to="/admin-profile">
+                        <Dropdown.Item as={Link} to="/admin">
                           <User size={16} className="me-2" /> Admin Profile
                         </Dropdown.Item>
                         <Dropdown.Item as={Link} to="/admin">

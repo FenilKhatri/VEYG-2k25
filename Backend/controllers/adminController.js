@@ -1,8 +1,18 @@
-const { Admin, GameRegistration } = require('../models')
-const { generateToken } = require('../utils/jwt')
-const { successResponse, errorResponse } = require('../utils/response')
+const Admin = require('../models/Admin')
+const GameRegistration = require('../models/GameRegistration')
+const { generateToken } = require('../middleware/auth')
+const nodemailer = require('nodemailer')
 const { sendPaymentConfirmationEmail } = require('../sendMail')
 const websocketService = require('../services/websocket')
+
+// Email transporter configuration
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+})
 
 // Admin Registration
 const adminRegister = async (req, res) => {
@@ -12,7 +22,7 @@ const adminRegister = async (req, res) => {
     // Check if admin already exists with this email
     const existingAdmin = await Admin.findOne({ email })
     if (existingAdmin) {
-      return errorResponse(res, 400, 'Admin with this email already exists')
+      return res.status(400).json({ success: false, message: 'Admin with this email already exists' })
     }
 
     // Create new admin
@@ -25,32 +35,44 @@ const adminRegister = async (req, res) => {
 
     await admin.save()
 
+    console.log('✅ Admin registration completed successfully')
+
+    // Send registration confirmation email with plain password
+    try {
+      await sendAdminRegistrationEmail(admin, password) // Send original plain password
+      console.log('✅ Admin registration email sent successfully')
+    } catch (emailError) {
+      console.error('❌ Failed to send admin registration email:', emailError)
+      // Don't fail registration if email fails
+    }
+
     // Generate token
     const token = generateToken({
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role,
-      isAdmin: admin.isAdmin
+      role: admin.role
     })
 
-    successResponse(res, 201, 'Admin registered successfully', {
-      token,
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        contactNumber: admin.contactNumber,
-        role: admin.role,
-        isAdmin: admin.isAdmin
+    res.status(201).json({
+      success: true,
+      message: 'Admin registered successfully',
+      data: {
+        token,
+        admin: {
+          id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role
+        }
       }
     })
   } catch (error) {
     console.error('Admin registration error:', error)
     if (error.code === 11000) {
-      return errorResponse(res, 400, 'Email already exists')
+      return res.status(400).json({ success: false, message: 'Email already exists' })
     }
-    errorResponse(res, 500, 'Server error during admin registration')
+    res.status(500).json({ success: false, message: 'Server error during admin registration' })
   }
 }
 
@@ -62,13 +84,13 @@ const adminLogin = async (req, res) => {
     // Find admin by email
     const admin = await Admin.findOne({ email }).select('+password')
     if (!admin) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
 
     // Check password
     const isPasswordValid = await admin.comparePassword(password)
     if (!isPasswordValid) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({ success: false, message: 'Invalid credentials' })
     }
 
     // Generate token
@@ -76,24 +98,25 @@ const adminLogin = async (req, res) => {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role,
-      isAdmin: admin.isAdmin
+      role: admin.role
     })
 
-    successResponse(res, 200, 'Admin login successful', {
-      token,
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        contactNumber: admin.contactNumber,
-        role: admin.role,
-        isAdmin: admin.isAdmin
+    res.status(200).json({
+      success: true,
+      message: 'Admin login successful',
+      data: {
+        token,
+        admin: {
+          id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role
+        }
       }
     })
   } catch (error) {
     console.error('Admin login error:', error)
-    errorResponse(res, 500, 'Server error during admin login')
+    res.status(500).json({ success: false, message: 'Server error during admin login' })
   }
 }
 
@@ -102,17 +125,21 @@ const getAdminProfile = async (req, res) => {
   try {
     const admin = await Admin.findById(req.user.id)
     if (!admin) {
-      return errorResponse(res, 404, 'Admin not found')
+      return res.status(404).json({ success: false, message: 'Admin not found' })
     }
 
-    successResponse(res, 200, 'Admin profile retrieved successfully', {
-      name: admin.name,
-      email: admin.email,
-      role: admin.role
+    res.status(200).json({
+      success: true,
+      message: 'Admin profile retrieved successfully',
+      data: {
+        name: admin.name,
+        email: admin.email,
+        role: admin.role
+      }
     })
   } catch (error) {
     console.error('Get admin profile error:', error)
-    errorResponse(res, 500, 'Server error while fetching admin profile')
+    res.status(500).json({ success: false, message: 'Server error while fetching admin profile' })
   }
 }
 
@@ -130,7 +157,7 @@ const updateAdminProfile = async (req, res) => {
     }
 
     if (Object.keys(updateData).length === 0) {
-      return errorResponse(res, 400, 'No valid fields to update')
+      return res.status(400).json({ success: false, message: 'No valid fields to update' })
     }
 
     const admin = await Admin.findByIdAndUpdate(
@@ -140,20 +167,24 @@ const updateAdminProfile = async (req, res) => {
     )
 
     if (!admin) {
-      return errorResponse(res, 404, 'Admin not found')
+      return res.status(404).json({ success: false, message: 'Admin not found' })
     }
 
-    successResponse(res, 200, 'Profile updated successfully', {
-      name: admin.name,
-      email: admin.email,
-      role: admin.role
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        name: admin.name,
+        email: admin.email,
+        role: admin.role
+      }
     })
   } catch (error) {
     console.error('Update admin profile error:', error)
     if (error.code === 11000) {
-      return errorResponse(res, 400, 'Email already exists')
+      return res.status(400).json({ success: false, message: 'Email already exists' })
     }
-    errorResponse(res, 500, 'Server error while updating profile')
+    res.status(500).json({ success: false, message: 'Server error while updating profile' })
   }
 }
 
@@ -163,32 +194,32 @@ const changeAdminPassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body
     
     if (!currentPassword || !newPassword) {
-      return errorResponse(res, 400, 'Current password and new password are required')
+      return res.status(400).json({ success: false, message: 'Current password and new password are required' })
     }
 
     if (newPassword.length < 6) {
-      return errorResponse(res, 400, 'New password must be at least 6 characters long')
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters long' })
     }
 
     const admin = await Admin.findById(req.user.id).select('+password')
     if (!admin) {
-      return errorResponse(res, 404, 'Admin not found')
+      return res.status(404).json({ success: false, message: 'Admin not found' })
     }
 
     // Verify current password
     const isCurrentPasswordValid = await admin.comparePassword(currentPassword)
     if (!isCurrentPasswordValid) {
-      return errorResponse(res, 401, 'Current password is incorrect')
+      return res.status(401).json({ success: false, message: 'Current password is incorrect' })
     }
 
     // Update password
     admin.password = newPassword
     await admin.save()
 
-    successResponse(res, 200, 'Password changed successfully')
+    res.status(200).json({ success: true, message: 'Password changed successfully' })
   } catch (error) {
     console.error('Change admin password error:', error)
-    errorResponse(res, 500, 'Server error while changing password')
+    res.status(500).json({ success: false, message: 'Server error while changing password' })
   }
 }
 
@@ -198,10 +229,10 @@ const getAllRegistrations = async (req, res) => {
     const registrations = await GameRegistration.find()
       .sort({ createdAt: -1 })
 
-    successResponse(res, 200, 'Registrations retrieved successfully', { registrations })
+    res.status(200).json({ success: true, message: 'Registrations retrieved successfully', data: { registrations } })
   } catch (error) {
     console.error('Get all registrations error:', error)
-    errorResponse(res, 500, 'Server error while fetching registrations')
+    res.status(500).json({ success: false, message: 'Server error while fetching registrations' })
   }
 }
 
@@ -212,7 +243,7 @@ const updateRegistrationStatus = async (req, res) => {
     const { approvalStatus } = req.body
 
     if (!['approved', 'rejected', 'pending'].includes(approvalStatus)) {
-      return errorResponse(res, 400, 'Invalid approval status. Must be approved, rejected, or pending')
+      return res.status(400).json({ success: false, message: 'Invalid approval status. Must be approved, rejected, or pending' })
     }
 
     // Get admin info for tracking who approved
@@ -230,7 +261,7 @@ const updateRegistrationStatus = async (req, res) => {
     )
 
     if (!registration) {
-      return errorResponse(res, 404, 'Registration not found')
+      return res.status(404).json({ success: false, message: 'Registration not found' })
     }
 
     // Send payment confirmation email if status is approved
@@ -257,60 +288,13 @@ const updateRegistrationStatus = async (req, res) => {
       console.warn('Failed to emit payment status update:', wsError.message);
     }
 
-    successResponse(res, 200, 'Approval status updated successfully', { registration })
+    res.status(200).json({ success: true, message: 'Approval status updated successfully', data: { registration } })
   } catch (error) {
     console.error('Update approval status error:', error)
-    errorResponse(res, 500, 'Server error while updating approval status')
+    res.status(500).json({ success: false, message: 'Server error while updating approval status' })
   }
 }
 
-// Retry Google Sheets sync for a specific registration
-const retrySheetSync = async (req, res) => {
-  try {
-    const { registrationId } = req.params;
-    
-    // Find the registration
-    const registration = await GameRegistration.findOne({ registrationId });
-    
-    if (!registration) {
-      return errorResponse(res, 404, 'Registration not found');
-    }
-    
-    console.log(`📊 Admin retry: Attempting to sync registration ${registrationId} to Google Sheet...`);
-    
-    // Attempt to sync to Google Sheet
-    const sheetResult = await sheetsService.addRegistration(registration);
-    
-    // Update registration with new sync status
-    registration.sheetSync = {
-      success: sheetResult.success,
-      error: sheetResult.success ? null : sheetResult.error,
-      lastAttempt: new Date(),
-      rowNumber: sheetResult.rowNumber || null
-    };
-    
-    await registration.save();
-    
-    if (sheetResult.success) {
-      console.log(`✅ Admin retry: Registration ${registrationId} synced to Google Sheet successfully`);
-      return successResponse(res, 200, 'Registration synced to Google Sheet successfully', {
-        registrationId,
-        rowNumber: sheetResult.rowNumber,
-        syncedAt: new Date()
-      });
-    } else {
-      console.error(`❌ Admin retry: Failed to sync registration ${registrationId}:`, sheetResult.error);
-      return errorResponse(res, 500, 'Failed to sync registration to Google Sheet', {
-        registrationId,
-        error: sheetResult.error
-      });
-    }
-    
-  } catch (error) {
-    console.error('Admin sheet retry error:', error);
-    return errorResponse(res, 500, 'Internal server error', error.message);
-  }
-};
 
 module.exports = {
   adminRegister,
@@ -320,5 +304,4 @@ module.exports = {
   changeAdminPassword,
   getAllRegistrations,
   updateRegistrationStatus,
-  retrySheetSync
 }

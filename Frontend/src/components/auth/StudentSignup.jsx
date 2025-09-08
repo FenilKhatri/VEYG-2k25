@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Modal } from 'react-bootstrap'
 import { User, Mail, Phone, Lock, Eye, EyeOff, UserPlus, School, Users, CheckCircle, RefreshCw } from 'lucide-react'
 import { collegesInGujarat, genders } from '../../data/constant'
-import useScrollAnimation from '../../hooks/useScrollAnimation'
 import apiService from '../../services/api'
 import '../../styles/auth.css'
 
@@ -27,7 +26,6 @@ const StudentSignup = ({ showToast }) => {
   const [showCollegeDropdown, setShowCollegeDropdown] = useState(false)
   const [showAddCollegeModal, setShowAddCollegeModal] = useState(false)
   const [newCollegeName, setNewCollegeName] = useState('')
-  const formRef = useScrollAnimation()
 
   const handleChange = (e) => {
     setFormData({
@@ -39,6 +37,9 @@ const StudentSignup = ({ showToast }) => {
   const handleCollegeSearch = (e) => {
     const searchValue = e.target.value
     setCollegeSearch(searchValue)
+    
+    // Always update the collegeName field with what the user types
+    setFormData({ ...formData, collegeName: searchValue })
     
     if (searchValue.trim() === '') {
       setFilteredColleges(collegesInGujarat)
@@ -143,7 +144,7 @@ const StudentSignup = ({ showToast }) => {
       <Container className="py-5 position-relative" style={{ zIndex: 2 }}>
         <Row className="justify-content-center align-items-center min-vh-100">
           <Col md={10} lg={8} xl={6}>
-            <div ref={formRef} className="scroll-animate">
+            <div className="scroll-animate">
               {/* Header Section */}
               <div className="text-center mb-4">
                 <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{

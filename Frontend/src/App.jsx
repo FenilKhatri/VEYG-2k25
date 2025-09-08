@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./styles/animations.css"
-import "./styles/global.css"
+import './styles/auth.css'
+import './styles/global-placeholders.css'
 import { Container } from "react-bootstrap"
 
 // Import components

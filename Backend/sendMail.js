@@ -31,6 +31,162 @@ transporter.verify().then(() => {
 // ---------- GENERATE RECEIPT ID ----------
 const generateReceiptId = () => `VEYG-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 900 + 100)}`;
 
+// ---------- STUDENT SIGNUP CONFIRMATION EMAIL ----------
+async function sendStudentSignupEmail(studentData, plainPassword) {
+    try {
+        console.log('📧 sendStudentSignupEmail called with:', { studentData, passwordLength: plainPassword?.length });
+        
+        const { name, email, collegeName } = studentData;
+        const loginUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        
+        console.log('📧 Email config:', { EMAIL_USER, SUPPORT_EMAIL, ORG_NAME, loginUrl });
+        
+        const emailHtml = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Welcome to VEYG 2025</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; }
+                .container { max-width: 600px; margin: 0 auto; background: white; }
+                .header { background: linear-gradient(135deg, #0ea5e9, #3b82f6); padding: 40px 30px; text-align: center; }
+                .header h1 { color: white; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+                .header p { color: rgba(255,255,255,0.9); font-size: 16px; }
+                .content { padding: 40px 30px; }
+                .welcome-box { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-left: 4px solid #0ea5e9; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+                .welcome-box h2 { color: #0369a1; font-size: 20px; margin-bottom: 10px; }
+                .info-grid { display: grid; gap: 15px; margin: 25px 0; }
+                .info-item { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+                .info-label { font-weight: 600; color: #475569; font-size: 14px; margin-bottom: 5px; }
+                .info-value { color: #1e293b; font-size: 16px; }
+                .password-box { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; padding: 20px; border-radius: 10px; text-align: center; margin: 25px 0; }
+                .password-box h3 { color: #92400e; margin-bottom: 10px; }
+                .password-display { background: white; padding: 15px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 18px; font-weight: bold; color: #1f2937; letter-spacing: 1px; }
+                .login-btn { display: inline-block; background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; transition: transform 0.2s; }
+                .login-btn:hover { transform: translateY(-2px); }
+                .footer { background: #1e293b; color: #94a3b8; padding: 30px; text-align: center; }
+                .footer h3 { color: white; margin-bottom: 15px; }
+                .contact-info { margin: 15px 0; }
+                .security-note { background: #fef2f2; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin: 20px 0; }
+                .security-note h4 { color: #dc2626; margin-bottom: 8px; }
+                .security-note p { color: #7f1d1d; font-size: 14px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎉 Welcome to VEYG 2025!</h1>
+                    <p>Your registration has been completed successfully</p>
+                </div>
+                
+                <div class="content">
+                    <div class="welcome-box">
+                        <h2>Hello ${name}! 👋</h2>
+                        <p>Thank you for registering for VEYG 2025. We're excited to have you join us for this amazing event!</p>
+                    </div>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">📧 Email Address</div>
+                            <div class="info-value">${email}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">🏫 College</div>
+                            <div class="info-value">${collegeName}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">📅 Registration Date</div>
+                            <div class="info-value">${new Date().toLocaleDateString('en-IN', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                            })}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="password-box">
+                        <h3>🔐 Your Login Credentials</h3>
+                        <p style="margin-bottom: 15px;">Your temporary password is:</p>
+                        <div class="password-display">${plainPassword}</div>
+                        <p style="margin-top: 15px; font-size: 14px; color: #92400e;">
+                            <strong>Please change this password after your first login for security.</strong>
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <a href="${loginUrl}/student-login" class="login-btn">
+                            🚀 Login to Your Account
+                        </a>
+                    </div>
+                    
+                    <div class="security-note">
+                        <h4>🔒 Security Reminder</h4>
+                        <p>Keep your login credentials secure and do not share them with anyone. Change your password immediately after logging in.</p>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                        <h3 style="color: #1e293b; margin-bottom: 15px;">What's Next?</h3>
+                        <ul style="color: #475569; line-height: 1.6;">
+                            <li>✅ Log in to your account using the credentials above</li>
+                            <li>🎮 Browse and register for exciting games and competitions</li>
+                            <li>📱 Stay updated with event announcements</li>
+                            <li>🏆 Get ready for an amazing VEYG 2025 experience!</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <h3>VEYG 2025</h3>
+                    <p>Saffrony Institute of Technology</p>
+                    <div class="contact-info">
+                        <p>📧 Email: ${SUPPORT_EMAIL}</p>
+                        <p>🌐 Website: <a href="${loginUrl}" style="color: #60a5fa;">${loginUrl}</a></p>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 14px;">
+                        This is an automated message. Please do not reply to this email.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const mailOptions = {
+            from: `"${ORG_NAME}" <${EMAIL_USER}>`,
+            to: email,
+            cc: SUPPORT_EMAIL,
+            subject: `🎉 Welcome to VEYG 2025 - Registration Confirmed!`,
+            html: emailHtml
+        };
+
+        console.log('📤 Sending email with options:', {
+            from: mailOptions.from,
+            to: mailOptions.to,
+            cc: mailOptions.cc,
+            subject: mailOptions.subject
+        });
+
+        const result = await transporter.sendMail(mailOptions);
+        console.log(`✅ Student signup email sent successfully to: ${email}`);
+        console.log('📧 Email result:', result);
+        return { success: true, message: 'Signup email sent successfully', result };
+
+    } catch (error) {
+        console.error('❌ Error sending student signup email:', error);
+        console.error('❌ Full error details:', {
+            message: error.message,
+            code: error.code,
+            command: error.command,
+            response: error.response,
+            responseCode: error.responseCode
+        });
+        return { success: false, message: 'Failed to send signup email', error: error.message };
+    }
+}
+
 // ---------- SERVE RECEIPT HANDLER ----------
 function serveReceiptHandler(req, res) {
     try {
@@ -242,6 +398,12 @@ async function sendRegistrationConfirmationEmail(registrationData) {
                         <p style="margin: 10px 0 0 0; font-size: 16px;"><strong>Amount:</strong> ₹${registration.amount || 0}</p>
                     </div>
                     
+                    <div style="background-color: rgba(253, 52, 45, 0.74); padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid rgb(145, 11, 11);">
+                        <p style="margin: 0; color: #721c24; font-size: 16px; font-weight: bold;">
+                            <strong>Please confirm your Payment!</strong>
+                        </p>
+                    </div>
+                    
                     <div style="background-color: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
                         <h3 style="color: #856404; margin: 0 0 10px 0;">💳 Next Step: Complete Your Payment</h3>
                         <p style="margin: 0; color: #856404; font-size: 16px; line-height: 1.6;">
@@ -368,7 +530,7 @@ async function sendPaymentConfirmationEmail(registrationData) {
                             Please download your official receipt from the VEYG 2025 website. Login to your account and visit your registrations page to download your confirmed receipt.
                         </p>
                         <div style="text-align: center; margin-top: 15px;">
-                            <a href="https://veyg-2k25-frontend.onrender.com/" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                            <a href="https://veyg-2k25-frontend.onrender.com/registered-games" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                                 🌐 Visit VEYG Website
                             </a>
                         </div>
@@ -411,5 +573,6 @@ module.exports = {
     generateReceiptPDF,
     sendRegistrationConfirmationEmail,
     sendPaymentConfirmationEmail,
+    sendStudentSignupEmail,
     serveReceiptHandler
 };

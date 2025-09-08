@@ -1,9 +1,53 @@
 const { successResponse, errorResponse } = require('../utils/response')
-const { sendRegistrationConfirmationEmail, sendPaymentConfirmationEmail } = require('../sendMail')
+const { sendPaymentConfirmationEmail } = require('../sendMail')
 const GameRegistration = require('../models/GameRegistration')
 const Student = require('../models/Student')
 const dayWiseValidation = require('../middleware/dayWiseValidation')
 const websocketService = require('../services/websocket')
+
+// Queue for handling high concurrent registrations
+const registrationQueue = []
+let isProcessingQueue = false
+
+// Process registration queue with batching for performance
+const processRegistrationQueue = async () => {
+  if (isProcessingQueue || registrationQueue.length === 0) return
+  
+  isProcessingQueue = true
+  const batchSize = 5 // Process 5 registrations at a time
+  
+  while (registrationQueue.length > 0) {
+    const batch = registrationQueue.splice(0, batchSize)
+    
+    // Process batch concurrently
+    await Promise.allSettled(
+      batch.map(async ({ registration, resolve, reject }) => {
+        try {
+          const savedRegistration = await registration.save()
+          await savedRegistration.populate('userId', 'name email contactNumber')
+          resolve(savedRegistration)
+        } catch (error) {
+          reject(error)
+        }
+      })
+    )
+    
+    // Small delay between batches to prevent database overload
+    await new Promise(resolve => setTimeout(resolve, 100))
+  }
+  
+  isProcessingQueue = false
+}
+
+// Add registration to queue for lazy processing
+const queueRegistration = (registration) => {
+  return new Promise((resolve, reject) => {
+    registrationQueue.push({ registration, resolve, reject })
+    
+    // Start processing queue if not already running
+    setImmediate(processRegistrationQueue)
+  })
+}
 
 // Generate unique registration ID and receipt number
 const generateRegistrationId = async (teamLeaderName, collegeName, gameName, gameDay, registrationType, teamMembers = []) => {
@@ -239,21 +283,13 @@ const registerGame = async (req, res) => {
     })
 
 
-    // Save registration with explicit error handling
-    const savedRegistration = await registration.save();
-    console.log('✅ Registration saved with ID:', savedRegistration._id);
+    // Use lazy loading queue for high concurrent load handling
+    const savedRegistration = await queueRegistration(registration);
+    console.log('✅ Registration queued and saved with ID:', savedRegistration._id);
 
-    // Populate user data for response
-    await savedRegistration.populate('userId', 'name email contactNumber');
-
-    // Send registration confirmation email asynchronously (non-blocking)
-    setImmediate(async () => {
-      try {
-        await sendRegistrationConfirmationEmail(savedRegistration);
-      } catch (emailError) {
-        console.error('❌ Failed to send registration confirmation email:', emailError);
-      }
-    });
+    // Registration confirmation emails are now handled by individual student registration
+    // No PDF attachments needed for game registration emails
+    console.log('✅ Game registration completed - student emails handled separately');
 
     // Emit new registration notification to admins via WebSocket
     try {

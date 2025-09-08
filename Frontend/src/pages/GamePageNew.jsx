@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Button, Badge, Spinner, Alert } from 'react-bootstrap'
-import { Trophy, Users, Clock, IndianRupee, Calendar, CheckCircle, Zap, Shield, Star, AlertTriangle } from 'lucide-react'
+import { Trophy, Users, Clock, IndianRupee, Calendar, CheckCircle, Zap, Shield, Star, AlertTriangle, BookOpen, Award, AlertCircle, CheckSquare, XCircle } from 'lucide-react'
 import { getGameById } from '../data/gamesData'
 import RegistrationForm from '../components/RegistrationForm'
 import RegistrationTimer from '../components/RegistrationTimer'
@@ -200,6 +200,57 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
                 </p>
               </Card.Body>
             </Card>
+
+            {/* Requirements Section */}
+            {game.requirements && (
+              <Card className="mb-4" style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '15px',
+                backdropFilter: 'blur(10px)',
+                position: 'relative',
+                top: '30px'
+              }}>
+                <Card.Header style={{
+                  background: 'rgba(220, 38, 127, 0.1)',
+                  border: 'none',
+                  borderRadius: '15px 15px 0 0'
+                }}>
+                  <h4 style={{ color: '#ff6b9d', margin: 0, display: 'flex', alignItems: 'center' }}>
+                    <AlertCircle size={24} style={{ marginRight: '10px' }} />
+                    Requirements & Eligibility
+                  </h4>
+                </Card.Header>
+                <Card.Body style={{ color: '#f1f5f9' }}>
+                  <Row>
+                    <Col md={12}>
+                      <h6 style={{ color: '#ff6b9d', marginBottom: '15px', display: 'flex', alignItems: 'center' }}>
+                        <CheckSquare size={18} style={{ marginRight: '8px' }} />
+                        Mandatory Requirements
+                      </h6>
+                      <ul style={{ paddingLeft: '0', listStyle: 'none' }}>
+                        {game.requirements.mandatory?.map((req, index) => (
+                          <li key={index} style={{ 
+                            marginBottom: '8px', 
+                            display: 'flex', 
+                            alignItems: 'flex-start',
+                            fontSize: '0.95rem'
+                          }}>
+                            <CheckCircle size={16} style={{ 
+                              color: '#10b981', 
+                              marginRight: '8px', 
+                              marginTop: '2px',
+                              flexShrink: 0 
+                            }} />
+                            {req}
+                          </li>
+                        ))}
+                      </ul>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            )}
           </Col>
 
           {/* Registration Sidebar */}

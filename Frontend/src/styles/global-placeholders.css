@@ -1,0 +1,84 @@
+/* Global placeholder styles for all input fields */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+select::-webkit-input-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+input::-moz-placeholder,
+textarea::-moz-placeholder,
+select::-moz-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder,
+select:-ms-input-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+input:-moz-placeholder,
+textarea:-moz-placeholder,
+select:-moz-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+/* Specific form control classes */
+.form-control::placeholder,
+.form-control-custom::placeholder,
+.custom-input::placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+.form-control::-webkit-input-placeholder,
+.form-control-custom::-webkit-input-placeholder,
+.custom-input::-webkit-input-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+.form-control::-moz-placeholder,
+.form-control-custom::-moz-placeholder,
+.custom-input::-moz-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+.form-control:-ms-input-placeholder,
+.form-control-custom:-ms-input-placeholder,
+.custom-input:-ms-input-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+.form-control:-moz-placeholder,
+.form-control-custom:-moz-placeholder,
+.custom-input:-moz-placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+/* Bootstrap form controls */
+.form-select::placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}
+
+/* React Bootstrap specific */
+.form-control.is-valid::placeholder,
+.form-control.is-invalid::placeholder {
+  color: white !important;
+  opacity: 0.7 !important;
+}

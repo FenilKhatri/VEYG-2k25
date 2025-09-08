@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'
 import { Mail, Lock, Eye, EyeOff, Zap, User } from 'lucide-react'
 import cookieAuth from '../../utils/cookieAuth'
 import apiService from '../../services/api'
-import useScrollAnimation from '../../hooks/useScrollAnimation'
 
 const StudentLogin = ({ showToast, updateAuthState }) => {
   const navigate = useNavigate()
@@ -15,7 +14,6 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const formRef = useScrollAnimation()
 
   const handleChange = (e) => {
     setFormData({
@@ -105,7 +103,7 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
       <Container className="py-5 position-relative" style={{ zIndex: 2 }}>
         <Row className="justify-content-center align-items-center min-vh-100">
           <Col md={8} lg={6} xl={5}>
-            <div ref={formRef} className="scroll-animate">
+            <div className="scroll-animate">
               {/* Header Section */}
               <div className="text-center mb-4">
                 <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{
@@ -224,23 +222,27 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-100 mb-4"
+                      className="w-100 mb-3"
                       disabled={loading}
                       style={{
                         background: 'linear-gradient(135deg, #00d4ff, #007bff)',
                         border: 'none',
-                        borderRadius: '12px',
-                        padding: '14px',
-                        fontSize: '16px',
+                        padding: '12px',
                         fontWeight: '600',
-                        boxShadow: '0 4px 15px rgba(0, 212, 255, 0.3)',
-                        transition: 'all 0.3s ease'
+                        fontSize: '1.1rem'
                       }}
                     >
                       {loading ? (
                         <>
-                          <Spinner animation="border" size="sm" className="me-2" />
-                          Signing In...
+                          <Spinner
+                            as="span"
+                            animation="border"
+                            size="sm"
+                            role="status"
+                            aria-hidden="true"
+                            className="me-2"
+                          />
+                          Signing in...
                         </>
                       ) : (
                         <>
@@ -250,10 +252,10 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
                       )}
                     </Button>
 
-                    {/* Register Link */}
+                    {/* Sign Up Link */}
                     <div className="text-center">
                       <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Don't have a student account?{' '}
+                        Don't have an account?{' '}
                       </span>
                       <Button
                         variant="link"
@@ -265,7 +267,7 @@ const StudentLogin = ({ showToast, updateAuthState }) => {
                           fontWeight: '500'
                         }}
                       >
-                        Signup here
+                        Sign up here
                       </Button>
                     </div>
                   </Form>

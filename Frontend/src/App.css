@@ -27,8 +27,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-top: 85px !important;
-  /* Global navbar spacing - increased slightly */
   line-height: 1.6;
   color: #333;
   background-color: #f8f9fa;

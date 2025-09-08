@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'
 import { Shield, User, Mail, Phone, Lock, Eye, EyeOff, UserPlus, Key } from 'lucide-react'
-import useScrollAnimation from '../../hooks/useScrollAnimation'
 
 const AdminSignup = ({ showToast }) => {
   const navigate = useNavigate()
@@ -19,7 +18,6 @@ const AdminSignup = ({ showToast }) => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showSecretKey, setShowSecretKey] = useState(false)
-  const formRef = useScrollAnimation()
 
   const handleChange = (e) => {
     setFormData({
@@ -94,7 +92,7 @@ const AdminSignup = ({ showToast }) => {
       <Container className="py-5 position-relative d-flex align-items-center justify-content-center" style={{ zIndex: 2, minHeight: '100vh' }}>
         <Row className="justify-content-center align-items-center w-100">
           <Col md={10} lg={8} xl={6}>
-            <div ref={formRef} className="scroll-animate">
+            <div className="scroll-animate">
               {/* Header Section */}
               <div className="text-center mb-4">
                 <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{

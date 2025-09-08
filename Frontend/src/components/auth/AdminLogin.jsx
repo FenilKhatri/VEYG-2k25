@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap'
 import { Shield, User, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
 import cookieAuth from '../../utils/cookieAuth'
 import apiService from '../../services/api'
-import useScrollAnimation from '../../hooks/useScrollAnimation'
 
 const AdminLogin = ({ showToast, updateAuthState }) => {
   const navigate = useNavigate()
@@ -15,7 +14,6 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const formRef = useScrollAnimation()
 
   const handleChange = (e) => {
     setFormData({
@@ -103,7 +101,7 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
       <Container className="py-5 position-relative d-flex align-items-center justify-content-center" style={{ zIndex: 2, minHeight: '100vh' }}>
         <Row className="justify-content-center align-items-center w-100">
           <Col md={8} lg={6} xl={5}>
-            <div ref={formRef} className="scroll-animate">
+            <div>
               {/* Header Section */}
               <div className="text-center mb-4">
                 <div className="d-inline-flex align-items-center justify-content-center mb-3" style={{
@@ -221,7 +219,7 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-100 mb-4"
+                      className="w-100 mb-3"
                       disabled={loading}
                       style={{
                         background: 'linear-gradient(135deg, #00d4ff, #007bff)',
@@ -246,6 +244,20 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                         </>
                       )}
                     </Button>
+                    
+                    <div className="text-center mb-4">
+                      <Link 
+                        to="/forgot-password" 
+                        className="text-decoration-none"
+                        style={{ 
+                          color: '#93c5fd',
+                          fontSize: '0.9rem',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Forgot your password?
+                      </Link>
+                    </div>
 
                     {/* Signup Link */}
                     <div className="text-center">
