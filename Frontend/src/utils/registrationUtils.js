@@ -1,5 +1,6 @@
 // Registration utility functions for VEYG-2025
 import cookieAuth from './cookieAuth'
+import apiService from '../services/api'
 
 /**
  * Register team and handle PDF download
@@ -120,12 +121,9 @@ export function downloadBase64Pdf(base64, filename) {
 export function setupBackendMonitor() {
   const check = async () => {
     try {
-      const resp = await fetch("/api/health", {
-        method: "GET",
-        timeout: 5000
-      });
-      if (!resp.ok) throw new Error("Backend unhealthy");
-
+      // Use the API service for health check
+      await apiService.healthCheck();
+      
       // Backend OK -> hide any alerts
       hideBackendAlert();
       console.log("✅ Backend health check passed");

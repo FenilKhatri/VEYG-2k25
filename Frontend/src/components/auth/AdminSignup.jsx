@@ -45,7 +45,7 @@ const AdminSignup = ({ showToast }) => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/register`, {
+      const response = await fetch(`http://localhost:3003/api/admin/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -414,5 +414,7 @@ const AdminSignup = ({ showToast }) => {
     </div>
   )
 }
+
+console.log("Signup Data:", AdminSignup);
 
 export default AdminSignup

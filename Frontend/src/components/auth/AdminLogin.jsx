@@ -244,20 +244,6 @@ const AdminLogin = ({ showToast, updateAuthState }) => {
                         </>
                       )}
                     </Button>
-                    
-                    <div className="text-center mb-4">
-                      <Link 
-                        to="/forgot-password" 
-                        className="text-decoration-none"
-                        style={{ 
-                          color: '#93c5fd',
-                          fontSize: '0.9rem',
-                          fontWeight: '500'
-                        }}
-                      >
-                        Forgot your password?
-                      </Link>
-                    </div>
 
                     {/* Signup Link */}
                     <div className="text-center">

@@ -1,9 +1,19 @@
 const jwt = require('jsonwebtoken')
 
 const generateToken = (payload) => {
-  return jwt.sign(payload, process.env.JWT_SECRET || 'your-secret-key', {
-    expiresIn: '7d'
-  })
+  const secret = process.env.JWT_SECRET || 'your-secret-key';
+  console.log('🔑 JWT Secret exists:', !!process.env.JWT_SECRET);
+  
+  try {
+    const token = jwt.sign(payload, secret, {
+      expiresIn: '7d'
+    });
+    console.log('✅ JWT token generated successfully');
+    return token;
+  } catch (error) {
+    console.error('❌ JWT generation error:', error);
+    throw error;
+  }
 }
 
 const verifyToken = (token) => {

@@ -1,26 +1,35 @@
 import cookieAuth from '../utils/cookieAuth'
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.VITE_FALLBACK_API_URL ||
-  'https://veyg-2k25-backend.onrender.com';
-
 // API Base URL configured
 
-
 class ApiService {
+  constructor() {
+    // Force localhost for development - override environment variable
+    this.baseURL = 'http://localhost:3003'
+    
+    // Alternative URLs for easy switching (uncomment as needed)
+    // this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3003'  // Environment-based
+    // this.baseURL = 'https://veyg-2k25-backend.onrender.com'  // Production
+    
+    this.defaultHeaders = {
+      'Content-Type': 'application/json'
+    }
+    
+    console.log(' API Service initialized with base URL:', this.baseURL)
+  }
+
   // Helper method to get auth headers
   getAuthHeaders() {
     const authData = cookieAuth.getAuthData()
     return {
-      'Content-Type': 'application/json',
+      ...this.defaultHeaders,
       ...(authData?.token && { 'Authorization': `Bearer ${authData.token}` })
     }
   }
 
   // Helper method for API requests with performance optimization
   async request(endpoint, options = {}) {
-    const url = `${API_BASE_URL}/api${endpoint}`
+    const url = `${this.baseURL}/api${endpoint}`
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 8000) // Reduced timeout for better performance
 
@@ -87,7 +96,9 @@ class ApiService {
 
   // Health check API
   async healthCheck() {
-    return this.request('/health')
+    return this.request('/health', {
+      method: 'GET'
+    })
   }
 
   // Authentication APIs

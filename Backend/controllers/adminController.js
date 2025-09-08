@@ -1,78 +1,159 @@
-const Admin = require('../models/Admin')
-const GameRegistration = require('../models/GameRegistration')
-const { generateToken } = require('../middleware/auth')
-const nodemailer = require('nodemailer')
+const { Admin, GameRegistration } = require('../models')
+const { generateToken } = require('../utils/jwt')
+const { successResponse, errorResponse } = require('../utils/response')
 const { sendPaymentConfirmationEmail } = require('../sendMail')
 const websocketService = require('../services/websocket')
 
-// Email transporter configuration
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-})
-
-// Admin Registration
+// Admin Registration - Completely New Implementation
 const adminRegister = async (req, res) => {
   try {
-    const { name, contactNumber, email, password, secretKey } = req.body
+    console.log('🔥 NEW Admin Registration Request:', req.body);
+    
+    const { name, contactNumber, email, password, confirmPassword, secretKey } = req.body;
 
-    // Check if admin already exists with this email
-    const existingAdmin = await Admin.findOne({ email })
+    // Comprehensive validation
+    if (!name || !contactNumber || !email || !password || !confirmPassword || !secretKey) {
+      console.log('❌ Missing required fields');
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required: name, contactNumber, email, password, confirmPassword, secretKey'
+      });
+    }
+
+    // Validate secret key
+    if (secretKey !== 'veyg_039') {
+      console.log('❌ Invalid secret key');
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid admin secret key provided'
+      });
+    }
+
+    // Validate password match
+    if (password !== confirmPassword) {
+      console.log('❌ Passwords do not match');
+      return res.status(400).json({
+        success: false,
+        message: 'Password and confirm password do not match'
+      });
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      console.log('❌ Password too weak');
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long'
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      console.log('❌ Invalid email format');
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address'
+      });
+    }
+
+    // Validate contact number
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(contactNumber)) {
+      console.log('❌ Invalid contact number');
+      return res.status(400).json({
+        success: false,
+        message: 'Contact number must be exactly 10 digits'
+      });
+    }
+
+    // Check for existing admin
+    const existingAdmin = await Admin.findOne({ 
+      $or: [
+        { email: email.toLowerCase() },
+        { contactNumber: contactNumber }
+      ]
+    });
+
     if (existingAdmin) {
-      return res.status(400).json({ success: false, message: 'Admin with this email already exists' })
+      console.log('❌ Admin already exists');
+      return res.status(400).json({
+        success: false,
+        message: 'Admin with this email or contact number already exists'
+      });
     }
 
     // Create new admin
-    const admin = new Admin({
-      name,
-      contactNumber,
-      email,
-      password
-    })
+    console.log('✅ Creating new admin account...');
+    const newAdmin = new Admin({
+      name: name.trim(),
+      contactNumber: contactNumber.trim(),
+      email: email.toLowerCase().trim(),
+      password: password,
+      role: 'admin',
+      isAdmin: true
+    });
 
-    await admin.save()
+    const savedAdmin = await newAdmin.save();
+    console.log('✅ Admin account created successfully');
 
-    console.log('✅ Admin registration completed successfully')
-
-    // Send registration confirmation email with plain password
-    try {
-      await sendAdminRegistrationEmail(admin, password) // Send original plain password
-      console.log('✅ Admin registration email sent successfully')
-    } catch (emailError) {
-      console.error('❌ Failed to send admin registration email:', emailError)
-      // Don't fail registration if email fails
-    }
-
-    // Generate token
+    // Generate JWT token
     const token = generateToken({
-      id: admin._id,
-      name: admin.name,
-      email: admin.email,
-      role: admin.role
-    })
+      id: savedAdmin._id,
+      name: savedAdmin.name,
+      email: savedAdmin.email,
+      role: savedAdmin.role,
+      isAdmin: savedAdmin.isAdmin
+    });
 
-    res.status(201).json({
+    console.log('✅ JWT token generated');
+
+    // Return success response
+    return res.status(201).json({
       success: true,
-      message: 'Admin registered successfully',
+      message: 'Admin account created successfully',
       data: {
-        token,
+        token: token,
         admin: {
-          id: admin._id,
-          name: admin.name,
-          email: admin.email,
-          role: admin.role
+          id: savedAdmin._id,
+          name: savedAdmin.name,
+          email: savedAdmin.email,
+          contactNumber: savedAdmin.contactNumber,
+          role: savedAdmin.role,
+          isAdmin: savedAdmin.isAdmin,
+          createdAt: savedAdmin.createdAt
         }
       }
-    })
+    });
+
   } catch (error) {
-    console.error('Admin registration error:', error)
+    console.error('❌ Admin registration error:', error);
+    
+    // Handle duplicate key error
     if (error.code === 11000) {
-      return res.status(400).json({ success: false, message: 'Email already exists' })
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `An admin with this ${field} already exists`
+      });
     }
-    res.status(500).json({ success: false, message: 'Server error during admin registration' })
+
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: validationErrors
+      });
+    }
+
+    // Generic server error
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error during admin registration',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 }
 
@@ -84,13 +165,13 @@ const adminLogin = async (req, res) => {
     // Find admin by email
     const admin = await Admin.findOne({ email }).select('+password')
     if (!admin) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' })
+      return errorResponse(res, 401, 'Invalid credentials')
     }
 
     // Check password
     const isPasswordValid = await admin.comparePassword(password)
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' })
+      return errorResponse(res, 401, 'Invalid credentials')
     }
 
     // Generate token
@@ -98,25 +179,24 @@ const adminLogin = async (req, res) => {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role
+      role: admin.role,
+      isAdmin: admin.isAdmin
     })
 
-    res.status(200).json({
-      success: true,
-      message: 'Admin login successful',
-      data: {
-        token,
-        admin: {
-          id: admin._id,
-          name: admin.name,
-          email: admin.email,
-          role: admin.role
-        }
+    successResponse(res, 200, 'Admin login successful', {
+      token,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        contactNumber: admin.contactNumber,
+        role: admin.role,
+        isAdmin: admin.isAdmin
       }
     })
   } catch (error) {
     console.error('Admin login error:', error)
-    res.status(500).json({ success: false, message: 'Server error during admin login' })
+    errorResponse(res, 500, 'Server error during admin login')
   }
 }
 
@@ -125,21 +205,17 @@ const getAdminProfile = async (req, res) => {
   try {
     const admin = await Admin.findById(req.user.id)
     if (!admin) {
-      return res.status(404).json({ success: false, message: 'Admin not found' })
+      return errorResponse(res, 404, 'Admin not found')
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Admin profile retrieved successfully',
-      data: {
-        name: admin.name,
-        email: admin.email,
-        role: admin.role
-      }
+    successResponse(res, 200, 'Admin profile retrieved successfully', {
+      name: admin.name,
+      email: admin.email,
+      role: admin.role
     })
   } catch (error) {
     console.error('Get admin profile error:', error)
-    res.status(500).json({ success: false, message: 'Server error while fetching admin profile' })
+    errorResponse(res, 500, 'Server error while fetching admin profile')
   }
 }
 
@@ -157,7 +233,7 @@ const updateAdminProfile = async (req, res) => {
     }
 
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ success: false, message: 'No valid fields to update' })
+      return errorResponse(res, 400, 'No valid fields to update')
     }
 
     const admin = await Admin.findByIdAndUpdate(
@@ -167,24 +243,20 @@ const updateAdminProfile = async (req, res) => {
     )
 
     if (!admin) {
-      return res.status(404).json({ success: false, message: 'Admin not found' })
+      return errorResponse(res, 404, 'Admin not found')
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Profile updated successfully',
-      data: {
-        name: admin.name,
-        email: admin.email,
-        role: admin.role
-      }
+    successResponse(res, 200, 'Profile updated successfully', {
+      name: admin.name,
+      email: admin.email,
+      role: admin.role
     })
   } catch (error) {
     console.error('Update admin profile error:', error)
     if (error.code === 11000) {
-      return res.status(400).json({ success: false, message: 'Email already exists' })
+      return errorResponse(res, 400, 'Email already exists')
     }
-    res.status(500).json({ success: false, message: 'Server error while updating profile' })
+    errorResponse(res, 500, 'Server error while updating profile')
   }
 }
 
@@ -194,32 +266,32 @@ const changeAdminPassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body
     
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ success: false, message: 'Current password and new password are required' })
+      return errorResponse(res, 400, 'Current password and new password are required')
     }
 
     if (newPassword.length < 6) {
-      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters long' })
+      return errorResponse(res, 400, 'New password must be at least 6 characters long')
     }
 
     const admin = await Admin.findById(req.user.id).select('+password')
     if (!admin) {
-      return res.status(404).json({ success: false, message: 'Admin not found' })
+      return errorResponse(res, 404, 'Admin not found')
     }
 
     // Verify current password
     const isCurrentPasswordValid = await admin.comparePassword(currentPassword)
     if (!isCurrentPasswordValid) {
-      return res.status(401).json({ success: false, message: 'Current password is incorrect' })
+      return errorResponse(res, 401, 'Current password is incorrect')
     }
 
     // Update password
     admin.password = newPassword
     await admin.save()
 
-    res.status(200).json({ success: true, message: 'Password changed successfully' })
+    successResponse(res, 200, 'Password changed successfully')
   } catch (error) {
     console.error('Change admin password error:', error)
-    res.status(500).json({ success: false, message: 'Server error while changing password' })
+    errorResponse(res, 500, 'Server error while changing password')
   }
 }
 
@@ -229,10 +301,10 @@ const getAllRegistrations = async (req, res) => {
     const registrations = await GameRegistration.find()
       .sort({ createdAt: -1 })
 
-    res.status(200).json({ success: true, message: 'Registrations retrieved successfully', data: { registrations } })
+    successResponse(res, 200, 'Registrations retrieved successfully', { registrations })
   } catch (error) {
     console.error('Get all registrations error:', error)
-    res.status(500).json({ success: false, message: 'Server error while fetching registrations' })
+    errorResponse(res, 500, 'Server error while fetching registrations')
   }
 }
 
@@ -243,7 +315,7 @@ const updateRegistrationStatus = async (req, res) => {
     const { approvalStatus } = req.body
 
     if (!['approved', 'rejected', 'pending'].includes(approvalStatus)) {
-      return res.status(400).json({ success: false, message: 'Invalid approval status. Must be approved, rejected, or pending' })
+      return errorResponse(res, 400, 'Invalid approval status. Must be approved, rejected, or pending')
     }
 
     // Get admin info for tracking who approved
@@ -261,7 +333,7 @@ const updateRegistrationStatus = async (req, res) => {
     )
 
     if (!registration) {
-      return res.status(404).json({ success: false, message: 'Registration not found' })
+      return errorResponse(res, 404, 'Registration not found')
     }
 
     // Send payment confirmation email if status is approved
@@ -288,13 +360,60 @@ const updateRegistrationStatus = async (req, res) => {
       console.warn('Failed to emit payment status update:', wsError.message);
     }
 
-    res.status(200).json({ success: true, message: 'Approval status updated successfully', data: { registration } })
+    successResponse(res, 200, 'Approval status updated successfully', { registration })
   } catch (error) {
     console.error('Update approval status error:', error)
-    res.status(500).json({ success: false, message: 'Server error while updating approval status' })
+    errorResponse(res, 500, 'Server error while updating approval status')
   }
 }
 
+// Retry Google Sheets sync for a specific registration
+const retrySheetSync = async (req, res) => {
+  try {
+    const { registrationId } = req.params;
+    
+    // Find the registration
+    const registration = await GameRegistration.findOne({ registrationId });
+    
+    if (!registration) {
+      return errorResponse(res, 404, 'Registration not found');
+    }
+    
+    console.log(`📊 Admin retry: Attempting to sync registration ${registrationId} to Google Sheet...`);
+    
+    // Attempt to sync to Google Sheet
+    const sheetResult = await sheetsService.addRegistration(registration);
+    
+    // Update registration with new sync status
+    registration.sheetSync = {
+      success: sheetResult.success,
+      error: sheetResult.success ? null : sheetResult.error,
+      lastAttempt: new Date(),
+      rowNumber: sheetResult.rowNumber || null
+    };
+    
+    await registration.save();
+    
+    if (sheetResult.success) {
+      console.log(`✅ Admin retry: Registration ${registrationId} synced to Google Sheet successfully`);
+      return successResponse(res, 200, 'Registration synced to Google Sheet successfully', {
+        registrationId,
+        rowNumber: sheetResult.rowNumber,
+        syncedAt: new Date()
+      });
+    } else {
+      console.error(`❌ Admin retry: Failed to sync registration ${registrationId}:`, sheetResult.error);
+      return errorResponse(res, 500, 'Failed to sync registration to Google Sheet', {
+        registrationId,
+        error: sheetResult.error
+      });
+    }
+    
+  } catch (error) {
+    console.error('Admin sheet retry error:', error);
+    return errorResponse(res, 500, 'Internal server error', error.message);
+  }
+};
 
 module.exports = {
   adminRegister,
@@ -304,4 +423,5 @@ module.exports = {
   changeAdminPassword,
   getAllRegistrations,
   updateRegistrationStatus,
+  retrySheetSync
 }

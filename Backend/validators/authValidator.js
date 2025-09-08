@@ -2,12 +2,10 @@ const { body, validationResult } = require('express-validator')
 
 // Validation for admin registration
 const validateAdminRegister = [
-  body('username')
+  body('name')
     .trim()
-    .isLength({ min: 3, max: 50 })
-    .withMessage('Username must be between 3 and 50 characters')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Username can only contain letters, numbers, and underscores'),
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters'),
   
   body('email')
     .isEmail()
@@ -16,9 +14,11 @@ const validateAdminRegister = [
   
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number')
+    .withMessage('Password must be at least 6 characters long'),
+  
+  body('contactNumber')
+    .matches(/^[0-9]{10}$/)
+    .withMessage('Contact number must be a valid 10-digit number')
 ]
 
 // Validation for admin login

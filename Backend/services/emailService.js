@@ -7,20 +7,22 @@ const EMAIL_CONFIG = {
     port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER || 'veyg.notification@gmail.com',
-        pass: process.env.EMAIL_PASS || 'gmsuduskeqjiqinf'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 };
 
 // Create transporter
 const transporter = nodemailer.createTransport(EMAIL_CONFIG);
 
-// Test transporter connection
+// Test transporter connection with better error handling
 transporter.verify((error, success) => {
     if (error) {
         console.error('❌ Email transporter error:', error);
+        console.error('❌ Check EMAIL_USER and EMAIL_PASS environment variables');
     } else {
         console.log('✅ Email server is ready to send messages');
+        console.log('📧 Using email:', process.env.EMAIL_USER);
     }
 });
 
@@ -71,7 +73,7 @@ async function sendStudentWelcomeEmail(studentData, password) {
                 </div>
                 
                 <div style="text-align: center;">
-                    <a href="http://localhost:5173/student-login" class="button">🚀 Login Now</a>
+                    <a href="https://veyg-2k25.onrender.com/student-login" class="button">🚀 Login Now</a>
                 </div>
                 
                 <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
