@@ -129,15 +129,16 @@ export function setupBackendMonitor() {
       console.log("✅ Backend health check passed");
     } catch (err) {
       console.warn("⚠️ Backend health check failed:", err);
-      showBackendAlert("Backend server connection failed. Some features may not work properly.");
+      // Silently handle connection errors - no more popup alerts
+      // showBackendAlert("Backend server connection failed. Some features may not work properly.");
     }
   };
 
-  // Run once after a short delay (no blind 2-3s popup)
-  setTimeout(check, 5000);
+  // Run once after a longer delay to avoid immediate popup
+  setTimeout(check, 10000);
 
   // Poll less frequently to reduce performance impact
-  setInterval(check, 1000 * 60 * 10); // every 10 minutes
+  setInterval(check, 1000 * 60 * 15); // every 15 minutes
 }
 
 /**

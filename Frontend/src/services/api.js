@@ -4,12 +4,12 @@ import cookieAuth from '../utils/cookieAuth'
 
 class ApiService {
   constructor() {
-    // Force localhost for development - override environment variable
-    this.baseURL = 'http://localhost:3003'
+    // Use environment-based URL for proper development/production switching
+    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3002'
     
     // Alternative URLs for easy switching (uncomment as needed)
-    // this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3003'  // Environment-based
-    // this.baseURL = 'https://veyg-2k25-backend.onrender.com'  // Production
+    // this.baseURL = 'http://localhost:3002'  // Force localhost for development
+    // this.baseURL = 'https://veyg-2k25-backend.onrender.com'  // Force production
     
     this.defaultHeaders = {
       'Content-Type': 'application/json'
