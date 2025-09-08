@@ -225,7 +225,7 @@ const AdminDashboardNew = () => {
                               <Row className="mb-5 g-4">
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                 color: 'white'
                                           }}>
                                                 <Card.Body className="text-center p-4">
@@ -237,7 +237,7 @@ const AdminDashboardNew = () => {
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                 color: 'white'
                                           }}>
                                                 <Card.Body className="text-center p-4">
@@ -249,7 +249,7 @@ const AdminDashboardNew = () => {
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                 color: 'white'
                                           }}>
                                                 <Card.Body className="text-center p-4">
@@ -261,7 +261,7 @@ const AdminDashboardNew = () => {
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #ff6b6b 0%, #ff9966 100%)',
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                                 color: 'white'
                                           }}>
                                                 <Card.Body className="text-center p-4">
@@ -273,21 +273,21 @@ const AdminDashboardNew = () => {
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-                                                color: '#333'
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                color: 'white'
                                           }}>
-                                                <Card.Body className="text-center text-white p-5 ">
+                                                <Card.Body className="text-center p-5">
                                                       <h2 className="mb-1 fw-bold">₹{stats.totalRevenue}</h2>
-                                                      <p className="mb-0">Total Revenue</p>
+                                                      <p className="mb-0 opacity-75">Total Revenue</p>
                                                 </Card.Body>
                                           </Card>
                                     </Col>
                                     <Col xl={2} lg={4} md={6}>
                                           <Card className="border-0 shadow-lg h-100" style={{
-                                                background: 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)',
-                                                color: '#333'
+                                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                color: 'white'
                                           }}>
-                                                <Card.Body className="text-center text-white p-4">
+                                                <Card.Body className="text-center p-4">
                                                       <TrendingUp size={40} className="mb-3" />
                                                       <h2 className="mb-1 fw-bold">{stats.todayRegistrations}</h2>
                                                       <p className="mb-0 opacity-75">Today's Registrations</p>
