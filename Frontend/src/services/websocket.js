@@ -19,7 +19,7 @@ class WebSocketService {
         }
 
         const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
-        const socketUrl = API_BASE_URL.replace('/api', '').replace('http', 'ws').replace('https', 'wss');
+        const socketUrl = API_BASE_URL;
 
         this.socket = io(socketUrl, {
             auth: {

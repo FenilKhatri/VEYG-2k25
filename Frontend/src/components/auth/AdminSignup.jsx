@@ -45,7 +45,7 @@ const AdminSignup = ({ showToast }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3003/api/admin/register`, {
+      const response = await fetch(`http://localhost:3002/api/admin/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
