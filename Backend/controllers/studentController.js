@@ -16,6 +16,9 @@ const studentRegister = async (req, res) => {
       return errorResponse(res, 400, 'Student with this email already exists')
     }
 
+    // Store plain password before hashing for email delivery
+    const plainPassword = password
+
     // Create new student
     const student = new Student({
       name,
@@ -30,10 +33,11 @@ const studentRegister = async (req, res) => {
 
     console.log('✅ Student registration completed successfully')
 
-    // Send registration confirmation email
+    // Send registration confirmation email with actual password
     try {
-      await sendRegistrationEmail(student)
-      console.log('✅ Registration email sent successfully')
+      const { sendStudentSignupEmail } = require('../sendMail')
+      await sendStudentSignupEmail(student, plainPassword)
+      console.log('✅ Registration email with password sent successfully')
     } catch (emailError) {
       console.error('❌ Failed to send registration email:', emailError)
       // Don't fail registration if email fails

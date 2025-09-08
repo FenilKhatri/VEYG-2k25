@@ -287,9 +287,21 @@ const registerGame = async (req, res) => {
     const savedRegistration = await queueRegistration(registration);
     console.log('✅ Registration queued and saved with ID:', savedRegistration._id);
 
-    // Registration confirmation emails are now handled by individual student registration
-    // No PDF attachments needed for game registration emails
-    console.log('✅ Game registration completed - student emails handled separately');
+    // Send registration confirmation emails to all participants
+    try {
+      const { sendRegistrationConfirmationEmail } = require('../sendMail');
+      // Use setImmediate to make email sending non-blocking
+      setImmediate(async () => {
+        try {
+          await sendRegistrationConfirmationEmail(savedRegistration);
+          console.log('✅ Registration confirmation emails sent to all participants');
+        } catch (emailError) {
+          console.error('❌ Failed to send registration confirmation emails:', emailError);
+        }
+      });
+    } catch (emailError) {
+      console.error('❌ Email sending setup error:', emailError);
+    }
 
     // Emit new registration notification to admins via WebSocket
     try {
