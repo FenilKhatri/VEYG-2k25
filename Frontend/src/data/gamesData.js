@@ -18,7 +18,8 @@ export const games = [
       mandatory: [
         "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
         "- Physical presence is mandatory.",
-        "- E-certificates will only be given to those who are physically present and have completed the event."
+        "- E-certificates will only be given to those who are physically present and have completed the event.",
+        "Only 3rd, 4th, and 5th Semester students may participate in this event."
       ],
     },
   },
@@ -40,7 +41,8 @@ export const games = [
       mandatory: [
         "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
         "- Physical presence is mandatory.",
-        "- E-certificates will only be given to those who are physically present and have completed the event."
+        "- E-certificates will only be given to those who are physically present and have completed the event.",
+        "Only 3rd, 4th, and 5th Semester students may participate in this event."
       ],
     },
   },
@@ -85,7 +87,8 @@ export const games = [
       mandatory: [
         "- Payment confirmation is mandatory. After registration confirm your payment to register the game. ",
         "- Physical presence is mandatory.",
-        "- E-certificates will only be given to those who are physically present and have completed the event."
+        "- E-certificates will only be given to those who are physically present and have completed the event.",
+        "Only 3rd, 4th, and 5th Semester students may participate in this event."
       ],
     },
   },

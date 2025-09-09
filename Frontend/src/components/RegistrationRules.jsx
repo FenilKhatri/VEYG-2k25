@@ -180,27 +180,6 @@ const RegistrationRules = () => {
                     <strong>"TechShield - Role of Drone Technologies"</strong>
                   </p>
                 </div>
-
-                <div
-                  className="alert alert-warning d-flex align-items-center"
-                  style={{
-                    background: "rgba(220, 53, 69, 0.15)",
-                    border: "1px solid rgba(220, 53, 69, 0.4)",
-                    borderRadius: "10px",
-                    color: "#fff",
-                  }}
-                >
-                  <Shield
-                    size={20}
-                    className="me-2"
-                    style={{ color: "#dc3545" }}
-                  />
-                  <div>
-                    <strong>Important Notice:</strong> This expert session is
-                    exclusively available for{" "}
-                    <strong className="text-warning">Saffronites students only</strong>.
-                  </div>
-                </div>
               </div>
 
               <div className="col-md-4 text-center">
@@ -293,9 +272,8 @@ const RegistrationRules = () => {
                     className="mb-3"
                     style={{
                       background: "rgba(255, 255, 255, 0.03)",
-                      border: `1px solid ${
-                        step.important ? "#ffc107" : "rgba(0, 212, 255, 0.25)"
-                      }`,
+                      border: `1px solid ${step.important ? "#ffc107" : "rgba(0, 212, 255, 0.25)"
+                        }`,
                       borderRadius: "12px",
                       overflow: "hidden",
                     }}
