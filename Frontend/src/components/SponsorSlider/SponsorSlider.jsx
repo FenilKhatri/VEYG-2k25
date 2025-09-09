@@ -23,7 +23,7 @@ const SponsorSlider = () => {
   const sponsors = [
     {
       id: 1,
-      name: "Dominoz",
+      name: "Domino's",
       logo: "/Sponsors_images/Domino's Pizza.png",
       description: "Domino's is a global leader in pizza delivery, known for fresh, hot pizzas, efficient delivery services",
       website: "https://pizzaonline.dominos.co.in/",

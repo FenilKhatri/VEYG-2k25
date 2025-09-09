@@ -1243,7 +1243,7 @@ export default function VEYGReceipt({ show, onHide, game }) {
 
                   <div className="tech-team">
                     <h4 style={{ color: "#92400e", marginBottom: "1rem" }}>Technical Team</h4>
-                    <p style={{ marginBottom: "0" }}>Fenil Khatri, Divyesh Khubavat, Vraj Fadiya, Riddhi Sadhu</p>
+                    <p style={{ marginBottom: "0" }}>Fenil Khatri, Divyesh Kubavat, Vraj Fadiya, Riddhi Sadhu</p>
                   </div>
 
                   <p style={{ marginTop: "2rem", fontSize: "0.9rem", color: "#64748b" }}>

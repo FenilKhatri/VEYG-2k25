@@ -53,14 +53,14 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
       ctx.clearRect(0, 0, width, height);
 
       // Enhanced gradient background with modern colors
-      const g = ctx.createRadialGradient(width/2, height/2, 0, width/2, height/2, Math.max(width, height));
+      const g = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height));
       g.addColorStop(0, "#0a0a23");
       g.addColorStop(0.3, "#1a1a2e");
       g.addColorStop(0.7, "#16213e");
       g.addColorStop(1, "#0f172a");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, width, height);
-      
+
       // Add subtle overlay pattern
       const overlay = ctx.createLinearGradient(0, 0, width, height);
       overlay.addColorStop(0, "rgba(0, 234, 255, 0.03)");
@@ -85,12 +85,12 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
         gradient.addColorStop(0, "rgba(0, 234, 255, 0.9)");
         gradient.addColorStop(0.5, "rgba(124, 58, 237, 0.6)");
         gradient.addColorStop(1, "rgba(0, 234, 255, 0)");
-        
+
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.r * 3, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
-        
+
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
@@ -111,7 +111,7 @@ const NeuralCanvas = ({ zIndex = 0 }) => {
             gradient.addColorStop(0, `rgba(0, 234, 255, ${opacity})`);
             gradient.addColorStop(0.5, `rgba(124, 58, 237, ${opacity * 0.8})`);
             gradient.addColorStop(1, `rgba(0, 234, 255, ${opacity})`);
-            
+
             ctx.strokeStyle = gradient;
             ctx.lineWidth = 1.2;
             ctx.beginPath();
@@ -470,12 +470,6 @@ const HeroSection = () => {
                   filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.3))",
                   textAlign: "center"
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "scale(1.05) rotate(1deg)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "scale(1) rotate(0deg)";
-                }}
               />
             </div>
 
@@ -670,13 +664,17 @@ const HeroSection = () => {
               <h4
                 style={{
                   color: "#9ddfff",
-                  letterSpacing: 1,
-                  marginBottom: 12,
+                  letterSpacing: "1px",
+                  marginBottom: "12px",
                   fontWeight: 700,
+                  fontSize: "clamp(2rem, 3vw, 4rem)",
+                  textTransform: "uppercase",
+                  textAlign: "center",
                 }}
               >
-                PREVIOUS YEAR HIGHLIGHTS
+                Previous Year Highlights
               </h4>
+
 
               <Row className="g-3 justify-content-center">
                 {previousYear.map((p, i) => (
