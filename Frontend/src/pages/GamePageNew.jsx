@@ -4,7 +4,6 @@ import { Container, Row, Col, Card, Button, Badge, Spinner, Alert } from 'react-
 import { Trophy, Users, Clock, IndianRupee, Calendar, CheckCircle, Zap, Shield, Star, AlertTriangle, BookOpen, Award, AlertCircle, CheckSquare, XCircle } from 'lucide-react'
 import { getGameById } from '../data/gamesData'
 import RegistrationForm from '../components/RegistrationForm'
-import RegistrationTimer from '../components/RegistrationTimer'
 import { useAuth } from '../context/AuthContext'
 
 const GamePageNew = ({ isLoggedIn, user, showToast }) => {
@@ -164,15 +163,10 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
             </Col>
           </Row>
         </Container>
-      </div>
+      </div>zzzzz
 
       {/* Main Content */}
       <Container style={{ paddingTop: '60px', paddingBottom: '60px' }}>
-        {/* Registration Timer */}
-        <RegistrationTimer
-          deadline="2025-09-13T23:59:59"
-          onExpired={handleRegistrationExpired}
-        />
 
         <Row>
           {/* Game Details */}
@@ -342,22 +336,22 @@ const GamePageNew = ({ isLoggedIn, user, showToast }) => {
                     </Button>
                   </div>
                 ) : (
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={handleRegisterClick}
-                    style={{
-                      width: '100%',
-                      borderRadius: '10px',
-                      background: 'linear-gradient(45deg, #00d4ff, #007bff)',
-                      border: 'none',
-                      padding: '12px',
-                      fontWeight: '600'
-                    }}
-                  >
-                    <Zap size={20} style={{ marginRight: '8px' }} />
-                    Register Now
-                  </Button>
+                  <div>
+                    <Alert variant="danger" className="mb-3">
+                      <AlertTriangle size={16} className="me-2" />
+                      <strong>Registration Closed</strong>
+                      <div className="mt-1">Registration for this event has been closed.</div>
+                    </Alert>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      disabled
+                      style={{ width: '100%', borderRadius: '10px' }}
+                    >
+                      <XCircle size={20} style={{ marginRight: '8px' }} />
+                      Registration Closed
+                    </Button>
+                  </div>
                 )}
               </Card.Body>
             </Card>

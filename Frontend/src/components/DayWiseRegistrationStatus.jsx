@@ -3,7 +3,6 @@ import { Card, Row, Col, Badge, Button, Alert } from 'react-bootstrap'
 import { Calendar, CheckCircle, XCircle, Clock, Trophy } from 'lucide-react'
 import { useDayWiseRegistration } from '../hooks/useDayWiseRegistration'
 import { useAuth } from '../context/AuthContext'
-import RegistrationTimer from './RegistrationTimer'
 
 const DayWiseRegistrationStatus = ({ onRegisterClick, showRegisterButton = true }) => {
       const { registeredGames, user } = useAuth()
@@ -164,11 +163,6 @@ const DayWiseRegistrationStatus = ({ onRegisterClick, showRegisterButton = true 
 
       return (
             <div className="day-wise-registration-status">
-                  {/* Registration Timer */}
-                  <RegistrationTimer
-                        deadline="2025-09-13T23:59:59"
-                        onExpired={handleRegistrationExpired}
-                  />
 
                   <Card className="mb-4">
                         <Card.Header className="bg-primary text-white">

@@ -378,9 +378,9 @@ const HeroSection = () => {
   ];
 
   // Previous year stats (restored and expanded)
-  const previousYear = [
-    { icon: "👥", title: "Registrations", value: 850, suffix: "+", color: "#ff00e5" },
-    { icon: "🎲", title: "Total Games", value: 5, suffix: "", color: "#00ff95" },
+  const thisYear = [
+    { icon: "👥", title: "Registrations", value: 371, color: "#ff00e5" },
+    { icon: "🎲", title: "Total Games", value: 4, color: "#00ff95" },
   ];
 
   return (
@@ -672,12 +672,12 @@ const HeroSection = () => {
                   textAlign: "center",
                 }}
               >
-                Previous Year Highlights
+                This Year Highlights
               </h4>
 
 
               <Row className="g-3 justify-content-center">
-                {previousYear.map((p, i) => (
+                {thisYear.map((p, i) => (
                   <Col key={i} xs={12} sm={6} md={6} lg={3}>
                     <CounterCard icon={p.icon} title={p.title} value={p.value} suffix={p.suffix} color={p.color} />
                   </Col>
