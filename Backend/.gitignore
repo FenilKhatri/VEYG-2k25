@@ -1,1 +1,5 @@
+# Production build
+dist/
+build/
+.vscode/
 .env
