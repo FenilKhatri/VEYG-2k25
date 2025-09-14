@@ -78,20 +78,20 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
   const handleGamesClick = (e) => {
     e.preventDefault();
     setExpanded(false);
-    
+
     // If we're not on home page, navigate to home first
     if (location.pathname !== '/') {
       window.location.href = '/#games';
       return;
     }
-    
+
     // If we're on home page, scroll to game cards section with offset for fixed navbar
     const gameCardsSection = document.getElementById('game-cards');
     if (gameCardsSection) {
       const navbarHeight = 80; // Account for fixed navbar height
       const elementPosition = gameCardsSection.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
-      
+
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
@@ -103,7 +103,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
   const renderLinks = (linksArray) =>
     linksArray.map((item, idx) => {
       const isActive = location.pathname === item.to;
-      
+
       // Special handling for Games link
       if (item.label === "Games") {
         return (
@@ -119,7 +119,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
           </Nav.Link>
         );
       }
-      
+
       return (
         <Nav.Link
           as={Link}
@@ -220,10 +220,10 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
                     Login
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item as={Link} to="/student-login">Student Login</Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/student-signup">Student Sign Up</Dropdown.Item>
+                    <Dropdown.Item>Student Login</Dropdown.Item>
+                    <Dropdown.Item>Student Sign Up</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item as={Link} to="/admin-login" className="text-pink">Admin Login</Dropdown.Item>
+                    <Dropdown.Item className="text-pink">Admin Login</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               )}
