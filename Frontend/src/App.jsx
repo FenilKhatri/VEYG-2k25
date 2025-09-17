@@ -85,11 +85,9 @@ const App = () => {
           cookieAuth.setAuthData(updatedAuthData)
         }
       } catch (verifyError) {
-        console.warn('Token verification failed, but keeping user logged in:', verifyError)
         // Keep user logged in even if verification fails (network issues, etc.)
       }
     } catch (error) {
-      console.error('Auth check failed:', error)
       // Only clear auth if there's a critical error
       const authData = cookieAuth.getAuthData()
       if (authData) {

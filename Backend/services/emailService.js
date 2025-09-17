@@ -18,11 +18,9 @@ const transporter = nodemailer.createTransport(EMAIL_CONFIG);
 // Test transporter connection with better error handling
 transporter.verify((error, success) => {
     if (error) {
-        console.error('❌ Email transporter error:', error);
-        console.error('❌ Check EMAIL_USER and EMAIL_PASS environment variables');
+        // Email transporter error - check environment variables
     } else {
-        console.log('✅ Email server is ready to send messages');
-        console.log('📧 Using email:', process.env.EMAIL_USER);
+        // Email server ready
     }
 });
 
@@ -30,8 +28,6 @@ transporter.verify((error, success) => {
 async function sendStudentWelcomeEmail(studentData, password) {
     const { name, email, collegeName } = studentData;
     
-    console.log('📧 Sending welcome email to:', email);
-    console.log('📧 Student data:', { name, collegeName });
     
     const emailHTML = `
     <!DOCTYPE html>
@@ -106,13 +102,9 @@ async function sendStudentWelcomeEmail(studentData, password) {
     };
 
     try {
-        console.log('📤 Attempting to send email...');
         const result = await transporter.sendMail(mailOptions);
-        console.log('✅ Email sent successfully!');
-        console.log('📧 Message ID:', result.messageId);
         return { success: true, messageId: result.messageId };
     } catch (error) {
-        console.error('❌ Email sending failed:', error.message);
         throw error;
     }
 }

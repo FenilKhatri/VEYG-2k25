@@ -77,19 +77,33 @@ const studentLogin = async (req, res) => {
   try {
     const { email, password } = req.body
 
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+    
     // Find student by email
-    const student = await Student.findOne({ email }).select('+password')
+    const student = await Student.findOne({ email: email.toLowerCase() })
     if (!student) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
     }
 
     // Check password
     const isPasswordValid = await student.comparePassword(password)
+    
     if (!isPasswordValid) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
     }
 
-    // Generate token
+    // Generate JWT token
     const token = generateToken({
       id: student._id,
       name: student.name,
@@ -98,23 +112,33 @@ const studentLogin = async (req, res) => {
       isAdmin: student.isAdmin
     })
 
-    successResponse(res, 200, 'Student login successful', {
-      token,
-      student: {
-        id: student._id,
-        name: student.name,
-        email: student.email,
-        contactNumber: student.contactNumber,
-        gender: student.gender,
-        degree: student.degree,
-        branch: student.branch,
-        role: student.role,
-        isAdmin: student.isAdmin
+    const responseData = {
+      success: true,
+      message: 'Student login successful',
+      data: {
+        token,
+        student: {
+          id: student._id,
+          name: student.name,
+          email: student.email,
+          contactNumber: student.contactNumber,
+          gender: student.gender,
+          collegeName: student.collegeName,
+          role: student.role,
+          isAdmin: student.isAdmin
+        }
       }
-    })
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json(responseData);
+
   } catch (error) {
-    console.error('Student login error:', error)
-    errorResponse(res, 500, 'Server error during student login')
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during student login'
+    });
   }
 }
 

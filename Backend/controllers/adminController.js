@@ -7,13 +7,10 @@ const websocketService = require('../services/websocket')
 // Admin Registration - Completely New Implementation
 const adminRegister = async (req, res) => {
   try {
-    console.log('🔥 NEW Admin Registration Request:', req.body);
-    
     const { name, contactNumber, email, password, confirmPassword, secretKey } = req.body;
 
     // Comprehensive validation
     if (!name || !contactNumber || !email || !password || !confirmPassword || !secretKey) {
-      console.log('❌ Missing required fields');
       return res.status(400).json({
         success: false,
         message: 'All fields are required: name, contactNumber, email, password, confirmPassword, secretKey'
@@ -22,7 +19,6 @@ const adminRegister = async (req, res) => {
 
     // Validate secret key
     if (secretKey !== 'veyg_039') {
-      console.log('❌ Invalid secret key');
       return res.status(400).json({
         success: false,
         message: 'Invalid admin secret key provided'
@@ -31,7 +27,6 @@ const adminRegister = async (req, res) => {
 
     // Validate password match
     if (password !== confirmPassword) {
-      console.log('❌ Passwords do not match');
       return res.status(400).json({
         success: false,
         message: 'Password and confirm password do not match'
@@ -40,7 +35,6 @@ const adminRegister = async (req, res) => {
 
     // Validate password strength
     if (password.length < 6) {
-      console.log('❌ Password too weak');
       return res.status(400).json({
         success: false,
         message: 'Password must be at least 6 characters long'
@@ -50,7 +44,6 @@ const adminRegister = async (req, res) => {
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      console.log('❌ Invalid email format');
       return res.status(400).json({
         success: false,
         message: 'Please provide a valid email address'
@@ -60,7 +53,6 @@ const adminRegister = async (req, res) => {
     // Validate contact number
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(contactNumber)) {
-      console.log('❌ Invalid contact number');
       return res.status(400).json({
         success: false,
         message: 'Contact number must be exactly 10 digits'
@@ -76,7 +68,6 @@ const adminRegister = async (req, res) => {
     });
 
     if (existingAdmin) {
-      console.log('❌ Admin already exists');
       return res.status(400).json({
         success: false,
         message: 'Admin with this email or contact number already exists'
@@ -84,7 +75,6 @@ const adminRegister = async (req, res) => {
     }
 
     // Create new admin
-    console.log('✅ Creating new admin account...');
     const newAdmin = new Admin({
       name: name.trim(),
       contactNumber: contactNumber.trim(),
@@ -95,7 +85,6 @@ const adminRegister = async (req, res) => {
     });
 
     const savedAdmin = await newAdmin.save();
-    console.log('✅ Admin account created successfully');
 
     // Generate JWT token
     const token = generateToken({
@@ -106,39 +95,27 @@ const adminRegister = async (req, res) => {
       isAdmin: savedAdmin.isAdmin
     });
 
-    console.log('✅ JWT token generated');
 
-    // Return success response
+    // Send success response
+    res.setHeader('Content-Type', 'application/json');
     return res.status(201).json({
       success: true,
-      message: 'Admin account created successfully',
+      message: 'Admin registered successfully',
       data: {
-        token: token,
+        token,
         admin: {
           id: savedAdmin._id,
           name: savedAdmin.name,
           email: savedAdmin.email,
           contactNumber: savedAdmin.contactNumber,
           role: savedAdmin.role,
-          isAdmin: savedAdmin.isAdmin,
-          createdAt: savedAdmin.createdAt
+          isAdmin: savedAdmin.isAdmin
         }
       }
     });
 
   } catch (error) {
-    console.error('❌ Admin registration error:', error);
-    
-    // Handle duplicate key error
-    if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
-      return res.status(400).json({
-        success: false,
-        message: `An admin with this ${field} already exists`
-      });
-    }
-
-    // Handle validation errors
+    // Handle Mongoose validation errors
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => err.message);
       return res.status(400).json({
@@ -148,11 +125,20 @@ const adminRegister = async (req, res) => {
       });
     }
 
-    // Generic server error
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `Admin with this ${field} already exists`
+      });
+    }
+
+    // Handle other errors
+    res.setHeader('Content-Type', 'application/json');
     return res.status(500).json({
       success: false,
-      message: 'Internal server error during admin registration',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: 'Server error during admin registration'
     });
   }
 }
@@ -162,19 +148,33 @@ const adminLogin = async (req, res) => {
   try {
     const { email, password } = req.body
 
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+    
     // Find admin by email
-    const admin = await Admin.findOne({ email }).select('+password')
+    const admin = await Admin.findOne({ email: email.toLowerCase() })
     if (!admin) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
     }
 
     // Check password
     const isPasswordValid = await admin.comparePassword(password)
+    
     if (!isPasswordValid) {
-      return errorResponse(res, 401, 'Invalid credentials')
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
     }
 
-    // Generate token
+    // Generate JWT token
     const token = generateToken({
       id: admin._id,
       name: admin.name,
@@ -183,20 +183,28 @@ const adminLogin = async (req, res) => {
       isAdmin: admin.isAdmin
     })
 
-    successResponse(res, 200, 'Admin login successful', {
-      token,
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        contactNumber: admin.contactNumber,
-        role: admin.role,
-        isAdmin: admin.isAdmin
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({
+      success: true,
+      message: 'Admin login successful',
+      data: {
+        token,
+        admin: {
+          id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role,
+          isAdmin: admin.isAdmin
+        }
       }
-    })
+    });
+
   } catch (error) {
-    console.error('Admin login error:', error)
-    errorResponse(res, 500, 'Server error during admin login')
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during admin login'
+    });
   }
 }
 
@@ -290,7 +298,6 @@ const changeAdminPassword = async (req, res) => {
 
     successResponse(res, 200, 'Password changed successfully')
   } catch (error) {
-    console.error('Change admin password error:', error)
     errorResponse(res, 500, 'Server error while changing password')
   }
 }
@@ -298,13 +305,23 @@ const changeAdminPassword = async (req, res) => {
 // Get All Registrations (Admin only)
 const getAllRegistrations = async (req, res) => {
   try {
-    const registrations = await GameRegistration.find()
-      .sort({ createdAt: -1 })
+    const registrations = await GameRegistration.find().sort({ createdAt: -1 })
 
-    successResponse(res, 200, 'Registrations retrieved successfully', { registrations })
+    const responseData = {
+      success: true,
+      message: 'Registrations retrieved successfully',
+      data: { registrations }
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json(responseData);
+
   } catch (error) {
-    console.error('Get all registrations error:', error)
-    errorResponse(res, 500, 'Server error while fetching registrations')
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching registrations'
+    });
   }
 }
 

@@ -38,7 +38,6 @@ const validateDayRegistration = async (userId, gameDay) => {
                   canRegister: true
             }
       } catch (error) {
-            console.error('Error validating day registration:', error)
             return {
                   canRegister: false,
                   reason: 'Server error during validation'
@@ -81,7 +80,6 @@ const getUserRegistrationSummary = async (userId) => {
 
             return summary
       } catch (error) {
-            console.error('Error getting user registration summary:', error)
             throw error
       }
 }
@@ -102,7 +100,6 @@ const checkRegistrationLimit = async (userId) => {
                   maxRegistrations
             }
       } catch (error) {
-            console.error('Error checking registration limit:', error)
             throw error
       }
 }
@@ -183,7 +180,6 @@ const getDayWiseStatistics = async () => {
 
             return result
       } catch (error) {
-            console.error('Error getting day-wise statistics:', error)
             throw error
       }
 }

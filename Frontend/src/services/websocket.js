@@ -14,7 +14,6 @@ class WebSocketService {
         const authData = cookieAuth.getAuthData();
         
         if (!authData || !authData.token) {
-            console.warn('🔌 Cannot connect to WebSocket: No authentication token');
             return;
         }
 
@@ -37,14 +36,12 @@ class WebSocketService {
         if (!this.socket) return;
 
         this.socket.on('connect', () => {
-            console.log('🔌 Connected to WebSocket server');
             this.isConnected = true;
             this.reconnectAttempts = 0;
             this.emit('connectionStatus', { connected: true });
         });
 
         this.socket.on('disconnect', (reason) => {
-            console.log('🔌 Disconnected from WebSocket server:', reason);
             this.isConnected = false;
             this.emit('connectionStatus', { connected: false, reason });
             
@@ -58,7 +55,6 @@ class WebSocketService {
         });
 
         this.socket.on('connect_error', (error) => {
-            console.error('🔌 WebSocket connection error:', error.message);
             this.isConnected = false;
             this.emit('connectionError', { error: error.message });
             this.handleReconnect();
@@ -66,25 +62,21 @@ class WebSocketService {
 
         // Payment status updates
         this.socket.on('paymentStatusUpdate', (data) => {
-            console.log('📡 Received payment status update:', data);
             this.emit('paymentStatusUpdate', data);
         });
 
         // New registration notifications (for admins)
         this.socket.on('newRegistration', (data) => {
-            console.log('📡 Received new registration notification:', data);
             this.emit('newRegistration', data);
         });
 
         // Registration updates (for admins)
         this.socket.on('registrationUpdate', (data) => {
-            console.log('📡 Received registration update:', data);
             this.emit('registrationUpdate', data);
         });
 
         // Global notifications
         this.socket.on('globalNotification', (data) => {
-            console.log('📡 Received global notification:', data);
             this.emit('globalNotification', data);
         });
 
@@ -96,7 +88,6 @@ class WebSocketService {
 
     handleReconnect() {
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-            console.error('🔌 Max reconnection attempts reached');
             this.emit('maxReconnectAttemptsReached');
             return;
         }
@@ -104,7 +95,6 @@ class WebSocketService {
         this.reconnectAttempts++;
         const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Exponential backoff, max 30s
         
-        console.log(`🔌 Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
         
         setTimeout(() => {
             if (!this.isConnected) {
@@ -118,7 +108,6 @@ class WebSocketService {
             this.socket.disconnect();
             this.socket = null;
             this.isConnected = false;
-            console.log('🔌 WebSocket disconnected manually');
         }
     }
 
@@ -142,7 +131,6 @@ class WebSocketService {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`Error in WebSocket event listener for ${event}:`, error);
                 }
             });
         }

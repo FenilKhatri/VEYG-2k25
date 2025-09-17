@@ -23,9 +23,9 @@ const transporter = nodemailer.createTransport({
 });
 
 transporter.verify().then(() => {
-    console.log("✅ Mail transporter verified.");
+    // Mail transporter verified
 }).catch(err => {
-    console.error("⚠️ Mail transporter verification failed:", err.message);
+    // Mail transporter verification failed
 });
 
 // ---------- GENERATE RECEIPT ID ----------
@@ -34,12 +34,8 @@ const generateReceiptId = () => `VEYG-${Date.now().toString().slice(-6)}${Math.f
 // ---------- STUDENT SIGNUP CONFIRMATION EMAIL ----------
 async function sendStudentSignupEmail(studentData, plainPassword) {
     try {
-        console.log('📧 sendStudentSignupEmail called with:', { studentData, passwordLength: plainPassword?.length });
-        
         const { name, email, collegeName } = studentData;
         const loginUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-        
-        console.log('📧 Email config:', { EMAIL_USER, SUPPORT_EMAIL, ORG_NAME, loginUrl });
         
         const emailHtml = `
         <!DOCTYPE html>
@@ -162,27 +158,10 @@ async function sendStudentSignupEmail(studentData, plainPassword) {
             html: emailHtml
         };
 
-        console.log('📤 Sending email with options:', {
-            from: mailOptions.from,
-            to: mailOptions.to,
-            cc: mailOptions.cc,
-            subject: mailOptions.subject
-        });
-
         const result = await transporter.sendMail(mailOptions);
-        console.log(`✅ Student signup email sent successfully to: ${email}`);
-        console.log('📧 Email result:', result);
         return { success: true, message: 'Signup email sent successfully', result };
 
     } catch (error) {
-        console.error('❌ Error sending student signup email:', error);
-        console.error('❌ Full error details:', {
-            message: error.message,
-            code: error.code,
-            command: error.command,
-            response: error.response,
-            responseCode: error.responseCode
-        });
         return { success: false, message: 'Failed to send signup email', error: error.message };
     }
 }
@@ -197,12 +176,10 @@ function serveReceiptHandler(req, res) {
         }
         return res.download(filePath, filename, err => {
             if (err && !res.headersSent) {
-                console.error("Error sending file:", err);
                 return res.status(500).send("Error sending file");
             }
         });
     } catch (err) {
-        console.error(err);
         return res.status(500).send("Server error");
     }
 }

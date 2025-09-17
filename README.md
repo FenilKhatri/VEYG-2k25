@@ -1,6 +1,6 @@
 # VEYG‑2k25
 
-A modern, responsive event website for **VEYG 2K25** — showcasing schedules, technical games, guidelines, sponsors, and registrations with smooth animations and a delightful UX.
+A full-stack event management platform for **VEYG 2K25** — featuring game registrations, admin dashboard, real-time notifications, and secure authentication with MongoDB backend and React frontend.
 
 <p align="center">
   <img alt="VEYG 2k25 banner" src="https://img.shields.io/badge/VEYG-2K25-blue" />
@@ -10,86 +10,132 @@ A modern, responsive event website for **VEYG 2K25** — showcasing schedules, t
   <img alt="License" src="https://img.shields.io/badge/License-MIT-green" />
 </p>
 
-## ✨ Highlights
+## ✨ Features
 
-* 🎯 **Clean, festival‑style landing** with hero animations (typewriter title & subtle motion effects)
-* 🧭 **Page sections**: Home, About, Guidelines, Technical Games, Schedule, Sponsors, Contact
-* 🧩 **Components**: `PageHeroSection`, Sponsor slider, Technical game cards, Registration timer
-* 🧠 **Hooks/Context**: `useDayWiseRegistration` (day‑wise logic), `AuthContext` (optional auth)
-* 🧱 **UI**: React + React‑Bootstrap, Lucide icons, Framer Motion transitions
-* 📱 **Responsive** out of the box, mobile‑first layout
-* 🗺️ **Routing** with `react-router-dom`
-* 🗃️ **Data‑driven** sections (e.g., `data/gamesData`)
+* 🎯 **Full-Stack Architecture**: Node.js/Express backend with React frontend
+* 🔐 **Secure Authentication**: JWT-based auth with bcrypt password hashing
+* 📊 **Admin Dashboard**: Real-time registration management and statistics
+* 🎮 **Game Registration**: Day-wise registration system with validation
+* 📧 **Email Notifications**: Automated welcome emails with login credentials
+* 🔄 **Real-time Updates**: WebSocket integration for live notifications
+* 💾 **MongoDB Integration**: Secure data persistence with Mongoose ODM
+* 📱 **Responsive Design**: Mobile-first UI with React-Bootstrap
+* 🎨 **Modern UI/UX**: Framer Motion animations and clean design
+* 🚀 **Production Ready**: Deployed on Render with environment configuration
 
-> If your local setup differs (e.g., CRA vs Vite, Firebase, etc.), see the notes below. The README is structured so you can tweak the relevant parts quickly.
+> **Security Note**: All sensitive credentials are stored in environment variables and excluded from version control.
 
 ---
 
-## 🗂️ Project Structure (suggested)
+## 🗂️ Project Structure
 
 ```
 VEYG-2k25/
-├─ public/
-├─ src/
-│  ├─ assets/
-│  ├─ components/
-│  │  ├─ HeroSection/
-│  │  │  └─ HeroSection.jsx
-│  │  ├─ SponsorSlider/
-│  │  │  └─ SponsorSlider.jsx
-│  │  ├─ TechnicalGames/
-│  │  │  ├─ TechnicalGamesSection.jsx
-│  │  │  └─ TechnicalGameCard.jsx
-│  │  ├─ HeroSection/PageHeroSection.jsx
-│  │  └─ RegistrationTimer.jsx
-│  ├─ pages/
-│  │  ├─ Home.jsx
-│  │  ├─ About.jsx
-│  │  ├─ Guidelines.jsx
-│  │  ├─ Schedule.jsx
-│  │  ├─ TechnicalGames.jsx
-│  │  ├─ Sponsors.jsx
-│  │  └─ Contact.jsx
-│  ├─ data/
-│  │  └─ gamesData.js
-│  ├─ hooks/
-│  │  └─ useDayWiseRegistration.js
-│  ├─ context/
-│  │  └─ AuthContext.jsx
+├─ Backend/
+│  ├─ controllers/
+│  │  ├─ adminController.js
+│  │  ├─ studentController.js
+│  │  ├─ gameRegistrationController.js
+│  │  └─ contactController.js
+│  ├─ middleware/
+│  │  ├─ auth.js
+│  │  └─ validation.js
+│  ├─ models/
+│  │  ├─ Admin.js
+│  │  ├─ Student.js
+│  │  ├─ GameRegistration.js
+│  │  └─ Contact.js
 │  ├─ router/
-│  │  └─ AppRouter.jsx
-│  ├─ App.jsx
-│  └─ main.jsx
-├─ .env.example
-├─ package.json
+│  │  ├─ adminRoutes.js
+│  │  ├─ studentRoutes.js
+│  │  └─ gameRegistrationRoutes.js
+│  ├─ services/
+│  │  ├─ websocket.js
+│  │  └─ emailService.js
+│  ├─ utils/
+│  │  ├─ auth.js
+│  │  ├─ db.js
+│  │  └─ dayWiseValidation.js
+│  ├─ .env.example
+│  ├─ .gitignore
+│  ├─ server.js
+│  └─ package.json
+├─ Frontend/
+│  ├─ src/
+│  │  ├─ components/
+│  │  │  ├─ auth/
+│  │  │  ├─ Games/
+│  │  │  └─ SponsorSlider/
+│  │  ├─ pages/
+│  │  │  ├─ AdminDashboard.jsx
+│  │  │  ├─ GamePage.jsx
+│  │  │  └─ Profile.jsx
+│  │  ├─ services/
+│  │  │  ├─ api.js
+│  │  │  └─ websocket.js
+│  │  ├─ utils/
+│  │  │  └─ registrationUtils.js
+│  │  ├─ context/
+│  │  │  └─ AuthContext.jsx
+│  │  └─ App.jsx
+│  ├─ .env.example
+│  └─ package.json
+├─ .gitignore
 └─ README.md
 ```
-
-> Your repository may organize files slightly differently; keep this as a reference and adjust names/paths accordingly.
 
 ---
 
 ## 🚀 Quick Start
 
-> **Prerequisites**: Node.js ≥ 18, npm ≥ 9 (or yarn/pnpm)
+> **Prerequisites**: Node.js ≥ 18, npm ≥ 9, MongoDB Atlas account
+
+### 1. Environment Setup
 
 ```bash
-# 1) Install dependencies
+# Clone the repository
+git clone https://github.com/your-username/VEYG-2k25.git
+cd VEYG-2k25
+
+# Backend setup
+cd Backend
+cp .env.example .env
+# Edit .env with your credentials (see Environment Variables section)
 npm install
 
-# 2) Run in development
-npm run dev         # (Vite)
-# or
-npm start           # (Create React App)
-
-# 3) Build for production
-npm run build
-
-# 4) Preview build (Vite only)
-npm run preview
+# Frontend setup
+cd ../Frontend
+npm install
 ```
 
-Open the app at the URL shown in your terminal (commonly `http://localhost:5173` for Vite or `http://localhost:3000` for CRA).
+### 2. Environment Variables
+
+Create `Backend/.env` file with:
+
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/VEYG-2k25
+JWT_SECRET=your-super-secret-jwt-key-here
+EMAIL_USER=your-gmail@gmail.com
+EMAIL_PASS=your-gmail-app-password
+PORT=3002
+NODE_ENV=development
+ORGANIZATION_NAME=VEYG 2025
+```
+
+### 3. Run Development Servers
+
+```bash
+# Terminal 1 - Backend
+cd Backend
+npm run dev
+
+# Terminal 2 - Frontend  
+cd Frontend
+npm run dev
+```
+
+- Backend: `http://localhost:3002`
+- Frontend: `http://localhost:5173`
 
 --
 

@@ -27,7 +27,6 @@ export async function registerTeam(payload) {
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       const text = await res.text();
-      console.error('Non-JSON response received:', text);
       throw new Error(`Server returned invalid response (${res.status}). Please try again.`);
     }
 
@@ -35,7 +34,6 @@ export async function registerTeam(payload) {
     try {
       data = await res.json();
     } catch (jsonError) {
-      console.error('JSON parsing error:', jsonError);
       throw new Error('Server returned invalid JSON response. Please try again.');
     }
 
@@ -54,7 +52,6 @@ export async function registerTeam(payload) {
     showSuccessMessage("Registration successful! Emails sent to all participants. PDF downloaded.");
     return data;
   } catch (err) {
-    console.error("Registration error:", err);
     showErrorMessage("Registration failed: " + (err.message || err));
     throw err;
   }
@@ -82,7 +79,6 @@ async function downloadPdfFromUrl(url, filename) {
     }, 500);
 
   } catch (err) {
-    console.error("PDF download error:", err);
     // Final fallback - just open the URL
     window.open(url, "_blank");
   }
@@ -110,7 +106,6 @@ export function downloadBase64Pdf(base64, filename) {
     a.remove();
     URL.revokeObjectURL(url);
   } catch (err) {
-    console.error("Base64 PDF download error:", err);
     showErrorMessage("Failed to download PDF");
   }
 }
@@ -126,9 +121,7 @@ export function setupBackendMonitor() {
       
       // Backend OK -> hide any alerts
       hideBackendAlert();
-      console.log("✅ Backend health check passed");
     } catch (err) {
-      console.warn("⚠️ Backend health check failed:", err);
       // Silently handle connection errors - no more popup alerts
       // showBackendAlert("Backend server connection failed. Some features may not work properly.");
     }
@@ -146,7 +139,6 @@ export function setupBackendMonitor() {
  * @param {string} msg - Alert message
  */
 function showBackendAlert(msg) {
-  console.warn("Backend Alert:", msg);
 
   // Try to find existing alert element
   let alertElement = document.getElementById("backend-alert");
@@ -192,7 +184,6 @@ function hideBackendAlert() {
  */
 function showSuccessMessage(msg) {
   // You can integrate this with your existing notification system
-  console.log("✅ Success:", msg);
 
   // Simple toast notification
   const toast = document.createElement("div");
@@ -222,7 +213,6 @@ function showSuccessMessage(msg) {
  * @param {string} msg - Error message
  */
 function showErrorMessage(msg) {
-  console.error("❌ Error:", msg);
 
   // Simple error toast
   const toast = document.createElement("div");

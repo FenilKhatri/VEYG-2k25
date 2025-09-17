@@ -15,7 +15,6 @@ class ApiService {
       'Content-Type': 'application/json'
     }
     
-    console.log(' API Service initialized with base URL:', this.baseURL)
   }
 
   // Helper method to get auth headers

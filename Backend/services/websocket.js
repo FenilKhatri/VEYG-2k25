@@ -23,7 +23,6 @@ class WebSocketService {
         this.io.use(this.authenticateSocket.bind(this));
         this.io.on('connection', this.handleConnection.bind(this));
 
-        console.log('🔌 WebSocket service initialized');
         return this.io;
     }
 
@@ -35,20 +34,23 @@ class WebSocketService {
                 return next(new Error('Authentication token required'));
             }
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // Use fallback secret if JWT_SECRET is not set
+            const jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
+            if (!process.env.JWT_SECRET) {
+            }
+
+            const decoded = jwt.verify(token, jwtSecret);
             socket.userId = decoded.id;
             socket.userRole = decoded.role;
             socket.isAdmin = decoded.isAdmin;
             
             next();
         } catch (error) {
-            console.error('Socket authentication error:', error);
             next(new Error('Invalid authentication token'));
         }
     }
 
     handleConnection(socket) {
-        console.log(`🔌 User connected: ${socket.userId} (${socket.userRole})`);
         
         // Store user connection
         this.connectedUsers.set(socket.userId, socket.id);
@@ -62,7 +64,6 @@ class WebSocketService {
         }
 
         socket.on('disconnect', () => {
-            console.log(`🔌 User disconnected: ${socket.userId}`);
             this.connectedUsers.delete(socket.userId);
         });
 
@@ -94,7 +95,6 @@ class WebSocketService {
                 type: 'REGISTRATION_STATUS_UPDATE'
             });
 
-            console.log(`📡 Payment status update sent to user ${userId} and admins:`, updateData);
         }
     }
 
@@ -108,7 +108,6 @@ class WebSocketService {
             };
 
             this.io.to('admin_room').emit('newRegistration', updateData);
-            console.log(`📡 New registration notification sent to admins:`, registrationData.registrationId);
         }
     }
 
@@ -119,7 +118,6 @@ class WebSocketService {
                 ...notification,
                 timestamp: new Date().toISOString()
             });
-            console.log(`📡 Global notification sent:`, notification.message);
         }
     }
 

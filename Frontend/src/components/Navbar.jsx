@@ -204,7 +204,7 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
                         </Dropdown.Item>
                       </>
                     ) : (
-                      <Dropdown.Item as={Link} to="/profile">
+                      <Dropdown.Item to="/profile" as={Link}>
                         <User size={16} className="me-2" /> Profile
                       </Dropdown.Item>
                     )}
@@ -220,10 +220,10 @@ const AppNavbar = ({ isLoggedIn, isAdminLoggedIn, userId, onLogout }) => {
                     Login
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item>Student Login</Dropdown.Item>
-                    <Dropdown.Item>Student Sign Up</Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/student-login">Student Login</Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/student-signup">Student Sign Up</Dropdown.Item>
                     <Dropdown.Divider />
-                    <Dropdown.Item className="text-pink">Admin Login</Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/admin-login" className="text-pink">Admin Login</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               )}
